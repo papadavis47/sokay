@@ -1,9 +1,9 @@
-import { Provider } from "@/components/ui/provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/main.css";
+
 const inter = Inter({
-  variable: "--inter",
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -18,9 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable}`}>
-        <Provider>{children}</Provider>
+    <html lang="en">
+      <body className={inter.variable}>
+        {children}
       </body>
     </html>
   );
