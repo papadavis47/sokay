@@ -43,6 +43,10 @@ yarn-error.log*
 # tanstack router generated
 src/routeTree.gen.ts
 
+# claude code
+CLAUDE.md
+.claude/
+
 ## Panda
 styled-system
 styled-system-studio
