@@ -2,37 +2,38 @@
   "name": "sokay",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite dev",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "prepare": "panda codegen",
+    "lint": "eslint src"
   },
   "dependencies": {
-    "@radix-ui/react-dialog": "^1.1.15",
-    "@radix-ui/react-label": "^2.1.8",
-    "@radix-ui/react-select": "^2.2.6",
-    "@radix-ui/react-slider": "^1.3.6",
-    "@radix-ui/react-slot": "^1.2.4",
+    "@ark-ui/react": "^5.31.0",
+    "@fontsource-variable/inter": "^5.2.8",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.87.1",
-    "@tailwindcss/postcss": "^4.1.17",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
+    "@tanstack/react-router": "^1.158.4",
+    "@tanstack/react-start": "^1.159.0",
     "lucide-react": "^0.556.0",
-    "next": "16.0.8",
     "react": "19.2.1",
-    "react-dom": "19.2.1",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.1.17"
+    "react-dom": "19.2.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.1",
+    "@pandacss/dev": "^1.8.1",
+    "@pandacss/preset-base": "^1.8.1",
+    "@park-ui/panda-preset": "^0.43.1",
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.3",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.0.8",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0",
+    "vite": "^7.3.1",
+    "vite-tsconfig-paths": "^6.1.0"
   }
 }

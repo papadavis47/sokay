@@ -1,102 +1,102 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react'
+import { useRouter } from '@tanstack/react-router'
+import { css } from 'styled-system/css'
+import { Pencil, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
-  Dialog,
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  DialogRoot,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import type { Goal, Debit } from "@/types/database";
+  DialogDescription,
+} from '@/components/ui/dialog'
+import { updateDebit, deleteDebit } from '@/server/debits'
+import type { Goal, Debit } from '@/types/database'
 
 interface HistoryViewProps {
-  goal: Goal;
-  debits: Debit[];
+  goal: Goal
+  debits: Debit[]
 }
 
 export function HistoryView({ goal, debits }: HistoryViewProps) {
-  const [editingDebit, setEditingDebit] = useState<Debit | null>(null);
-  const [foodName, setFoodName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
-  const supabase = createClient();
+  const [editingDebit, setEditingDebit] = useState<Debit | null>(null)
+  const [foodName, setFoodName] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
 
   const handleEdit = (debit: Debit) => {
-    setEditingDebit(debit);
-    setFoodName(debit.food_name);
-    setError("");
-  };
+    setEditingDebit(debit)
+    setFoodName(debit.food_name)
+    setError('')
+  }
 
   const handleSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingDebit) return;
-
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    if (!editingDebit) return
+    setError('')
+    setLoading(true)
 
     try {
-      const { error: updateError } = await supabase
-        .from("debits")
-        .update({ food_name: foodName.trim() })
-        .eq("id", editingDebit.id);
-
-      if (updateError) throw updateError;
-
-      setEditingDebit(null);
-      setFoodName("");
-      router.refresh();
+      await updateDebit({
+        data: { debitId: editingDebit.id, foodName: foodName.trim() },
+      })
+      setEditingDebit(null)
+      setFoodName('')
+      router.invalidate()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleDelete = async (debitId: string) => {
-    if (!confirm("Are you sure you want to remove this entry?")) {
-      return;
-    }
+    if (!confirm('Are you sure you want to remove this entry?')) return
 
     try {
-      const { error: deleteError } = await supabase
-        .from("debits")
-        .delete()
-        .eq("id", debitId);
-
-      if (deleteError) throw deleteError;
-
-      router.refresh();
+      await deleteDebit({ data: { debitId } })
+      router.invalidate()
     } catch (err) {
-      alert(err instanceof Error ? err.message : "An error occurred");
+      alert(err instanceof Error ? err.message : 'An error occurred')
     }
-  };
+  }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  };
+    return new Date(dateString).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+  }
 
-  const usedCredits = debits.length;
-  const remainingCredits = goal.total_credits - usedCredits;
+  const usedCredits = debits.length
+  const remainingCredits = goal.total_credits - usedCredits
 
   return (
-    <div className="space-y-6">
+    <div className={css({ display: 'flex', flexDirection: 'column', gap: '6' })}>
       <div>
-        <h1 className="text-4xl font-bold mb-2">History</h1>
-        <p className="text-xl text-muted-foreground">
+        <h1
+          className={css({
+            fontSize: '4xl',
+            fontWeight: 'bold',
+            mb: '2',
+            color: 'fg.default',
+          })}
+        >
+          History
+        </h1>
+        <p className={css({ fontSize: 'xl', color: 'fg.muted' })}>
           All your tracked treats for the current goal
         </p>
       </div>
@@ -105,16 +105,19 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
         <CardHeader>
           <CardTitle>Summary</CardTitle>
           <CardDescription>
-            {usedCredits} of {goal.total_credits} credits used • {remainingCredits} remaining
+            {usedCredits} of {goal.total_credits} credits used · {remainingCredits}{' '}
+            remaining
           </CardDescription>
         </CardHeader>
       </Card>
 
       {debits.length === 0 ? (
         <Card>
-          <CardContent className="pt-6 text-center text-muted-foreground">
+          <CardBody
+            className={css({ pt: '6', textAlign: 'center', color: 'fg.muted' })}
+          >
             <p>No treats logged yet. You're doing great!</p>
-          </CardContent>
+          </CardBody>
         </Card>
       ) : (
         <Card>
@@ -122,53 +125,65 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
             <CardTitle>All Entries</CardTitle>
             <CardDescription>{debits.length} total entries</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+          <CardBody>
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
               {debits.map((debit) => (
                 <div
                   key={debit.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  className={css({
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: '4',
+                    borderRadius: 'l2',
+                    bg: 'gray.a2',
+                    _hover: { bg: 'gray.a3' },
+                    transition: 'background-color 0.15s',
+                  })}
                 >
                   <div>
-                    <p className="font-medium">{debit.food_name}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className={css({ fontWeight: 'medium' })}>{debit.food_name}</p>
+                    <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
                       {formatDate(debit.debited_at)}
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className={css({ display: 'flex', gap: '2' })}>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleEdit(debit)}
                     >
-                      Edit
+                      <Pencil size={14} />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(debit.id)}
                     >
-                      Delete
+                      <Trash2 size={14} />
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
       )}
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editingDebit} onOpenChange={(open) => !open && setEditingDebit(null)}>
+      <DialogRoot
+        open={!!editingDebit}
+        onOpenChange={(e) => !e.open && setEditingDebit(null)}
+      >
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Entry</DialogTitle>
-            <DialogDescription>
-              Update what you had for this treat
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSaveEdit} className="space-y-4">
-            <div className="space-y-2">
+          <DialogTitle>Edit Entry</DialogTitle>
+          <DialogDescription className={css({ mb: '4' })}>
+            Update what you had for this treat
+          </DialogDescription>
+          <form
+            onSubmit={handleSaveEdit}
+            className={css({ display: 'flex', flexDirection: 'column', gap: '4' })}
+          >
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
               <Label htmlFor="editFoodName">Food or Drink</Label>
               <Input
                 id="editFoodName"
@@ -181,12 +196,22 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
             </div>
 
             {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+              <div
+                className={css({
+                  fontSize: 'sm',
+                  color: 'red.11',
+                  bg: 'red.a3',
+                  p: '3',
+                  borderRadius: 'l2',
+                })}
+              >
                 {error}
               </div>
             )}
 
-            <div className="flex justify-end gap-2">
+            <div
+              className={css({ display: 'flex', justifyContent: 'flex-end', gap: '2' })}
+            >
               <Button
                 type="button"
                 variant="outline"
@@ -196,12 +221,12 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save Changes"}
+                {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
           </form>
         </DialogContent>
-      </Dialog>
+      </DialogRoot>
     </div>
-  );
+  )
 }

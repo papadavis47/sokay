@@ -8,12 +8,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key Technology Decisions
 
-- **Next.js 16.0.2**: Using the latest stable version with App Router architecture
+- **TanStack Start (RC)**: Full-stack React framework with SSR, server functions, and file-based routing
+- **TanStack Router**: Type-safe routing with loaders, beforeLoad guards, and `router.invalidate()` for refresh
 - **React 19.2.0**: Latest React version
-- **Tailwind CSS v4.1.17**: Recently migrated from Chakra UI to Tailwind v4 (see commit d724fa5)
-- **Shadcn UI**: Component library built on Radix UI primitives
+- **Panda CSS v1.8**: CSS-in-JS engine with atomic CSS generation, configured via `panda.config.ts`
+- **Park UI + Ark UI**: Accessible headless components (Ark UI) with styled layer (Park UI preset for Panda CSS)
 - **Supabase**: Backend-as-a-Service for authentication and PostgreSQL database
 - **TypeScript**: Strict mode enabled with paths configured (`@/*` -> `./src/*`)
+- **Vite**: Build tool with TanStack Start plugin
 - **Package Manager**: pnpm
 
 ## Development Commands
@@ -31,6 +33,9 @@ pnpm start
 # Run linter
 pnpm lint
 
+# Regenerate Panda CSS styled-system
+pnpm panda codegen
+
 # Install dependencies
 pnpm install
 ```
@@ -39,35 +44,50 @@ pnpm install
 
 ```
 src/
-├── app/
-│   ├── dashboard/           # Protected dashboard routes
-│   │   ├── layout.tsx       # Dashboard layout with auth check
-│   │   └── page.tsx         # Main dashboard (shows goal or setup)
-│   ├── goal/
-│   │   └── review/[id]/     # Goal review/completion page
-│   ├── history/             # Full history with edit/delete
-│   ├── login/               # Login page
-│   ├── signup/              # Signup page
-│   ├── layout.tsx           # Root layout with Inter font
-│   └── page.tsx             # Landing page
-├── components/              # React components
-│   ├── ui/                  # Shadcn UI components
-│   ├── dashboard-nav.tsx    # Navigation bar with logout
+├── routes/
+│   ├── __root.tsx           # Root HTML shell + ThemeProvider
+│   ├── index.tsx            # Landing page
+│   ├── login.tsx            # Login page (redirects authed users)
+│   ├── signup.tsx           # Signup page (redirects authed users)
+│   ├── dashboard.tsx        # Dashboard layout route (auth guard)
+│   ├── dashboard/
+│   │   ├── index.tsx        # Main dashboard (goal or setup)
+│   │   └── history.tsx      # Full history with edit/delete
+│   └── goal/
+│       └── review/$id.tsx   # Goal review/completion page
+├── components/
+│   ├── ui/                  # Park UI style components (Panda CSS + Ark UI)
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── select.tsx
+│   │   ├── slider.tsx
+│   │   └── index.ts
+│   ├── dashboard-nav.tsx    # Navigation bar with logout + theme toggle
 │   ├── goal-dashboard.tsx   # Active goal display + debit form
 │   ├── goal-review.tsx      # Goal completion review
 │   ├── goal-setup-form.tsx  # New goal creation form
-│   └── history-view.tsx     # History with edit/delete
+│   ├── history-view.tsx     # History with edit/delete
+│   ├── theme-provider.tsx   # Dark/light mode context
+│   └── theme-toggle.tsx     # Sun/moon toggle button
+├── server/
+│   ├── auth.ts              # Server functions: getUser, requireUser, logout
+│   ├── goals.ts             # Server functions: createGoal, completeGoal
+│   └── debits.ts            # Server functions: createDebit, updateDebit, deleteDebit
 ├── lib/
-│   ├── supabase/            # Supabase clients
-│   │   ├── client.ts        # Browser client
-│   │   ├── server.ts        # Server client (async cookies)
-│   │   └── middleware.ts    # Auth middleware
-│   └── utils.ts             # Tailwind merge utility
+│   └── supabase/
+│       ├── client.ts        # Browser client (import.meta.env)
+│       └── server.ts        # Server client (getRequest for cookies)
 ├── types/
 │   └── database.ts          # TypeScript types for database
-├── styles/
-│   └── main.css             # Tailwind + theme variables
-└── proxy.ts                 # Next.js proxy (middleware) for auth
+├── router.tsx               # Router configuration
+├── index.css                # Panda CSS layers + Inter font
+└── routeTree.gen.ts         # Auto-generated route tree (do not edit)
+styled-system/               # Auto-generated Panda CSS output (gitignored)
+panda.config.ts              # Panda CSS config with Park UI preset
+vite.config.ts               # Vite config with TanStack Start plugin
 ```
 
 ## Architecture Notes
@@ -82,13 +102,19 @@ Run `supabase-schema.sql` in your Supabase SQL editor to set up the database. Ke
 
 ### Authentication Flow
 
-1. **Proxy** (`src/proxy.ts`): Intercepts all requests, refreshes auth tokens (Next.js 16+ proxy pattern)
-2. **Protected Routes**: `/dashboard`, `/goal`, `/history` redirect to `/login` if not authenticated
-3. **Auth Pages**: `/login` and `/signup` redirect to `/dashboard` if already authenticated
-4. **Supabase Clients**:
-   - `client.ts`: Browser-side (client components)
-   - `server.ts`: Server-side (server components, uses async cookies in Next.js 16)
-   - `middleware.ts`: Proxy-specific client (legacy name, still works)
+1. **Route Guards**: `beforeLoad` in route files calls `requireUser()` server function
+2. **Server Functions**: All mutations go through `createServerFn` with server-side auth
+3. **Protected Routes**: `/dashboard`, `/goal` require auth via `requireUser()`
+4. **Auth Pages**: `/login` and `/signup` redirect to `/dashboard` if already authenticated
+5. **Supabase Clients**:
+   - `client.ts`: Browser-side (uses `import.meta.env.VITE_SUPABASE_*`)
+   - `server.ts`: Server-side (uses `getRequest()` from TanStack Start for cookies)
+
+### Data Loading Pattern
+
+- Route `loader` functions call server functions for data fetching
+- Components consume data via `Route.useLoaderData()`
+- After mutations, call `router.invalidate()` to re-run loaders
 
 ### User Flow
 
@@ -96,8 +122,8 @@ Run `supabase-schema.sql` in your Supabase SQL editor to set up the database. Ke
 2. If no active goal → shows goal setup form
 3. User creates goal → dashboard shows credits and debit button
 4. User logs treats → debits reduce available credits
-5. View full history at `/history` with edit/delete capabilities
-6. When goal period ends or credits run out → user must review goal at `/goal/review/[id]`
+5. View full history at `/dashboard/history` with edit/delete capabilities
+6. When goal period ends or credits run out → user must review goal at `/goal/review/$id`
 7. After review → goal marked as completed, user can start a new goal
 
 ### Goal States
@@ -116,16 +142,17 @@ Run `supabase-schema.sql` in your Supabase SQL editor to set up the database. Ke
 
 ### Styling Setup
 
-- **Tailwind v4** is configured via PostCSS (`@tailwindcss/postcss`)
-- Theme variables in `src/styles/main.css` using `@theme` directive
-- **Shadcn UI** components in `src/components/ui/`
-- Font: Inter (Google Font) configured as CSS variable `--font-inter` in layout
+- **Panda CSS** configured via PostCSS (`@pandacss/dev/postcss`)
+- **Park UI preset** provides Radix Colors (teal accent, neutral gray), semantic tokens, and component recipes
+- **Dark mode**: `.dark` class on `<html>`, toggled via ThemeProvider + localStorage
+- UI components in `src/components/ui/` use Panda CSS `css()` + Ark UI headless primitives
+- Font: Inter Variable via `@fontsource-variable/inter`
 
 ### TypeScript Configuration
 
 - Path alias `@/*` maps to `./src/*`
+- `baseUrl: "."` allows importing `styled-system/*` directly
 - Strict mode enabled
-- JSX pragma: `react-jsx`
 - Module resolution: `bundler`
 
 ## Environment Setup
@@ -133,10 +160,7 @@ Run `supabase-schema.sql` in your Supabase SQL editor to set up the database. Ke
 1. Create a Supabase project at https://supabase.com
 2. Run the SQL schema from `supabase-schema.sql` in the SQL Editor
 3. Copy `.env.local.example` to `.env.local`
-4. Add your Supabase URL and anon key from project settings
+4. Add your Supabase URL and anon key:
+   - `VITE_SUPABASE_URL=your-project-url`
+   - `VITE_SUPABASE_ANON_KEY=your-anon-key`
 5. Run `pnpm install` and `pnpm dev`
-
-## ESLint
-
-- Uses Next.js recommended config (`next/core-web-vitals`, `next/typescript`)
-- Flat config format (eslint.config.mjs)

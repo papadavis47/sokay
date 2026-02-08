@@ -1,143 +1,78 @@
-"use client"
+import { Dialog as ArkDialog } from '@ark-ui/react/dialog'
+import { Portal } from '@ark-ui/react/portal'
+import { type ComponentProps, forwardRef } from 'react'
+import { css, cx } from 'styled-system/css'
 
-import * as React from "react"
-import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { XIcon } from "lucide-react"
+const backdropStyles = css({
+  bg: 'black/50',
+  inset: '0',
+  position: 'fixed',
+  zIndex: 'overlay',
+  _open: { animation: 'fade-in 0.2s ease-out' },
+  _closed: { animation: 'fade-out 0.15s ease-in' },
+})
 
-import { cn } from "@/lib/utils"
+const positionerStyles = css({
+  alignItems: 'center',
+  display: 'flex',
+  inset: '0',
+  justifyContent: 'center',
+  position: 'fixed',
+  zIndex: 'modal',
+})
 
-function Dialog({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
-}
+const contentStyles = css({
+  bg: 'bg.default',
+  borderRadius: 'l3',
+  boxShadow: 'lg',
+  maxW: 'lg',
+  p: '6',
+  position: 'relative',
+  w: 'full',
+  mx: '4',
+  _open: { animation: 'slide-in 0.2s ease-out' },
+  _closed: { animation: 'slide-out 0.15s ease-in' },
+})
 
-function DialogTrigger({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
-}
+const titleStyles = css({
+  fontSize: 'lg',
+  fontWeight: 'semibold',
+  lineHeight: 'tight',
+})
 
-function DialogPortal({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
-}
+const descriptionStyles = css({
+  color: 'fg.muted',
+  fontSize: 'sm',
+})
 
-function DialogClose({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
-}
+export const DialogRoot = ArkDialog.Root
+export const DialogTrigger = ArkDialog.Trigger
 
-function DialogOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
-  return (
-    <DialogPrimitive.Overlay
-      data-slot="dialog-overlay"
-      className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+export const DialogContent = forwardRef<HTMLDivElement, ComponentProps<typeof ArkDialog.Content>>(
+  function DialogContent({ className, children, ...props }, ref) {
+    return (
+      <Portal>
+        <ArkDialog.Backdrop className={backdropStyles} />
+        <ArkDialog.Positioner className={positionerStyles}>
+          <ArkDialog.Content ref={ref} className={cx(contentStyles, className)} {...props}>
+            {children}
+          </ArkDialog.Content>
+        </ArkDialog.Positioner>
+      </Portal>
+    )
+  },
+)
 
-function DialogContent({
-  className,
-  children,
-  showCloseButton = true,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  showCloseButton?: boolean
-}) {
-  return (
-    <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
-      <DialogPrimitive.Content
-        data-slot="dialog-content"
-        className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
-          className
-        )}
-        {...props}
-      >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-          >
-            <XIcon />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        )}
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  )
-}
+export const DialogTitle = forwardRef<HTMLHeadingElement, ComponentProps<typeof ArkDialog.Title>>(
+  function DialogTitle({ className, ...props }, ref) {
+    return <ArkDialog.Title ref={ref} className={cx(titleStyles, className)} {...props} />
+  },
+)
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
-      {...props}
-    />
-  )
-}
+export const DialogDescription = forwardRef<HTMLParagraphElement, ComponentProps<typeof ArkDialog.Description>>(
+  function DialogDescription({ className, ...props }, ref) {
+    return <ArkDialog.Description ref={ref} className={cx(descriptionStyles, className)} {...props} />
+  },
+)
 
-function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="dialog-footer"
-      className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function DialogTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return (
-    <DialogPrimitive.Title
-      data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold", className)}
-      {...props}
-    />
-  )
-}
-
-function DialogDescription({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
-  return (
-    <DialogPrimitive.Description
-      data-slot="dialog-description"
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
-  )
-}
-
-export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-}
+export const DialogCloseTrigger = ArkDialog.CloseTrigger

@@ -1,63 +1,66 @@
-"use client"
+import { Slider as ArkSlider } from '@ark-ui/react/slider'
+import { type ComponentProps, forwardRef } from 'react'
+import { css, cx } from 'styled-system/css'
 
-import * as React from "react"
-import * as SliderPrimitive from "@radix-ui/react-slider"
+const rootStyles = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+  width: 'full',
+})
 
-import { cn } from "@/lib/utils"
+const controlStyles = css({
+  display: 'flex',
+  alignItems: 'center',
+  position: 'relative',
+  py: '2',
+})
 
-function Slider({
-  className,
-  defaultValue,
-  value,
-  min = 0,
-  max = 100,
-  ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  const _values = React.useMemo(
-    () =>
-      Array.isArray(value)
-        ? value
-        : Array.isArray(defaultValue)
-          ? defaultValue
-          : [min, max],
-    [value, defaultValue, min, max]
-  )
+const trackStyles = css({
+  bg: 'gray.a3',
+  borderRadius: 'full',
+  height: '2',
+  overflow: 'hidden',
+  flex: '1',
+})
 
-  return (
-    <SliderPrimitive.Root
-      data-slot="slider"
-      defaultValue={defaultValue}
-      value={value}
-      min={min}
-      max={max}
-      className={cn(
-        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
-        className
-      )}
-      {...props}
-    >
-      <SliderPrimitive.Track
-        data-slot="slider-track"
-        className={cn(
-          "bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
-        )}
-      >
-        <SliderPrimitive.Range
-          data-slot="slider-range"
-          className={cn(
-            "bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
-          )}
-        />
-      </SliderPrimitive.Track>
-      {Array.from({ length: _values.length }, (_, index) => (
-        <SliderPrimitive.Thumb
-          data-slot="slider-thumb"
-          key={index}
-          className="border-primary ring-ring/50 block size-4 shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-        />
-      ))}
-    </SliderPrimitive.Root>
-  )
-}
+const rangeStyles = css({
+  bg: 'colorPalette.solid.bg',
+  height: 'full',
+})
 
-export { Slider }
+const thumbStyles = css({
+  bg: 'bg.default',
+  borderColor: 'colorPalette.default',
+  borderRadius: 'full',
+  borderWidth: '2px',
+  boxShadow: 'sm',
+  h: '5',
+  w: '5',
+  outline: 0,
+  transitionProperty: 'border-color, box-shadow',
+  transitionDuration: '0.2s',
+  _focus: {
+    boxShadow: '0 0 0 2px var(--colors-color-palette-default)',
+  },
+})
+
+export type SliderProps = ComponentProps<typeof ArkSlider.Root>
+
+export const Slider = forwardRef<HTMLDivElement, SliderProps>(
+  function Slider({ className, ...props }, ref) {
+    return (
+      <ArkSlider.Root ref={ref} className={cx(rootStyles, className)} {...props}>
+        <ArkSlider.Control className={controlStyles}>
+          <ArkSlider.Track className={trackStyles}>
+            <ArkSlider.Range className={rangeStyles} />
+          </ArkSlider.Track>
+          {props.value?.map((_, index) => (
+            <ArkSlider.Thumb key={index} index={index} className={thumbStyles} />
+          ))}
+        </ArkSlider.Control>
+        <ArkSlider.HiddenInput />
+      </ArkSlider.Root>
+    )
+  },
+)

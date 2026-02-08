@@ -13,12 +13,13 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# tanstack start
+/.output/
+/.vinxi/
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -38,4 +39,10 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+
+# tanstack router generated
+src/routeTree.gen.ts
+
+## Panda
+styled-system
+styled-system-studio

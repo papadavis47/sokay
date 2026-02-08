@@ -1,92 +1,82 @@
-import * as React from "react"
+import { type ComponentProps, forwardRef } from 'react'
+import { css, cx } from 'styled-system/css'
 
-import { cn } from "@/lib/utils"
+const cardStyles = css({
+  bg: 'bg.default',
+  borderRadius: 'l3',
+  borderWidth: '1px',
+  borderColor: 'border.default',
+  boxShadow: 'xs',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+  position: 'relative',
+})
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+const cardHeaderStyles = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+  p: '6',
+})
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+const cardBodyStyles = css({
+  display: 'flex',
+  flexDirection: 'column',
+  pb: '6',
+  px: '6',
+})
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
-      {...props}
-    />
-  )
-}
+const cardFooterStyles = css({
+  display: 'flex',
+  alignItems: 'center',
+  p: '6',
+  pt: '0',
+})
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-description"
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
-  )
-}
+const cardTitleStyles = css({
+  fontSize: 'lg',
+  fontWeight: 'semibold',
+  lineHeight: 'tight',
+})
 
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+const cardDescriptionStyles = css({
+  fontSize: 'sm',
+  color: 'fg.muted',
+})
 
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6", className)}
-      {...props}
-    />
-  )
-}
+export const Card = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
+  function Card({ className, ...props }, ref) {
+    return <div ref={ref} className={cx(cardStyles, className)} {...props} />
+  },
+)
 
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-      {...props}
-    />
-  )
-}
+export const CardHeader = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
+  function CardHeader({ className, ...props }, ref) {
+    return <div ref={ref} className={cx(cardHeaderStyles, className)} {...props} />
+  },
+)
 
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardAction,
-  CardDescription,
-  CardContent,
-}
+export const CardBody = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
+  function CardBody({ className, ...props }, ref) {
+    return <div ref={ref} className={cx(cardBodyStyles, className)} {...props} />
+  },
+)
+
+export const CardFooter = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
+  function CardFooter({ className, ...props }, ref) {
+    return <div ref={ref} className={cx(cardFooterStyles, className)} {...props} />
+  },
+)
+
+export const CardTitle = forwardRef<HTMLHeadingElement, ComponentProps<'h3'>>(
+  function CardTitle({ className, ...props }, ref) {
+    return <h3 ref={ref} className={cx(cardTitleStyles, className)} {...props} />
+  },
+)
+
+export const CardDescription = forwardRef<HTMLParagraphElement, ComponentProps<'p'>>(
+  function CardDescription({ className, ...props }, ref) {
+    return <p ref={ref} className={cx(cardDescriptionStyles, className)} {...props} />
+  },
+)

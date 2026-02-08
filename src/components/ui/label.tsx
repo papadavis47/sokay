@@ -1,24 +1,18 @@
-"use client"
+import { type ComponentProps, forwardRef } from 'react'
+import { css, cx } from 'styled-system/css'
 
-import * as React from "react"
-import * as LabelPrimitive from "@radix-ui/react-label"
+const labelStyles = css({
+  color: 'fg.default',
+  fontWeight: 'medium',
+  fontSize: 'sm',
+  lineHeight: 'normal',
+  userSelect: 'none',
+})
 
-import { cn } from "@/lib/utils"
+export type LabelProps = ComponentProps<'label'>
 
-function Label({
-  className,
-  ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
-  return (
-    <LabelPrimitive.Root
-      data-slot="label"
-      className={cn(
-        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-export { Label }
+export const Label = forwardRef<HTMLLabelElement, LabelProps>(
+  function Label({ className, ...props }, ref) {
+    return <label ref={ref} className={cx(labelStyles, className)} {...props} />
+  },
+)

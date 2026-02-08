@@ -1,44 +1,70 @@
-"use client";
-
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import type { User } from "@supabase/supabase-js";
+import { Link } from '@tanstack/react-router'
+import { css } from 'styled-system/css'
+import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { logout } from '@/server/auth'
+import type { User } from '@supabase/supabase-js'
 
 export function DashboardNav({ user }: { user: User }) {
-  const router = useRouter();
-  const supabase = createClient();
-
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  };
+    await logout()
+  }
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/dashboard">
-            <h1 className="text-2xl font-bold">sokay</h1>
+    <header
+      className={css({
+        borderBottomWidth: '1px',
+        borderColor: 'border.default',
+        bg: 'bg.default/95',
+        backdropFilter: 'blur(8px)',
+      })}
+    >
+      <div
+        className={css({
+          maxW: '7xl',
+          mx: 'auto',
+          px: '4',
+          display: 'flex',
+          h: '16',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        })}
+      >
+        <div className={css({ display: 'flex', alignItems: 'center', gap: '6' })}>
+          <Link to="/dashboard">
+            <h1 className={css({ fontSize: '2xl', fontWeight: 'bold', color: 'fg.default' })}>
+              sokay
+            </h1>
           </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">Dashboard</Button>
+          <nav className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
+            <Link to="/dashboard">
+              <Button variant="plain" size="sm">
+                Dashboard
+              </Button>
             </Link>
-            <Link href="/history">
-              <Button variant="ghost" size="sm">History</Button>
+            <Link to="/dashboard/history">
+              <Button variant="plain" size="sm">
+                History
+              </Button>
             </Link>
           </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">{user.email}</span>
+        <div className={css({ display: 'flex', alignItems: 'center', gap: '3' })}>
+          <span
+            className={css({
+              fontSize: 'sm',
+              color: 'fg.muted',
+              display: { base: 'none', md: 'inline' },
+            })}
+          >
+            {user.email}
+          </span>
+          <ThemeToggle />
           <Button variant="outline" size="sm" onClick={handleLogout}>
             Log out
           </Button>
         </div>
       </div>
     </header>
-  );
+  )
 }
