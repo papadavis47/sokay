@@ -22,8 +22,8 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
   const router = useRouter()
 
   const usedCredits = debits.length
-  const remainingCredits = goal.total_credits - usedCredits
-  const successRate = ((goal.total_credits - usedCredits) / goal.total_credits) * 100
+  const remainingCredits = goal.totalCredits - usedCredits
+  const successRate = ((goal.totalCredits - usedCredits) / goal.totalCredits) * 100
 
   const handleComplete = async () => {
     setLoading(true)
@@ -37,8 +37,9 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date | null) => {
+    if (!date) return ''
+    return date.toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
@@ -113,7 +114,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               {remainingCredits}
             </div>
             <div className={css({ fontSize: 'xl', color: 'fg.muted' })}>
-              credits remaining out of {goal.total_credits}
+              credits remaining out of {goal.totalCredits}
             </div>
             <div className={css({ fontSize: 'sm', color: 'fg.muted', mt: '2' })}>
               {usedCredits} treats logged
@@ -149,7 +150,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               })}
             >
               <div className={css({ fontSize: '2xl', fontWeight: 'bold' })}>
-                {getDurationLabel(goal.duration_months)}
+                {getDurationLabel(goal.durationMonths)}
               </div>
               <div className={css({ fontSize: 'sm', color: 'fg.muted' })}>Goal Duration</div>
             </div>
@@ -180,11 +181,11 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
           >
             <div>
               <p className={css({ color: 'fg.muted' })}>Started</p>
-              <p className={css({ fontWeight: 'medium' })}>{formatDate(goal.start_date)}</p>
+              <p className={css({ fontWeight: 'medium' })}>{formatDate(goal.startDate)}</p>
             </div>
             <div className={css({ textAlign: 'right' })}>
               <p className={css({ color: 'fg.muted' })}>Ended</p>
-              <p className={css({ fontWeight: 'medium' })}>{formatDate(goal.end_date)}</p>
+              <p className={css({ fontWeight: 'medium' })}>{formatDate(goal.endDate)}</p>
             </div>
           </div>
         </CardBody>
@@ -210,9 +211,9 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
                     bg: 'gray.a2',
                   })}
                 >
-                  <span className={css({ fontWeight: 'medium' })}>{debit.food_name}</span>
+                  <span className={css({ fontWeight: 'medium' })}>{debit.foodName}</span>
                   <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-                    {formatDate(debit.debited_at)}
+                    {formatDate(debit.debitedAt)}
                   </span>
                 </div>
               ))}

@@ -1,6 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/db'
+import { goals } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 
 export const createGoal = createServerFn({ method: 'POST' })
   .inputValidator((data: { totalCredits: number; durationMonths: number }) => data)
@@ -13,16 +16,15 @@ export const createGoal = createServerFn({ method: 'POST' })
     const endDate = new Date()
     endDate.setMonth(endDate.getMonth() + data.durationMonths)
 
-    const { error } = await supabase.from('goals').insert({
-      user_id: user.id,
-      total_credits: data.totalCredits,
-      duration_months: data.durationMonths,
-      start_date: startDate.toISOString(),
-      end_date: endDate.toISOString(),
+    await db.insert(goals).values({
+      userId: user.id,
+      totalCredits: data.totalCredits,
+      durationMonths: data.durationMonths,
+      startDate,
+      endDate,
       status: 'active',
     })
 
-    if (error) throw new Error(error.message)
     return { success: true }
   })
 
@@ -33,12 +35,9 @@ export const completeGoal = createServerFn({ method: 'POST' })
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw redirect({ to: '/login' })
 
-    const { error } = await supabase
-      .from('goals')
-      .update({ status: 'completed' })
-      .eq('id', data.goalId)
-      .eq('user_id', user.id)
+    await db.update(goals)
+      .set({ status: 'completed' })
+      .where(and(eq(goals.id, data.goalId), eq(goals.userId, user.id)))
 
-    if (error) throw new Error(error.message)
     return { success: true }
   })

@@ -35,7 +35,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
 
   const handleEdit = (debit: Debit) => {
     setEditingDebit(debit)
-    setFoodName(debit.food_name)
+    setFoodName(debit.foodName)
     setError('')
   }
 
@@ -70,8 +70,9 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-US', {
+  const formatDate = (date: Date | null) => {
+    if (!date) return ''
+    return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -81,7 +82,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
   }
 
   const usedCredits = debits.length
-  const remainingCredits = goal.total_credits - usedCredits
+  const remainingCredits = goal.totalCredits - usedCredits
 
   return (
     <div className={css({ display: 'flex', flexDirection: 'column', gap: '6' })}>
@@ -105,7 +106,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
         <CardHeader>
           <CardTitle>Summary</CardTitle>
           <CardDescription>
-            {usedCredits} of {goal.total_credits} credits used · {remainingCredits}{' '}
+            {usedCredits} of {goal.totalCredits} credits used · {remainingCredits}{' '}
             remaining
           </CardDescription>
         </CardHeader>
@@ -142,9 +143,9 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
                   })}
                 >
                   <div>
-                    <p className={css({ fontWeight: 'medium' })}>{debit.food_name}</p>
+                    <p className={css({ fontWeight: 'medium' })}>{debit.foodName}</p>
                     <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-                      {formatDate(debit.debited_at)}
+                      {formatDate(debit.debitedAt)}
                     </p>
                   </div>
                   <div className={css({ display: 'flex', gap: '2' })}>

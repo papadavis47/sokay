@@ -34,8 +34,8 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
   const router = useRouter()
 
   const usedCredits = debits.length
-  const remainingCredits = goal.total_credits - usedCredits
-  const percentageUsed = (usedCredits / goal.total_credits) * 100
+  const remainingCredits = goal.totalCredits - usedCredits
+  const percentageUsed = (usedCredits / goal.totalCredits) * 100
 
   const handleDebit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,8 +54,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date | null) => {
+    if (!date) return ''
+    return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -64,7 +65,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
 
   const getDaysRemaining = () => {
     const now = new Date()
-    const end = new Date(goal.end_date)
+    const end = goal.endDate
     const diffTime = end.getTime() - now.getTime()
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   }
@@ -85,7 +86,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
         <CardHeader>
           <CardTitle className={css({ fontSize: '3xl!' })}>Your Sokay Balance</CardTitle>
           <CardDescription>
-            Goal period: {formatDate(goal.start_date)} - {formatDate(goal.end_date)} (
+            Goal period: {formatDate(goal.startDate)} - {formatDate(goal.endDate)} (
             {daysRemaining} days remaining)
           </CardDescription>
         </CardHeader>
@@ -112,7 +113,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 credit{remainingCredits !== 1 ? 's' : ''} remaining
               </div>
               <div className={css({ fontSize: 'sm', color: 'fg.muted', mt: '2' })}>
-                {usedCredits} of {goal.total_credits} used
+                {usedCredits} of {goal.totalCredits} used
               </div>
             </div>
           </div>
@@ -145,7 +146,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               })}
             >
               <span>0</span>
-              <span>{goal.total_credits}</span>
+              <span>{goal.totalCredits}</span>
             </div>
           </div>
 
@@ -236,9 +237,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     bg: 'gray.a2',
                   })}
                 >
-                  <span className={css({ fontWeight: 'medium' })}>{debit.food_name}</span>
+                  <span className={css({ fontWeight: 'medium' })}>{debit.foodName}</span>
                   <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-                    {formatDate(debit.debited_at)}
+                    {formatDate(debit.debitedAt)}
                   </span>
                 </div>
               ))}
@@ -272,7 +273,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               color: 'fg.default',
             })}
           >
-            {remainingCredits > goal.total_credits * 0.5
+            {remainingCredits > goal.totalCredits * 0.5
               ? "You're doing great! Keep being mindful."
               : remainingCredits > 0
                 ? "You've got this. Make each credit count."

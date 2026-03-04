@@ -1,6 +1,9 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/db'
+import { goals, debits } from '@/lib/db/schema'
+import { eq, and, desc } from 'drizzle-orm'
 import { GoalReview } from '@/components/goal-review'
 import { css } from 'styled-system/css'
 
@@ -13,24 +16,21 @@ const getReviewData = createServerFn({ method: 'GET' })
     } = await supabase.auth.getUser()
     if (!user) throw redirect({ to: '/login' })
 
-    const { data: goal } = await supabase
-      .from('goals')
-      .select('*')
-      .eq('id', data.id)
-      .eq('user_id', user.id)
-      .single()
+    const [goal] = await db.select()
+      .from(goals)
+      .where(and(eq(goals.id, data.id), eq(goals.userId, user.id)))
+      .limit(1)
 
     if (!goal) {
       throw redirect({ to: '/dashboard' })
     }
 
-    const { data: debits } = await supabase
-      .from('debits')
-      .select('*')
-      .eq('goal_id', goal.id)
-      .order('debited_at', { ascending: false })
+    const goalDebits = await db.select()
+      .from(debits)
+      .where(eq(debits.goalId, goal.id))
+      .orderBy(desc(debits.debitedAt))
 
-    return { goal, debits: debits || [] }
+    return { goal, debits: goalDebits }
   })
 
 export const Route = createFileRoute('/goal/review/$id')({

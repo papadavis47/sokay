@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate, redirect } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/login')({
   beforeLoad: async () => {
     const user = await getUser()
     if (user) {
-      throw { redirect: { to: '/dashboard' } }
+      throw redirect({ to: '/dashboard' })
     }
   },
   component: LoginPage,

@@ -55,11 +55,10 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           <ArkSlider.Track className={trackStyles}>
             <ArkSlider.Range className={rangeStyles} />
           </ArkSlider.Track>
-          {props.value?.map((_, index) => (
-            <ArkSlider.Thumb key={index} index={index} className={thumbStyles} />
-          ))}
+          <ArkSlider.Thumb index={0} className={thumbStyles}>
+            <ArkSlider.HiddenInput />
+          </ArkSlider.Thumb>
         </ArkSlider.Control>
-        <ArkSlider.HiddenInput />
       </ArkSlider.Root>
     )
   },
