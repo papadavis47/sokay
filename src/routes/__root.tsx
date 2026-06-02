@@ -7,7 +7,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { ThemeProvider } from '@/components/theme-provider'
-import '@fontsource-variable/inter'
+import '@fontsource-variable/inter/index.css'
 import '@/index.css'
 
 export const Route = createRootRoute({
