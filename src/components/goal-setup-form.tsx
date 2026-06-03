@@ -65,7 +65,7 @@ export function GoalSetupForm() {
       <CardHeader>
         <CardTitle className={css({ fontSize: '2xl!' })}>Set Your Sokay Goal</CardTitle>
         <CardDescription>
-          Choose how many treats you'll allow yourself and for how long. Remember, this is
+          Choose how many items you'll allow yourself and for how long. Remember, this is
           about balance, not restriction.
         </CardDescription>
       </CardHeader>
@@ -102,7 +102,7 @@ export function GoalSetupForm() {
                 step={1}
               />
               <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-                You can enjoy up to {credits[0]} treat{credits[0] !== 1 ? 's' : ''} during
+                You can enjoy up to {credits[0]} item{credits[0] !== 1 ? 's' : ''} during
                 your goal period.
               </p>
             </div>
@@ -159,7 +159,7 @@ export function GoalSetupForm() {
           >
             <p className={css({ fontSize: 'sm', fontWeight: 'medium' })}>Your Goal Summary</p>
             <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-              I will track my treats and limit myself to{' '}
+              I will track my items and limit myself to{' '}
               <strong>{credits[0]} sokay credits</strong> over the next{' '}
               <strong>{getDurationLabel(duration)}</strong>. I'm building a healthier
               relationship with food, one mindful choice at a time.

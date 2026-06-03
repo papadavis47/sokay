@@ -157,11 +157,11 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 className={css({ w: 'full' })}
                 disabled={remainingCredits <= 0}
               >
-                {remainingCredits > 0 ? 'Log a Treat' : 'No Credits Remaining'}
+                {remainingCredits > 0 ? 'Log an Item' : 'No Credits Remaining'}
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogTitle>Log a Treat</DialogTitle>
+              <DialogTitle>Log an Item</DialogTitle>
               <DialogDescription className={css({ mb: '4' })}>
                 What did you enjoy? Be honest—this is for you, not judgment.
               </DialogDescription>
@@ -208,7 +208,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     Cancel
                   </Button>
                   <Button type="submit" disabled={loading}>
-                    {loading ? 'Logging...' : 'Log Treat'}
+                    {loading ? 'Logging...' : 'Log Item'}
                   </Button>
                 </div>
               </form>
@@ -221,7 +221,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your last few treats</CardDescription>
+            <CardDescription>Your last few items</CardDescription>
           </CardHeader>
           <CardBody>
             <div className={css({ display: 'flex', flexDirection: 'column', gap: '3' })}>

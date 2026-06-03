@@ -98,7 +98,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
           History
         </h1>
         <p className={css({ fontSize: 'xl', color: 'fg.muted' })}>
-          All your tracked treats for the current goal
+          All your tracked items for the current goal
         </p>
       </div>
 
@@ -117,7 +117,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
           <CardBody
             className={css({ pt: '6', textAlign: 'center', color: 'fg.muted' })}
           >
-            <p>No treats logged yet. You're doing great!</p>
+            <p>No items logged yet. You're doing great!</p>
           </CardBody>
         </Card>
       ) : (
@@ -178,7 +178,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
         <DialogContent>
           <DialogTitle>Edit Entry</DialogTitle>
           <DialogDescription className={css({ mb: '4' })}>
-            Update what you had for this treat
+            Update what you had for this item
           </DialogDescription>
           <form
             onSubmit={handleSaveEdit}

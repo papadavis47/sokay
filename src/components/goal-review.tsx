@@ -117,7 +117,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               credits remaining out of {goal.totalCredits}
             </div>
             <div className={css({ fontSize: 'sm', color: 'fg.muted', mt: '2' })}>
-              {usedCredits} treats logged
+              {usedCredits} items logged
             </div>
           </div>
 
@@ -165,7 +165,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               <div className={css({ fontSize: '2xl', fontWeight: 'bold' })}>
                 {usedCredits}
               </div>
-              <div className={css({ fontSize: 'sm', color: 'fg.muted' })}>Treats Logged</div>
+              <div className={css({ fontSize: 'sm', color: 'fg.muted' })}>Items Logged</div>
             </div>
           </div>
 
@@ -194,7 +194,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
       {debits.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Your Treats</CardTitle>
+            <CardTitle>Your Items</CardTitle>
             <CardDescription>What you enjoyed during this goal</CardDescription>
           </CardHeader>
           <CardBody>

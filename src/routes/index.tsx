@@ -8,6 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -47,6 +48,7 @@ function Home() {
           <nav
             className={css({ display: "flex", alignItems: "center", gap: "3" })}
           >
+            <ThemeToggle />
             <Link to="/login">
               <Button variant="plain">Log in</Button>
             </Link>
@@ -78,19 +80,40 @@ function Home() {
             >
               It's okay to not eat perfectly all the time
             </h2>
-            <p
+            <div
               className={css({
-                fontSize: "xl",
-                color: "fg.muted",
-                maxW: "2xl",
-                mx: "auto",
+                display: "flex",
+                flexDirection: "column",
+                gap: "4",
+                mt: "8",
               })}
             >
-              We all eat things we know are not good for us. Build a healthier
-              relationship with food by tracking your "mistakes" mindfully. Set
-              your own budget, stay accountable, and remember—perfection isn't
-              the goal.
-            </p>
+              <p
+                className={css({
+                  fontSize: "xl",
+                  color: "fg.muted",
+                  maxW: { base: "2xl", md: "none" },
+                  mx: { base: "auto", md: "0" },
+                  textAlign: { base: "center", md: "left" },
+                })}
+              >
+                We all eat things we know are not good for us. Build a healthier
+                relationship with food by tracking your "mistakes" with self
+                forgiveness.
+              </p>
+              <p
+                className={css({
+                  fontSize: "xl",
+                  color: "fg.muted",
+                  maxW: { base: "2xl", md: "none" },
+                  mx: { base: "auto", md: "0" },
+                  textAlign: { base: "center", md: "left" },
+                })}
+              >
+                Set your own budget, stay accountable, and remember--100%
+                perfection is not the goal.
+              </p>
+            </div>
           </div>
 
           <div
@@ -103,11 +126,6 @@ function Home() {
           >
             <Link to="/signup">
               <Button size="lg">Start Your Journey</Button>
-            </Link>
-            <Link to="/login">
-              <Button size="lg" variant="outline">
-                Log In
-              </Button>
             </Link>
           </div>
 
@@ -130,11 +148,11 @@ function Home() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Track Mindfully</CardTitle>
+                <CardTitle>Track Imperfections</CardTitle>
                 <CardDescription>
                   Log your the food item when you indulge. Stay aware without
                   judgment. Stay mindful of where you want to go - and stay
-                  realistic about the world we all live in.
+                  realistic about the world we live in.
                 </CardDescription>
               </CardHeader>
             </Card>

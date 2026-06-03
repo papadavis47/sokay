@@ -6,7 +6,9 @@ import {
   HeadContent,
   Scripts,
 } from '@tanstack/react-router'
+import { css } from 'styled-system/css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Footer } from '@/components/footer'
 import '@fontsource-variable/inter/index.css'
 import '@/index.css'
 
@@ -30,7 +32,18 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      <div
+        className={css({
+          display: 'flex',
+          flexDirection: 'column',
+          minH: '100dvh',
+        })}
+      >
+        <div className={css({ flex: '1' })}>
+          <Outlet />
+        </div>
+        <Footer />
+      </div>
     </RootDocument>
   )
 }
