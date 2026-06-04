@@ -24,7 +24,7 @@ export function BrandMark({ to, size = "md" }: BrandMarkProps) {
         className={css({
           fontSize: titleSize,
           fontWeight: "bold",
-          color: "fg.default",
+          color: "brand.solid",
         })}
       >
         sokay

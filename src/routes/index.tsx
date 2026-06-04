@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { css } from "styled-system/css";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,19 +73,13 @@ function Home() {
               })}
             >
               <span
-                className={css({
-                  color: "#ea580c",
-                  _dark: { color: "#fdba74" },
-                })}
+                className={css({ color: "brand.solid" })}
               >
                 Sokay
               </span>
               {" - Progress is "}
               <span
-                className={css({
-                  color: "#ea580c",
-                  _dark: { color: "#fdba74" },
-                })}
+                className={css({ color: "brand.solid" })}
               >
                 everything
               </span>
@@ -100,10 +95,7 @@ function Home() {
             >
               It'
               <span
-                className={css({
-                  color: "#ea580c",
-                  _dark: { color: "#fdba74" },
-                })}
+                className={css({ color: "brand.solid" })}
               >
                 s okay
               </span>{" "}
@@ -164,7 +156,10 @@ function Home() {
             })}
           >
             <Link to="/signup">
-              <Button size="lg">Start Your Journey</Button>
+              <Button size="lg" variant="cta">
+                Start Your Journey
+                <ArrowRight className={css({ w: "5", h: "5" })} />
+              </Button>
             </Link>
           </div>
 
