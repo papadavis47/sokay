@@ -222,23 +222,20 @@ function Home() {
             >
               <p>
                 Your body thrives when you eat well 90% of the time. The other
-                10%? That's life—convenience, celebrations, cravings, and
-                environment. We are all fish swimming upstream if our
-                destination is good health.
+                10%? That's life—celebrations, cravings, short term convenience
+                and environment. We are all fish swimming upstream.
               </p>
               <p>
                 Sokay helps you stay mindful of these moments without guilt. Set
                 a realistic limit for sugary, high calorie and ultraprocessed
                 food items. Track them honestly, and watch as you naturally
-                build healthier habits by searching for delicious and nutritious
-                alternatives while still living with self compassion.
+                build healthier habits.
               </p>
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
-                Remember: It's okay. The process is everything.
+                Remember: It's okay.
               </p>
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
                 Set your limit as a goal. Try to meet or stay under that limit.
-                Stay aware.
               </p>
 
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
@@ -248,7 +245,8 @@ function Home() {
                 And if at first you don't succeed. Try and try again.
               </p>
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
-                Focus on the journey process. The destination result will follow
+                Focus on the journey and the process. The destination and the
+                result will follow
               </p>
             </CardBody>
           </Card>
