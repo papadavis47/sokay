@@ -37,8 +37,9 @@ src/
 │   │   └── history.tsx      # /dashboard/history
 │   └── goal/review/$id.tsx  # /goal/review/:id — end-of-cycle review
 ├── components/
-│   ├── ui/                  # primitives (button, card, dialog, input, label, select, slider)
-│   ├── dashboard-nav.tsx, theme-provider.tsx, theme-toggle.tsx
+│   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
+│   ├── brand-mark.tsx       # shared "sokay / Process, not perfection" wordmark
+│   ├── dashboard-nav.tsx, footer.tsx, theme-provider.tsx, theme-toggle.tsx
 │   ├── goal-setup-form.tsx, goal-dashboard.tsx, goal-review.tsx
 │   └── history-view.tsx
 ├── server/                  # server functions (createServerFn)
@@ -68,7 +69,7 @@ Always import via aliases (e.g. `import { Button } from '@/components/ui/button'
 Two tables defined in both `src/lib/db/schema.ts` (Drizzle) and `supabase-schema.sql` (SQL with RLS). **Keep them in sync.**
 
 - `goals` — `userId`, `totalCredits` (5–20), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
-- `debits` — `goalId` (cascade), `userId`, `foodName`, `debitedAt`
+- `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
 
 Row Level Security is enforced in Supabase: every row is filtered by `auth.uid() = user_id`. **Every server function must scope its queries by the authenticated `user.id`** (do not rely on RLS alone since Drizzle uses the service-side connection).
 
