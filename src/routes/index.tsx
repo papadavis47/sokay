@@ -62,6 +62,33 @@ function Home() {
               mb: "8",
             })}
           >
+            <h1
+              className={css({
+                fontSize: { base: "5xl", md: "6xl" },
+                fontWeight: "bold",
+                letterSpacing: "tight",
+                color: "fg.default",
+                lineHeight: "tight",
+              })}
+            >
+              <span
+                className={css({
+                  color: "#ea580c",
+                  _dark: { color: "#fdba74" },
+                })}
+              >
+                Sokay
+              </span>
+              {" - Progress is "}
+              <span
+                className={css({
+                  color: "#ea580c",
+                  _dark: { color: "#fdba74" },
+                })}
+              >
+                everything
+              </span>
+            </h1>
             <h2
               className={css({
                 fontSize: { base: "4xl", md: "5xl" },
@@ -71,7 +98,16 @@ function Home() {
                 lineHeight: "tight",
               })}
             >
-              It's okay to not eat perfectly all the time
+              It'
+              <span
+                className={css({
+                  color: "#ea580c",
+                  _dark: { color: "#fdba74" },
+                })}
+              >
+                s okay
+              </span>{" "}
+              to not eat perfectly all the time
             </h2>
             <div
               className={css({
