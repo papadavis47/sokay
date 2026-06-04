@@ -45,9 +45,11 @@ export function Footer() {
               sokay
             </span>
           </Link>
-          <p className={css({ fontSize: "sm", color: "fg.muted", maxW: "md" })}>
-            Eat Mindfully
-          </p>
+          <span
+            className={css({ fontSize: "sm", color: "fg.muted", maxW: "md" })}
+          >
+            Process, not perfection
+          </span>
         </div>
 
         <nav
