@@ -15,7 +15,8 @@ const buttonStyles = {
     justifyContent: 'center',
     outline: '0',
     position: 'relative',
-    transitionProperty: 'background-color, border-color, color, box-shadow',
+    transitionProperty:
+      'background-color, border-color, color, box-shadow, transform',
     transitionDuration: '0.2s',
     userSelect: 'none',
     verticalAlign: 'middle',
@@ -45,6 +46,22 @@ const buttonStyles = {
     color: 'colorPalette.plain.fg',
     _hover: { bg: 'colorPalette.plain.bg.hover' },
   }),
+  // Warm brand accent CTA: solid fill, lifting shadow, and a trailing icon
+  // (any <svg> child) that slides on hover. Colors come from the `brand`
+  // semantic tokens, so light/dark is handled automatically.
+  cta: css({
+    bg: 'brand.solid',
+    color: 'brand.onSolid',
+    boxShadow: 'brand',
+    '& svg': { transition: 'transform 0.2s' },
+    _hover: {
+      bg: 'brand.solidHover',
+      boxShadow: 'brandHover',
+      transform: 'translateY(-2px)',
+      '& svg': { transform: 'translateX(3px)' },
+    },
+    _active: { transform: 'translateY(0)' },
+  }),
 }
 
 const sizeStyles = {
@@ -54,7 +71,7 @@ const sizeStyles = {
 }
 
 export interface ButtonProps extends ComponentProps<typeof ark.button> {
-  variant?: 'solid' | 'outline' | 'subtle' | 'plain'
+  variant?: 'solid' | 'outline' | 'subtle' | 'plain' | 'cta'
   size?: 'sm' | 'md' | 'lg'
 }
 
