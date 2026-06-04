@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI agents working on **Sokay** — a mindful-eating tracker where users budget a small number of "sokay credits" over a time window and log treats against that budget.
+Guidance for AI agents working on **Sokay** — a mindful-eating tracker where users set a small "sokay credits" limit over a time window and log treats against that limit.
 
 ## Tech Stack
 

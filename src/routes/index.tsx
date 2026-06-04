@@ -110,7 +110,7 @@ function Home() {
                   textAlign: { base: "center", md: "left" },
                 })}
               >
-                Set your own budget, stay accountable, and remember--100%
+                Set your own limit, stay accountable, and remember--100%
                 perfection is not the goal.
               </p>
             </div>
@@ -139,7 +139,7 @@ function Home() {
           >
             <Card>
               <CardHeader>
-                <CardTitle>Set Your Budget</CardTitle>
+                <CardTitle>Set Your Limit</CardTitle>
                 <CardDescription>
                   Choose 5-20 "sokay" credits and a timeframe (1 month to 1
                   year)
@@ -191,7 +191,7 @@ function Home() {
               </p>
               <p>
                 Sokay helps you stay mindful of these moments without guilt. Set
-                a realistic budget for your sugary, high calorie and
+                a realistic limit for your sugary, high calorie and
                 ultraprocessed food items. Track them honestly, and watch as you
                 naturally build healthier habits by searching for delicious and
                 nutritious options alternatives while still living with self
@@ -201,8 +201,8 @@ function Home() {
                 Remember: It's okay. The process is everything.
               </p>
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
-                Set your budget as a goal. Try to meet or stay under that
-                budget. Stay aware.
+                Set your limit as a goal. Try to meet or stay under that
+                limit. Stay aware.
               </p>
 
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>

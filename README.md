@@ -1,6 +1,6 @@
 # Sokay - Mindful Eating Tracker
 
-**"It's okay."** Track treats mindfully. Set a budget of "sokay credits," log indulgences without guilt, build sustainable habits through balance and self-forgiveness.
+**"It's okay."** Track treats mindfully. Set a limit of "sokay credits," log indulgences without guilt, build sustainable habits through balance and self-forgiveness.
 
 ## Tech Stack
 
