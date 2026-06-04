@@ -1,6 +1,6 @@
 # Sokay - Mindful Eating Tracker
 
-**"It's okay."** Track treats mindfully. Set a limit of "sokay credits," log indulgences without guilt, build sustainable habits through balance and self-forgiveness.
+**"It's okay."** Track eating habits mindfully. Set a limit of "sokay credits," log indulgences without guilt, build sustainable habits through realistic goals and self-forgiveness.
 
 ## Tech Stack
 
@@ -32,8 +32,8 @@ pnpm panda codegen  # regenerate styled-system
 
 ## How It Works
 
-1. Sign up and set a goal: 5-20 credits over 1-12 months
-2. Log treats as you go, see remaining balance
+1. Sign up and set a goal: 5-20 limit over 1-12 months
+2. Log splurges as you go, see remaining balance
 3. Review and reflect when goal ends, then start fresh
 
 RLS ensures users only access their own data.
