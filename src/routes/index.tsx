@@ -97,9 +97,19 @@ function Home() {
                   textAlign: { base: "center", md: "left" },
                 })}
               >
-                We all eat things we know are not good for us. Build a healthier
-                relationship with food by tracking your "mistakes" with self
-                forgiveness.
+                We all eat things we know are not good for us.{" "}
+              </p>
+              <p
+                className={css({
+                  fontSize: "xl",
+                  color: "fg.muted",
+                  maxW: { base: "2xl", md: "none" },
+                  mx: { base: "auto", md: "0" },
+                  textAlign: { base: "center", md: "left" },
+                })}
+              >
+                Build a healthier relationship with food by tracking your
+                "mistakes" with self forgiveness.
               </p>
               <p
                 className={css({
@@ -141,8 +151,10 @@ function Home() {
               <CardHeader>
                 <CardTitle>Set Your Limit</CardTitle>
                 <CardDescription>
-                  Choose 5-20 "sokay" credits and a timeframe (1 month to 1
-                  year)
+                  Choose 5-20 "sokay" credits and choose your timeframe (1 month
+                  to 1 year)Most of what we sold in the supermarket or on every
+                  street corner or gas station is not the ideal.Build awareness
+                  and keep trying.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -150,9 +162,9 @@ function Home() {
               <CardHeader>
                 <CardTitle>Track Imperfections</CardTitle>
                 <CardDescription>
-                  Log your the food item when you indulge. Stay aware without
-                  judgment. Stay mindful of where you want to go - and stay
-                  realistic about the world we live in.
+                  Log food items when you feel you have strayed from your goal.
+                  Stay aware without judgment. Remember where you want to go -
+                  and stay realistic about the environment you live in.{" "}
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -160,8 +172,10 @@ function Home() {
               <CardHeader>
                 <CardTitle>Build In Forgiveness</CardTitle>
                 <CardDescription>
-                  Life isn't about perfection. It's about balance and being kind
-                  to yourself.
+                  The process is not about beating yourself up. It's about
+                  staying on the path. There will be ups and downs. Plan for it
+                  and anticipate falls. Simply pick yourself up and keep moving
+                  forward.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -184,25 +198,23 @@ function Home() {
             >
               <p>
                 Your body thrives when you eat well 90% of the time. The other
-                10%? That's life—celebrations, cravings, and the environment we
-                live in. We are all fish swimming upstream - if our destination
-                is good health. And why else would you be reading this if you
-                did not want that?
+                10%? That's life—convenience, celebrations, cravings, and
+                environment. We are all fish swimming upstream if our
+                destination is good health.
               </p>
               <p>
                 Sokay helps you stay mindful of these moments without guilt. Set
-                a realistic limit for your sugary, high calorie and
-                ultraprocessed food items. Track them honestly, and watch as you
-                naturally build healthier habits by searching for delicious and
-                nutritious options alternatives while still living with self
-                compassion.
+                a realistic limit for sugary, high calorie and ultraprocessed
+                food items. Track them honestly, and watch as you naturally
+                build healthier habits by searching for delicious and nutritious
+                alternatives while still living with self compassion.
               </p>
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
                 Remember: It's okay. The process is everything.
               </p>
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
-                Set your limit as a goal. Try to meet or stay under that
-                limit. Stay aware.
+                Set your limit as a goal. Try to meet or stay under that limit.
+                Stay aware.
               </p>
 
               <p className={css({ fontWeight: "medium", color: "fg.default" })}>
