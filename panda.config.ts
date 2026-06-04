@@ -17,6 +17,35 @@ export default defineConfig({
   ],
   jsxFramework: 'react',
   outdir: 'styled-system',
+  theme: {
+    extend: {
+      semanticTokens: {
+        colors: {
+          // Warm brand accent used for the "sokay" wordmark and heading
+          // highlights. Light / dark values baked in.
+          brand: {
+            solid: { value: { base: '#ea580c', _dark: '#fdba74' } },
+            solidHover: { value: { base: '#c2410c', _dark: '#fcd34d' } },
+            onSolid: { value: { base: 'white', _dark: '#1c1917' } },
+          },
+        },
+        shadows: {
+          brand: {
+            value: {
+              base: '0 8px 20px -6px rgba(234, 88, 12, 0.5)',
+              _dark: '0 8px 20px -6px rgba(253, 186, 116, 0.45)',
+            },
+          },
+          brandHover: {
+            value: {
+              base: '0 12px 26px -6px rgba(234, 88, 12, 0.6)',
+              _dark: '0 12px 26px -6px rgba(253, 186, 116, 0.55)',
+            },
+          },
+        },
+      },
+    },
+  },
   plugins: [
     {
       name: 'Remove Panda Preset Colors',
