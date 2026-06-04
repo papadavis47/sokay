@@ -105,7 +105,10 @@ Rules:
 
 - Use Panda's `css({...})` from `styled-system/css` for all styling. No CSS modules, no inline `style`, no Tailwind.
 - Use the theme tokens from `@park-ui/panda-preset` (teal accent, neutral gray, `radius: 'md'`): `bg.canvas`, `fg.default`, `fg.muted`, `colorPalette.*`, `gray.a2`, `red.11`, etc.
+- **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, and the `cta` button.
+- Button variants (`@/components/ui/button.tsx`): `solid` (default), `outline`, `subtle`, `plain`, and `cta` — the warm brand-fill primary call-to-action (lifting shadow + a trailing `<svg>` icon that slides on hover). Use `cta` for the main conversion action on a page, not in dense nav.
 - Compose primitives from `@/components/ui/*` instead of reaching into Ark UI directly.
+- The Inter latin subset is **inlined as a base64 data URI** in `src/index.css` (`font-display: block`) so the font ships with the render-blocking CSS and is present at first paint — no FOUT / layout shift. Don't swap it back to an external `@font-face` + `<link rel="preload">`.
 - Dark mode is toggled by adding/removing `dark` on `<html>` — the inline script in `__root.tsx` hydrates it from `localStorage('sokay-theme')`. Use `ThemeProvider` / `ThemeToggle` rather than touching the DOM directly.
 
 ## Environment
