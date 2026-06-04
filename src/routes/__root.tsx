@@ -9,7 +9,6 @@ import {
 import { css } from 'styled-system/css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Footer } from '@/components/footer'
-import '@fontsource-variable/inter/index.css'
 import '@/index.css'
 
 export const Route = createRootRoute({
