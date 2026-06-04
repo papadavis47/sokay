@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { BrandMark } from '@/components/brand-mark'
 import { logout } from '@/server/auth'
 import type { User } from '@supabase/supabase-js'
 
@@ -31,11 +32,7 @@ export function DashboardNav({ user }: { user: User }) {
         })}
       >
         <div className={css({ display: 'flex', alignItems: 'center', gap: '6' })}>
-          <Link to="/dashboard">
-            <h1 className={css({ fontSize: '2xl', fontWeight: 'bold', color: 'fg.default' })}>
-              sokay
-            </h1>
-          </Link>
+          <BrandMark to="/dashboard" />
           <nav className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
             <Link to="/dashboard">
               <Button variant="plain" size="sm">

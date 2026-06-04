@@ -9,6 +9,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BrandMark } from "@/components/brand-mark";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -36,15 +37,7 @@ function Home() {
             justifyContent: "space-between",
           })}
         >
-          <h1
-            className={css({
-              fontSize: "2xl",
-              fontWeight: "bold",
-              color: "fg.default",
-            })}
-          >
-            sokay
-          </h1>
+          <BrandMark to="/" />
           <nav
             className={css({ display: "flex", alignItems: "center", gap: "3" })}
           >

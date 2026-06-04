@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { css } from "styled-system/css";
+import { BrandMark } from "@/components/brand-mark";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -27,30 +28,7 @@ export function Footer() {
           gap: "6",
         })}
       >
-        <div
-          className={css({
-            display: "flex",
-            flexDirection: "column",
-            gap: "2",
-          })}
-        >
-          <Link to="/">
-            <span
-              className={css({
-                fontSize: "lg",
-                fontWeight: "bold",
-                color: "fg.default",
-              })}
-            >
-              sokay
-            </span>
-          </Link>
-          <span
-            className={css({ fontSize: "sm", color: "fg.muted", maxW: "md" })}
-          >
-            Process, not perfection
-          </span>
-        </div>
+        <BrandMark to="/" size="sm" />
 
         <nav
           className={css({
