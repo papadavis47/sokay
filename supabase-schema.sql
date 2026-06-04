@@ -23,10 +23,16 @@ create table public.debits (
   goal_id uuid references public.goals(id) on delete cascade not null,
   user_id uuid references auth.users not null,
   food_name text not null,
+  notes text check (notes is null or char_length(notes) <= 250),
   debited_at timestamp with time zone default now(),
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
+
+-- Migration for existing databases: add notes column if missing
+alter table public.debits
+  add column if not exists notes text
+    check (notes is null or char_length(notes) <= 250);
 
 -- Enable Row Level Security
 alter table public.goals enable row level security;

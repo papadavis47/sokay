@@ -10,6 +10,7 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import {
   DialogRoot,
@@ -21,6 +22,8 @@ import {
 import { createDebit } from '@/server/debits'
 import type { Goal, Debit } from '@/types/database'
 
+const NOTES_MAX_LENGTH = 250
+
 interface GoalDashboardProps {
   goal: Goal
   debits: Debit[]
@@ -28,6 +31,7 @@ interface GoalDashboardProps {
 
 export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
   const [foodName, setFoodName] = useState('')
+  const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -43,8 +47,15 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
     setLoading(true)
 
     try {
-      await createDebit({ data: { goalId: goal.id, foodName: foodName.trim() } })
+      await createDebit({
+        data: {
+          goalId: goal.id,
+          foodName: foodName.trim(),
+          notes: notes.trim() || undefined,
+        },
+      })
       setFoodName('')
+      setNotes('')
       setDialogOpen(false)
       router.invalidate()
     } catch (err) {
@@ -150,7 +161,17 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
             </div>
           </div>
 
-          <DialogRoot open={dialogOpen} onOpenChange={(e) => setDialogOpen(e.open)}>
+          <DialogRoot
+            open={dialogOpen}
+            onOpenChange={(e) => {
+              setDialogOpen(e.open)
+              if (!e.open) {
+                setFoodName('')
+                setNotes('')
+                setError('')
+              }
+            }}
+          >
             <DialogTrigger asChild>
               <Button
                 size="lg"
@@ -179,6 +200,36 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     required
                     disabled={loading}
                     autoFocus
+                  />
+                </div>
+
+                <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
+                  <div
+                    className={css({
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    })}
+                  >
+                    <Label htmlFor="notes">Notes (optional)</Label>
+                    <span
+                      className={css({
+                        fontSize: 'xs',
+                        color:
+                          notes.length > NOTES_MAX_LENGTH ? 'red.11' : 'fg.muted',
+                      })}
+                    >
+                      {notes.length} / {NOTES_MAX_LENGTH}
+                    </span>
+                  </div>
+                  <Textarea
+                    id="notes"
+                    placeholder="How were you feeling? What was the occasion?"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    maxLength={NOTES_MAX_LENGTH}
+                    rows={3}
+                    disabled={loading}
                   />
                 </div>
 
@@ -231,14 +282,44 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   className={css({
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
+                    gap: '3',
                     p: '3',
                     borderRadius: 'l2',
                     bg: 'gray.a2',
                   })}
                 >
-                  <span className={css({ fontWeight: 'medium' })}>{debit.foodName}</span>
-                  <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
+                  <div
+                    className={css({
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1',
+                      minW: '0',
+                    })}
+                  >
+                    <span className={css({ fontWeight: 'medium' })}>
+                      {debit.foodName}
+                    </span>
+                    {debit.notes && (
+                      <span
+                        className={css({
+                          fontSize: 'sm',
+                          color: 'fg.muted',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
+                        })}
+                      >
+                        {debit.notes}
+                      </span>
+                    )}
+                  </div>
+                  <span
+                    className={css({
+                      fontSize: 'sm',
+                      color: 'fg.muted',
+                      whiteSpace: 'nowrap',
+                    })}
+                  >
                     {formatDate(debit.debitedAt)}
                   </span>
                 </div>

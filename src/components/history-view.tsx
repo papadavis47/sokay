@@ -11,6 +11,7 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import {
   DialogRoot,
@@ -21,6 +22,8 @@ import {
 import { updateDebit, deleteDebit } from '@/server/debits'
 import type { Goal, Debit } from '@/types/database'
 
+const NOTES_MAX_LENGTH = 250
+
 interface HistoryViewProps {
   goal: Goal
   debits: Debit[]
@@ -29,6 +32,7 @@ interface HistoryViewProps {
 export function HistoryView({ goal, debits }: HistoryViewProps) {
   const [editingDebit, setEditingDebit] = useState<Debit | null>(null)
   const [foodName, setFoodName] = useState('')
+  const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -36,6 +40,7 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
   const handleEdit = (debit: Debit) => {
     setEditingDebit(debit)
     setFoodName(debit.foodName)
+    setNotes(debit.notes ?? '')
     setError('')
   }
 
@@ -47,10 +52,15 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
 
     try {
       await updateDebit({
-        data: { debitId: editingDebit.id, foodName: foodName.trim() },
+        data: {
+          debitId: editingDebit.id,
+          foodName: foodName.trim(),
+          notes: notes.trim() || undefined,
+        },
       })
       setEditingDebit(null)
       setFoodName('')
+      setNotes('')
       router.invalidate()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -142,8 +152,28 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
                     transition: 'background-color 0.15s',
                   })}
                 >
-                  <div>
+                  <div
+                    className={css({
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1',
+                      minW: '0',
+                      flex: '1',
+                    })}
+                  >
                     <p className={css({ fontWeight: 'medium' })}>{debit.foodName}</p>
+                    {debit.notes && (
+                      <p
+                        className={css({
+                          fontSize: 'sm',
+                          color: 'fg.default',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
+                        })}
+                      >
+                        {debit.notes}
+                      </p>
+                    )}
                     <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
                       {formatDate(debit.debitedAt)}
                     </p>
@@ -173,7 +203,14 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
 
       <DialogRoot
         open={!!editingDebit}
-        onOpenChange={(e) => !e.open && setEditingDebit(null)}
+        onOpenChange={(e) => {
+          if (!e.open) {
+            setEditingDebit(null)
+            setFoodName('')
+            setNotes('')
+            setError('')
+          }
+        }}
       >
         <DialogContent>
           <DialogTitle>Edit Entry</DialogTitle>
@@ -193,6 +230,36 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
                 required
                 disabled={loading}
                 autoFocus
+              />
+            </div>
+
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
+              <div
+                className={css({
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                })}
+              >
+                <Label htmlFor="editNotes">Notes (optional)</Label>
+                <span
+                  className={css({
+                    fontSize: 'xs',
+                    color:
+                      notes.length > NOTES_MAX_LENGTH ? 'red.11' : 'fg.muted',
+                  })}
+                >
+                  {notes.length} / {NOTES_MAX_LENGTH}
+                </span>
+              </div>
+              <Textarea
+                id="editNotes"
+                placeholder="How were you feeling? What was the occasion?"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                maxLength={NOTES_MAX_LENGTH}
+                rows={3}
+                disabled={loading}
               />
             </div>
 
@@ -216,7 +283,12 @@ export function HistoryView({ goal, debits }: HistoryViewProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setEditingDebit(null)}
+                onClick={() => {
+                  setEditingDebit(null)
+                  setFoodName('')
+                  setNotes('')
+                  setError('')
+                }}
                 disabled={loading}
               >
                 Cancel

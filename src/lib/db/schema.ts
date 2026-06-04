@@ -17,6 +17,7 @@ export const debits = pgTable('debits', {
   goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
   userId: uuid('user_id').notNull(),
   foodName: text('food_name').notNull(),
+  notes: text('notes'),
   debitedAt: timestamp('debited_at', { withTimezone: true }).defaultNow(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
