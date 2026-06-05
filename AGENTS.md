@@ -44,7 +44,7 @@ src/
 │   └── history-view.tsx
 ├── server/                  # server functions (createServerFn)
 │   ├── auth.ts              # getUser, requireUser, logout
-│   ├── goals.ts             # createGoal, completeGoal
+│   ├── goals.ts             # createGoal, startGoalReview, completeGoal
 │   └── debits.ts            # createDebit, updateDebit, deleteDebit
 ├── lib/
 │   ├── db/                  # drizzle client + schema
@@ -70,6 +70,15 @@ Two tables defined in both `src/lib/db/schema.ts` (Drizzle) and `supabase-schema
 
 - `goals` — `userId`, `totalCredits` (5–20), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
+
+### Goal lifecycle
+
+A goal moves `active → reviewing → completed`. Data is **never deleted** — completed goals and their debits stay queryable so users can review past cycles.
+
+- **Time runs out:** the dashboard loader (`src/routes/dashboard/index.tsx`) lazily flips an `active` goal whose `endDate <= now` to `reviewing` and redirects to `/goal/review/$id`. There is no cron — the transition happens on the next dashboard load. The countdown UI clamps days-remaining at `0` (never negative).
+- **Credits run out:** logging is a **hard cap** — `createDebit` rejects inserts once `usedCredits >= totalCredits` (the active goal also can't be `reviewing`/`completed`). When the user clicks "Log an Item" at 0 credits, the dashboard shows a dialog offering "Review & Start Over", which calls `startGoalReview` (sets `reviewing`) and routes to the review page.
+- **Review → fresh start:** the review page's "Complete Goal & Start Fresh" calls `completeGoal` (sets `completed`); the dashboard then shows the setup form for a new goal.
+- **History** (`/dashboard/history`) lists **all** of the user's goals (active + past) with status badges; selecting one shows its debits — editable only for the `active` goal, read-only otherwise.
 
 Row Level Security is enforced in Supabase: every row is filtered by `auth.uid() = user_id`. **Every server function must scope its queries by the authenticated `user.id`** (do not rely on RLS alone since Drizzle uses the service-side connection).
 
@@ -105,7 +114,7 @@ Rules:
 
 - Use Panda's `css({...})` from `styled-system/css` for all styling. No CSS modules, no inline `style`, no Tailwind.
 - Use the theme tokens from `@park-ui/panda-preset` (teal accent, neutral gray, `radius: 'md'`): `bg.canvas`, `fg.default`, `fg.muted`, `colorPalette.*`, `gray.a2`, `red.11`, etc.
-- **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, and the `cta` button.
+- **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, the soft surface pair `brand.subtle` (tinted background) / `brand.border`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, the `cta` button, the balance/review credit numbers, the tinted summary cards, and the History goal selector. Prefer these over the teal `colorPalette.*` accent for anything that should read as "brand".
 - Button variants (`@/components/ui/button.tsx`): `solid` (default), `outline`, `subtle`, `plain`, and `cta` — the warm brand-fill primary call-to-action (lifting shadow + a trailing `<svg>` icon that slides on hover). Use `cta` for the main conversion action on a page, not in dense nav.
 - Compose primitives from `@/components/ui/*` instead of reaching into Ark UI directly.
 - The Inter latin subset is **inlined as a base64 data URI** in `src/index.css` (`font-display: block`) so the font ships with the render-blocking CSS and is present at first paint — no FOUT / layout shift. Don't swap it back to an external `@font-face` + `<link rel="preload">`.
