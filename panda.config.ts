@@ -27,6 +27,19 @@ export default defineConfig({
             solid: { value: { base: '#ea580c', _dark: '#fdba74' } },
             solidHover: { value: { base: '#c2410c', _dark: '#fcd34d' } },
             onSolid: { value: { base: 'white', _dark: '#1c1917' } },
+            // Soft warm surface + border for tinted cards / callouts.
+            subtle: {
+              value: {
+                base: 'rgba(234, 88, 12, 0.08)',
+                _dark: 'rgba(253, 186, 116, 0.10)',
+              },
+            },
+            border: {
+              value: {
+                base: 'rgba(234, 88, 12, 0.25)',
+                _dark: 'rgba(253, 186, 116, 0.28)',
+              },
+            },
           },
         },
         shadows: {
