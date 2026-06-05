@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { goals, debits } from '@/lib/db/schema'
-import { eq, and, desc } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { HistoryView } from '@/components/history-view'
 import { css } from 'styled-system/css'
 
@@ -12,21 +12,24 @@ const getHistoryData = createServerFn({ method: 'GET' }).handler(async () => {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw redirect({ to: '/login' })
 
-  const [activeGoal] = await db.select()
+  // Every goal the user has ever set — past and present. Data is never purged,
+  // so completed goals remain browsable after the user moves on.
+  const userGoals = await db.select()
     .from(goals)
-    .where(and(eq(goals.userId, user.id), eq(goals.status, 'active')))
-    .limit(1)
+    .where(eq(goals.userId, user.id))
+    .orderBy(desc(goals.createdAt))
 
-  if (!activeGoal) {
-    throw redirect({ to: '/dashboard' })
-  }
+  const goalsWithDebits = await Promise.all(
+    userGoals.map(async (goal) => {
+      const goalDebits = await db.select()
+        .from(debits)
+        .where(eq(debits.goalId, goal.id))
+        .orderBy(desc(debits.debitedAt))
+      return { goal, debits: goalDebits }
+    }),
+  )
 
-  const goalDebits = await db.select()
-    .from(debits)
-    .where(eq(debits.goalId, activeGoal.id))
-    .orderBy(desc(debits.debitedAt))
-
-  return { goal: activeGoal, debits: goalDebits }
+  return { goalsWithDebits }
 })
 
 export const Route = createFileRoute('/dashboard/history')({
@@ -35,11 +38,11 @@ export const Route = createFileRoute('/dashboard/history')({
 })
 
 function HistoryPage() {
-  const { goal, debits } = Route.useLoaderData()
+  const { goalsWithDebits } = Route.useLoaderData()
 
   return (
     <div className={css({ maxW: '4xl', mx: 'auto' })}>
-      <HistoryView goal={goal} debits={debits} />
+      <HistoryView goalsWithDebits={goalsWithDebits} />
     </div>
   )
 }
