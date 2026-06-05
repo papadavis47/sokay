@@ -28,6 +28,20 @@ export const createGoal = createServerFn({ method: 'POST' })
     return { success: true }
   })
 
+export const startGoalReview = createServerFn({ method: 'POST' })
+  .inputValidator((data: { goalId: string }) => data)
+  .handler(async ({ data }) => {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw redirect({ to: '/login' })
+
+    await db.update(goals)
+      .set({ status: 'reviewing' })
+      .where(and(eq(goals.id, data.goalId), eq(goals.userId, user.id)))
+
+    return { success: true }
+  })
+
 export const completeGoal = createServerFn({ method: 'POST' })
   .inputValidator((data: { goalId: string }) => data)
   .handler(async ({ data }) => {
