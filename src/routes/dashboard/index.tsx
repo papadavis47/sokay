@@ -31,6 +31,15 @@ const getDashboardData = createServerFn({ method: 'GET' }).handler(async () => {
     return { activeGoal: null, debits: [] }
   }
 
+  // Time's up: the goal's window has closed. Move it into review so the
+  // countdown stops and the user is prompted to wrap up and start fresh.
+  if (activeGoal.endDate.getTime() <= Date.now()) {
+    await db.update(goals)
+      .set({ status: 'reviewing' })
+      .where(and(eq(goals.id, activeGoal.id), eq(goals.userId, user.id)))
+    throw redirect({ to: '/goal/review/$id', params: { id: activeGoal.id } })
+  }
+
   const goalDebits = await db.select()
     .from(debits)
     .where(eq(debits.goalId, activeGoal.id))
