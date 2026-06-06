@@ -3,6 +3,7 @@ import { css } from 'styled-system/css'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { BrandMark } from '@/components/brand-mark'
+import { MobileNav } from '@/components/mobile-nav'
 import { logout } from '@/server/auth'
 import type { User } from '@supabase/supabase-js'
 
@@ -33,7 +34,14 @@ export function DashboardNav({ user }: { user: User }) {
       >
         <div className={css({ display: 'flex', alignItems: 'center', gap: '6' })}>
           <BrandMark to="/dashboard" />
-          <nav className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
+          {/* Desktop nav */}
+          <nav
+            className={css({
+              display: { base: 'none', md: 'flex' },
+              alignItems: 'center',
+              gap: '2',
+            })}
+          >
             <Link to="/dashboard">
               <Button variant="plain" size="sm">
                 Dashboard
@@ -46,20 +54,89 @@ export function DashboardNav({ user }: { user: User }) {
             </Link>
           </nav>
         </div>
-        <div className={css({ display: 'flex', alignItems: 'center', gap: '3' })}>
-          <span
-            className={css({
-              fontSize: 'sm',
-              color: 'fg.muted',
-              display: { base: 'none', md: 'inline' },
-            })}
-          >
+
+        {/* Desktop actions */}
+        <div
+          className={css({
+            display: { base: 'none', md: 'flex' },
+            alignItems: 'center',
+            gap: '3',
+          })}
+        >
+          <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
             {user.email}
           </span>
           <ThemeToggle />
-          <Button variant="outline" size="sm" onClick={handleLogout}>
+          <Button
+            variant="plain"
+            size="sm"
+            onClick={handleLogout}
+            className={css({
+              color: 'brand.solid',
+              _hover: { bg: 'brand.subtle' },
+            })}
+          >
             Log out
           </Button>
+        </div>
+
+        {/* Mobile actions */}
+        <div
+          className={css({
+            display: { base: 'flex', md: 'none' },
+            alignItems: 'center',
+            gap: '2',
+          })}
+        >
+          <ThemeToggle />
+          <MobileNav label="Dashboard menu">
+            {(close) => (
+              <>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'fg.muted',
+                    px: '3',
+                    py: '2',
+                    wordBreak: 'break-all',
+                  })}
+                >
+                  {user.email}
+                </span>
+                <Link to="/dashboard" onClick={close}>
+                  <Button
+                    variant="plain"
+                    className={css({ w: 'full', justifyContent: 'flex-start' })}
+                  >
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link to="/dashboard/history" onClick={close}>
+                  <Button
+                    variant="plain"
+                    className={css({ w: 'full', justifyContent: 'flex-start' })}
+                  >
+                    History
+                  </Button>
+                </Link>
+                <Button
+                  variant="plain"
+                  onClick={() => {
+                    close()
+                    handleLogout()
+                  }}
+                  className={css({
+                    mt: '2',
+                    justifyContent: 'flex-start',
+                    color: 'brand.solid',
+                    _hover: { bg: 'brand.subtle' },
+                  })}
+                >
+                  Log out
+                </Button>
+              </>
+            )}
+          </MobileNav>
         </div>
       </div>
     </header>
