@@ -111,7 +111,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
     >
       <Card>
         <CardHeader>
-          <CardTitle className={css({ fontSize: "3xl!" })}>
+          <CardTitle className={css({ fontSize: "3xl!", color: "brand.solid" })}>
             Your Sokay Balance
           </CardTitle>
           <CardDescription>
