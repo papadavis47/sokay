@@ -6,6 +6,7 @@ Guidance for AI agents working on **Sokay** — a mindful-eating tracker where u
 
 - **Framework**: TanStack Start + TanStack React Router (file-based routing)
 - **UI**: React 19, Park UI / Ark UI primitives, Panda CSS (`styled-system/`), `lucide-react` icons
+- **Animation**: [Motion](https://motion.dev/docs/react) (`motion` package, imported from `motion/react`) — used for the mobile nav slide-out drawer; reach for it for any new motion/transitions
 - **Backend**: TanStack Start server functions (`createServerFn`) running in the same Vite app
 - **Auth**: Supabase Auth via `@supabase/ssr` (browser + server clients)
 - **Database**: Supabase Postgres accessed through Drizzle ORM (`postgres-js` driver)
@@ -29,7 +30,7 @@ Always use **pnpm**, never npm or yarn. Run `pnpm prepare` after changing `panda
 src/
 ├── routes/                  # TanStack Router file-based routes
 │   ├── __root.tsx           # root layout, theme bootstrap
-│   ├── index.tsx            # marketing/landing
+│   ├── index.tsx            # marketing/landing (composes HomeNav + HeroSection + HowItWorks + OriginStory)
 │   ├── login.tsx, signup.tsx
 │   ├── dashboard.tsx        # /dashboard layout (auth-gated via beforeLoad)
 │   ├── dashboard/
@@ -39,7 +40,11 @@ src/
 ├── components/
 │   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
 │   ├── brand-mark.tsx       # shared "sokay / Process, not perfection" wordmark
-│   ├── dashboard-nav.tsx, footer.tsx, theme-provider.tsx, theme-toggle.tsx
+│   ├── home-nav.tsx         # landing-page header (responsive; hamburger below md)
+│   ├── dashboard-nav.tsx    # auth header (responsive; hamburger below md)
+│   ├── mobile-nav.tsx       # shared Motion slide-out drawer used by both navs
+│   ├── hero-section.tsx, how-it-works.tsx, origin-story.tsx  # landing-page sections
+│   ├── footer.tsx, theme-provider.tsx, theme-toggle.tsx
 │   ├── goal-setup-form.tsx, goal-dashboard.tsx, goal-review.tsx
 │   └── history-view.tsx
 ├── server/                  # server functions (createServerFn)
@@ -117,6 +122,7 @@ Rules:
 - **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, the soft surface pair `brand.subtle` (tinted background) / `brand.border`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, the `cta` button, the balance/review credit numbers, the tinted summary cards, and the History goal selector. Prefer these over the teal `colorPalette.*` accent for anything that should read as "brand".
 - Button variants (`@/components/ui/button.tsx`): `solid` (default), `outline`, `subtle`, `plain`, and `cta` — the warm brand-fill primary call-to-action (lifting shadow + a trailing `<svg>` icon that slides on hover). Use `cta` for the main conversion action on a page, not in dense nav.
 - Compose primitives from `@/components/ui/*` instead of reaching into Ark UI directly.
+- **Responsive nav**: both `home-nav.tsx` and `dashboard-nav.tsx` show an inline nav at `md+` and a hamburger below `md`. The hamburger opens the shared `mobile-nav.tsx` drawer — a Motion (`AnimatePresence`) slide-in panel portaled to `document.body` with a fading backdrop, Esc-to-close, body scroll-lock, and a render-prop `close` so links dismiss it on tap. Reuse `MobileNav` for any new responsive header rather than rolling another drawer.
 - The Inter latin subset is **inlined as a base64 data URI** in `src/index.css` (`font-display: block`) so the font ships with the render-blocking CSS and is present at first paint — no FOUT / layout shift. Don't swap it back to an external `@font-face` + `<link rel="preload">`.
 - Dark mode is toggled by adding/removing `dark` on `<html>` — the inline script in `__root.tsx` hydrates it from `localStorage('sokay-theme')`. Use `ThemeProvider` / `ThemeToggle` rather than touching the DOM directly.
 
