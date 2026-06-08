@@ -23,7 +23,17 @@ export const debits = pgTable('debits', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 })
 
+export const profiles = pgTable('profiles', {
+  id: uuid('id').primaryKey(),
+  displayName: text('display_name'),
+  avatarUrl: text('avatar_url'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+})
+
 export type Goal = typeof goals.$inferSelect
 export type NewGoal = typeof goals.$inferInsert
 export type Debit = typeof debits.$inferSelect
 export type NewDebit = typeof debits.$inferInsert
+export type Profile = typeof profiles.$inferSelect
+export type NewProfile = typeof profiles.$inferInsert
