@@ -20,6 +20,7 @@ export const Route = createFileRoute('/signup')({
 })
 
 function SignupPage() {
+  const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -43,7 +44,11 @@ function SignupPage() {
 
     setLoading(true)
     try {
-      const { error } = await supabase.auth.signUp({ email, password })
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { display_name: displayName.trim() } },
+      })
       if (error) throw error
       navigate({ to: '/dashboard' })
     } catch (err) {
@@ -71,6 +76,17 @@ function SignupPage() {
         </CardHeader>
         <CardBody>
           <form onSubmit={handleSignup} className={css({ display: 'flex', flexDirection: 'column', gap: '4' })}>
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
+              <Label htmlFor="displayName">Display name</Label>
+              <Input
+                id="displayName"
+                type="text"
+                placeholder="How should we greet you?"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                disabled={loading}
+              />
+            </div>
             <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
               <Label htmlFor="email">Email</Label>
               <Input
