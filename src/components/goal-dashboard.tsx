@@ -465,6 +465,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                       <span
                         className={css({
                           fontSize: "sm",
+                          fontStyle: "italic",
                           color: "fg.muted",
                           whiteSpace: "pre-wrap",
                           wordBreak: "break-word",

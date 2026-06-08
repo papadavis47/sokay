@@ -472,6 +472,7 @@ function GoalEntries({
                       <p
                         className={css({
                           fontSize: "sm",
+                          fontStyle: "italic",
                           color: "fg.default",
                           whiteSpace: "pre-wrap",
                           wordBreak: "break-word",
