@@ -425,7 +425,7 @@ function GoalEntries({
           <CardBody
             className={css({ pt: "6", textAlign: "center", color: "fg.muted" })}
           >
-            <p>No items were logged for this goal.</p>
+            <p>No items are logged for this goal.</p>
           </CardBody>
         </Card>
       ) : (

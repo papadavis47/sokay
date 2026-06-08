@@ -226,9 +226,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 <DialogTitle>You've used all your items</DialogTitle>
                 <DialogDescription className={css({ mb: "4" })}>
                   You've logged all {goal.totalItems} of your sokay items for
-                  this period, so there are none left to spend. That's the limit
-                  working as intended—no overlogging. When you're ready, review
-                  how this round went and start a fresh goal.
+                  this period. That's the limit working as intended—no
+                  overlogging. When you're ready, review how this round went and
+                  start a fresh goal.
                 </DialogDescription>
                 {error && (
                   <div
@@ -519,9 +519,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
             })}
           >
             {remainingItems > goal.totalItems * 0.5
-              ? "You're doing great! Keep being mindful."
+              ? "You're doing great!"
               : remainingItems > 0
-                ? "You've got this. Make each item count."
+                ? "Progress, not perfection."
                 : "Goal complete! Time to review your progress."}
           </p>
         </CardBody>

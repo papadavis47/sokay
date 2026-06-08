@@ -35,7 +35,7 @@ export function BrandMark({ to, size = "md" }: BrandMarkProps) {
           color: "fg.muted",
         })}
       >
-        Process, not perfection
+        Progress, not perfection
       </span>
     </div>
   );
