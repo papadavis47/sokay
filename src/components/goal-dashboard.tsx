@@ -39,9 +39,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
   const [limitDialogOpen, setLimitDialogOpen] = useState(false);
   const router = useRouter();
 
-  const usedCredits = debits.length;
-  const remainingCredits = goal.totalCredits - usedCredits;
-  const percentageUsed = (usedCredits / goal.totalCredits) * 100;
+  const usedItems = debits.length;
+  const remainingItems = goal.totalItems - usedItems;
+  const percentageUsed = (usedItems / goal.totalItems) * 100;
 
   const handleDebit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,15 +144,15 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   mb: "2",
                 })}
               >
-                {remainingCredits}
+                {remainingItems}
               </div>
               <div className={css({ fontSize: "xl", color: "fg.muted" })}>
-                item{remainingCredits !== 1 ? "s" : ""} remaining
+                item{remainingItems !== 1 ? "s" : ""} remaining
               </div>
               <div
                 className={css({ fontSize: "sm", color: "fg.muted", mt: "2" })}
               >
-                {usedCredits} of {goal.totalCredits} used
+                {usedItems} of {goal.totalItems} used
               </div>
             </div>
           </div>
@@ -191,11 +191,11 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               })}
             >
               <span>0</span>
-              <span>{goal.totalCredits}</span>
+              <span>{goal.totalItems}</span>
             </div>
           </div>
 
-          {remainingCredits <= 0 ? (
+          {remainingItems <= 0 ? (
             <DialogRoot
               open={limitDialogOpen}
               onOpenChange={(e) => {
@@ -211,7 +211,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               <DialogContent>
                 <DialogTitle>You've used all your items</DialogTitle>
                 <DialogDescription className={css({ mb: "4" })}>
-                  You've logged all {goal.totalCredits} of your sokay items for
+                  You've logged all {goal.totalItems} of your sokay items for
                   this period, so there are none left to spend. That's the limit
                   working as intended—no overlogging. When you're ready, review
                   how this round went and start a fresh goal.
@@ -476,9 +476,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               color: "fg.default",
             })}
           >
-            {remainingCredits > goal.totalCredits * 0.5
+            {remainingItems > goal.totalItems * 0.5
               ? "You're doing great! Keep being mindful."
-              : remainingCredits > 0
+              : remainingItems > 0
                 ? "You've got this. Make each item count."
                 : "Goal complete! Time to review your progress."}
           </p>

@@ -33,7 +33,7 @@ const durationCollection = createListCollection({
 });
 
 export function GoalSetupForm() {
-  const [credits, setCredits] = useState([10]);
+  const [items, setItems] = useState([10]);
   const [duration, setDuration] = useState<DurationMonths>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,7 +46,7 @@ export function GoalSetupForm() {
 
     try {
       await createGoal({
-        data: { totalCredits: credits[0], durationMonths: duration },
+        data: { totalItems: items[0], durationMonths: duration },
       });
       router.invalidate();
     } catch (err) {
@@ -111,19 +111,19 @@ export function GoalSetupForm() {
                     color: "colorPalette.default",
                   })}
                 >
-                  {credits[0]}
+                  {items[0]}
                 </span>
               </div>
               <Slider
-                value={credits}
-                onValueChange={(e) => setCredits(e.value)}
+                value={items}
+                onValueChange={(e) => setItems(e.value)}
                 min={5}
                 max={20}
                 step={1}
               />
               <p className={css({ fontSize: "sm", color: "fg.muted" })}>
-                You can enjoy up to {credits[0]} item
-                {credits[0] !== 1 ? "s" : ""} during your goal period.
+                You can enjoy up to {items[0]} item
+                {items[0] !== 1 ? "s" : ""} during your goal period.
               </p>
             </div>
 
@@ -188,7 +188,7 @@ export function GoalSetupForm() {
             </p>
             <p className={css({ fontSize: "sm", color: "fg.muted" })}>
               I will track my items and limit myself to{" "}
-              <strong>{credits[0]} sokay items</strong> over the next{" "}
+              <strong>{items[0]} sokay items</strong> over the next{" "}
               <strong>{getDurationLabel(duration)}</strong>. I'm building a
               healthier relationship with food, one mindful choice at a time.
             </p>

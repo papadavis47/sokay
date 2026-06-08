@@ -21,10 +21,10 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const usedCredits = debits.length;
-  const remainingCredits = goal.totalCredits - usedCredits;
+  const usedItems = debits.length;
+  const remainingItems = goal.totalItems - usedItems;
   const successRate =
-    ((goal.totalCredits - usedCredits) / goal.totalCredits) * 100;
+    ((goal.totalItems - usedItems) / goal.totalItems) * 100;
 
   const handleComplete = async () => {
     setLoading(true);
@@ -126,15 +126,15 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
                 mb: "2",
               })}
             >
-              {remainingCredits}
+              {remainingItems}
             </div>
             <div className={css({ fontSize: "xl", color: "fg.muted" })}>
-              items remaining out of {goal.totalCredits}
+              items remaining out of {goal.totalItems}
             </div>
             <div
               className={css({ fontSize: "sm", color: "fg.muted", mt: "2" })}
             >
-              {usedCredits} items logged
+              {usedItems} items logged
             </div>
           </div>
 
@@ -184,7 +184,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               })}
             >
               <div className={css({ fontSize: "2xl", fontWeight: "bold" })}>
-                {usedCredits}
+                {usedItems}
               </div>
               <div className={css({ fontSize: "sm", color: "fg.muted" })}>
                 Items Logged

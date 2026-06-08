@@ -227,7 +227,7 @@ export function HistoryView({ goalsWithDebits }: HistoryViewProps) {
                       <span
                         className={css({ fontSize: "sm", color: "fg.muted" })}
                       >
-                        {used} of {goal.totalCredits} items used
+                        {used} of {goal.totalItems} items used
                       </span>
                     </div>
                     <span
@@ -405,8 +405,8 @@ function GoalEntries({
   onEdit,
   onDelete,
 }: GoalEntriesProps) {
-  const usedCredits = debits.length;
-  const remainingCredits = goal.totalCredits - usedCredits;
+  const usedItems = debits.length;
+  const remainingItems = goal.totalItems - usedItems;
 
   return (
     <>
@@ -414,7 +414,7 @@ function GoalEntries({
         <CardHeader>
           <CardTitle>Summary</CardTitle>
           <CardDescription>
-            {usedCredits} of {goal.totalCredits} items used · {remainingCredits}{" "}
+            {usedItems} of {goal.totalItems} items used · {remainingItems}{" "}
             remaining
           </CardDescription>
         </CardHeader>

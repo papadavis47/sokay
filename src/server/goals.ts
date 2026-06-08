@@ -6,7 +6,7 @@ import { goals } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 
 export const createGoal = createServerFn({ method: 'POST' })
-  .inputValidator((data: { totalCredits: number; durationMonths: number }) => data)
+  .inputValidator((data: { totalItems: number; durationMonths: number }) => data)
   .handler(async ({ data }) => {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -18,7 +18,7 @@ export const createGoal = createServerFn({ method: 'POST' })
 
     await db.insert(goals).values({
       userId: user.id,
-      totalCredits: data.totalCredits,
+      totalItems: data.totalItems,
       durationMonths: data.durationMonths,
       startDate,
       endDate,

@@ -3,7 +3,7 @@ import { pgTable, uuid, integer, text, timestamp } from 'drizzle-orm/pg-core'
 export const goals = pgTable('goals', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id').notNull(),
-  totalCredits: integer('total_credits').notNull(),
+  totalItems: integer('total_items').notNull(),
   durationMonths: integer('duration_months').notNull(),
   startDate: timestamp('start_date', { withTimezone: true }).notNull().defaultNow(),
   endDate: timestamp('end_date', { withTimezone: true }).notNull(),

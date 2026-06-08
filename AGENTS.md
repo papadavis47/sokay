@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI agents working on **Sokay** — a mindful-eating tracker where users set a small "sokay credits" limit over a time window and log treats against that limit.
+Guidance for AI agents working on **Sokay** — a mindful-eating tracker where users set a small "sokay items" limit over a time window and log treats against that limit.
 
 ## Tech Stack
 
@@ -103,7 +103,7 @@ Always import via aliases (e.g. `import { Button } from '@/components/ui/button'
 
 Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` (SQL with RLS), **and** `supabase/migrations/` (the applied source of truth). **Keep all three in sync.**
 
-- `goals` — `userId`, `totalCredits` (5–20), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
+- `goals` — `userId`, `totalItems` (5–20, column `total_items`), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
 - `profiles` — `id` (PK = `auth.users.id`, cascade delete), `displayName`, `avatarUrl`. One row per user, kept 1-to-1 with `auth.users` by an `on auth.users` insert trigger (`handle_new_user`, `security definer`). `display_name` is seeded with precedence: signup `options.data.display_name` → OAuth `full_name`/`name` → email local part. Editable later via `/dashboard/settings`.
 
@@ -112,7 +112,7 @@ Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` 
 A goal moves `active → reviewing → completed`. Data is **never deleted** — completed goals and their debits stay queryable so users can review past cycles.
 
 - **Time runs out:** the dashboard loader (`src/routes/dashboard/index.tsx`) lazily flips an `active` goal whose `endDate <= now` to `reviewing` and redirects to `/goal/review/$id`. There is no cron — the transition happens on the next dashboard load. The countdown UI clamps days-remaining at `0` (never negative).
-- **Credits run out:** logging is a **hard cap** — `createDebit` rejects inserts once `usedCredits >= totalCredits` (the active goal also can't be `reviewing`/`completed`). When the user clicks "Log an Item" at 0 credits, the dashboard shows a dialog offering "Review & Start Over", which calls `startGoalReview` (sets `reviewing`) and routes to the review page.
+- **Items run out:** logging is a **hard cap** — `createDebit` rejects inserts once `usedItems >= totalItems` (the active goal also can't be `reviewing`/`completed`). When the user clicks "Log an Item" at 0 items, the dashboard shows a dialog offering "Review & Start Over", which calls `startGoalReview` (sets `reviewing`) and routes to the review page.
 - **Review → fresh start:** the review page's "Complete Goal & Start Fresh" calls `completeGoal` (sets `completed`); the dashboard then shows the setup form for a new goal.
 - **History** (`/dashboard/history`) lists **all** of the user's goals (active + past) with status badges; selecting one shows its debits — editable only for the `active` goal, read-only otherwise.
 
@@ -135,6 +135,7 @@ export const doThing = createServerFn({ method: 'POST' })
 ```
 
 Rules:
+
 - Always call `supabase.auth.getUser()` and redirect if missing.
 - Always include `eq(table.userId, user.id)` in `where(and(...))` for updates/deletes.
 - Validate inputs in `.inputValidator` — keep payload shapes minimal.
@@ -156,13 +157,13 @@ Rules:
 ### GitHub OAuth setup (env-specific)
 
 - **Local**: a GitHub OAuth App with callback `http://127.0.0.1:54321/auth/v1/callback`; creds in `supabase/.env.local`; `enabled = true` in `[auth.external.github]` in `config.toml`.
-- **Prod**: a *separate* GitHub OAuth App with callback `https://<prod-ref>.supabase.co/auth/v1/callback`; creds entered in the cloud dashboard (Authentication → Providers → GitHub), not `config.toml`.
+- **Prod**: a _separate_ GitHub OAuth App with callback `https://<prod-ref>.supabase.co/auth/v1/callback`; creds entered in the cloud dashboard (Authentication → Providers → GitHub), not `config.toml`.
 
 ## Styling
 
 - Use Panda's `css({...})` from `styled-system/css` for all styling. No CSS modules, no inline `style`, no Tailwind.
 - Use the theme tokens from `@park-ui/panda-preset` (teal accent, neutral gray, `radius: 'md'`): `bg.canvas`, `fg.default`, `fg.muted`, `colorPalette.*`, `gray.a2`, `red.11`, etc.
-- **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, the soft surface pair `brand.subtle` (tinted background) / `brand.border`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, the `cta` button, the balance/review credit numbers, the tinted summary cards, and the History goal selector. Prefer these over the teal `colorPalette.*` accent for anything that should read as "brand".
+- **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, the soft surface pair `brand.subtle` (tinted background) / `brand.border`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, the `cta` button, the balance/review item counts, the tinted summary cards, and the History goal selector. Prefer these over the teal `colorPalette.*` accent for anything that should read as "brand".
 - Button variants (`@/components/ui/button.tsx`): `solid` (default), `outline`, `subtle`, `plain`, and `cta` — the warm brand-fill primary call-to-action (lifting shadow + a trailing `<svg>` icon that slides on hover). Use `cta` for the main conversion action on a page, not in dense nav.
 - Compose primitives from `@/components/ui/*` instead of reaching into Ark UI directly.
 - **Responsive nav**: both `home-nav.tsx` and `dashboard-nav.tsx` show an inline nav at `md+` and a hamburger below `md`. The hamburger opens the shared `mobile-nav.tsx` drawer — a Motion (`AnimatePresence`) slide-in panel portaled to `document.body` with a fading backdrop, Esc-to-close, body scroll-lock, and a render-prop `close` so links dismiss it on tap. Reuse `MobileNav` for any new responsive header rather than rolling another drawer.
@@ -194,12 +195,13 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Don't edit `routeTree.gen.ts`, `styled-system/`, `.output/`, `.tanstack/`, or `dist/`.
 - Don't add a second styling system (Tailwind, CSS modules, emotion).
 - Don't bypass `requireUser` / `getUser` checks in server functions.
-- Don't change the Drizzle schema without also updating `supabase-schema.sql` and the SQL `check` constraints (credits 5–20, duration in {1,2,3,6,12}, status enum).
+- Don't change the Drizzle schema without also updating `supabase-schema.sql` and the SQL `check` constraints (items 5–20, duration in {1,2,3,6,12}, status enum).
 - Don't introduce a new ORM, query builder, or HTTP framework — server functions + Drizzle is the pattern.
 
 ## Status & Checklist (pick up here)
 
 ### Done ✅
+
 - Local Supabase dev stack (Docker) wired up; `.env.local` points at local, prod values commented.
 - Migrations as schema source of truth: `init_goals_debits` + `profiles`.
 - Auth: email/password **and** GitHub OAuth (login/signup button + `/auth/callback`), same-email linking.
@@ -210,16 +212,19 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Learning notes: `learning/auth-and-dev-prod-supabase.md`, `learning/git-safety-and-prod-sync.md`.
 
 ### To commit (uncommitted work — group into separate commits)
+
 1. **Cookie fix** — `src/lib/supabase/server.ts`
 2. **GitHub OAuth** — `src/server/auth.ts` (exchangeCode), `src/routes/auth/callback.tsx`, `src/components/github-auth-button.tsx`, `src/routes/login.tsx`, `src/routes/signup.tsx` (button), `supabase/config.toml`
 3. **Profiles** — `supabase/migrations/*_profiles.sql`, `src/lib/db/schema.ts`, `supabase-schema.sql`, `src/routes/signup.tsx` (display name field), `src/server/profiles.ts`
 4. **Settings + nav** — `src/routes/dashboard/settings.tsx`, `src/routes/dashboard.tsx`, `src/components/dashboard-nav.tsx`
 5. **Logout fix** — `src/components/dashboard-nav.tsx`, `src/server/auth.ts` (overlaps #2/#4 — stage hunks carefully)
 6. **Supabase scaffold + env docs** — `supabase/` (config.toml, migrations, .gitignore), `.env.local.example`
+
 - ⚠️ `routeTree.gen.ts` regenerates on dev/build — let it; don't hand-edit. It now includes `/auth/callback` and `/dashboard/settings`.
 - ⚠️ Never `git add` `.env*` or `supabase/.env.local` (already gitignored).
 
 ### TODO (next steps)
+
 - [ ] Tests: Vitest for server fns (`profiles`, `goals`, `debits` scoping); Playwright for auth flows (email, GitHub, logout, protected-route redirect).
 - [ ] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
 - [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).

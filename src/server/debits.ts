@@ -28,7 +28,7 @@ export const createDebit = createServerFn({ method: "POST" })
     } = await supabase.auth.getUser();
     if (!user) throw redirect({ to: "/login" });
 
-    // Hard cap: never let a user log past their goal's credit limit.
+    // Hard cap: never let a user log past their goal's item limit.
     const [goal] = await db
       .select()
       .from(goals)
@@ -45,7 +45,7 @@ export const createDebit = createServerFn({ method: "POST" })
       .from(debits)
       .where(eq(debits.goalId, goal.id));
 
-    if (used >= goal.totalCredits) {
+    if (used >= goal.totalItems) {
       throw new Error("You have used all your sokay items for this period.");
     }
 

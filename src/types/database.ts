@@ -7,6 +7,6 @@ export type { Goal, Debit }
 
 export interface GoalWithDebits extends Goal {
   debits: Debit[]
-  remainingCredits: number
-  usedCredits: number
+  remainingItems: number
+  usedItems: number
 }

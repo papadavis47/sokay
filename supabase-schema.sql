@@ -8,7 +8,7 @@ create extension if not exists "uuid-ossp";
 create table public.goals (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references auth.users not null,
-  total_credits integer not null check (total_credits >= 5 and total_credits <= 20),
+  total_items integer not null check (total_items >= 5 and total_items <= 20),
   duration_months integer not null check (duration_months in (1, 2, 3, 6, 12)),
   start_date timestamp with time zone not null default now(),
   end_date timestamp with time zone not null,
