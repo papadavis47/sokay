@@ -112,9 +112,13 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
       <Card>
         <CardHeader>
           <CardTitle
-            className={css({ fontSize: "3xl!", color: "brand.solid" })}
+            className={css({
+              fontSize: "2xl!",
+              color: "brand.solid",
+              textTransform: "uppercase",
+            })}
           >
-            Your Sokay Balance
+            sokay balance
           </CardTitle>
           <CardDescription>
             Goal period: {formatDate(goal.startDate)} -{" "}
@@ -186,8 +190,8 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               className={css({
                 display: "flex",
                 justifyContent: "space-between",
-                fontSize: "xs",
-                color: "fg.muted",
+                fontSize: "md",
+                color: "brand.solid",
               })}
             >
               <span>0</span>
@@ -204,7 +208,17 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               }}
             >
               <DialogTrigger asChild>
-                <Button size="lg" className={css({ w: "full" })}>
+                <Button
+                  size="lg"
+                  className={css({
+                    w: "full",
+                    color: "brand.solid!",
+                    borderWidth: "1px",
+                    borderColor: "brand.solid",
+                    h: "auto!",
+                    py: "4",
+                  })}
+                >
                   Log an Item
                 </Button>
               </DialogTrigger>
@@ -268,13 +282,25 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               }}
             >
               <DialogTrigger asChild>
-                <Button size="lg" className={css({ w: "full" })}>
+                <Button
+                  size="lg"
+                  className={css({
+                    w: "full",
+                    color: "brand.solid!",
+                    borderWidth: "1px",
+                    borderColor: "brand.solid",
+                    h: "auto!",
+                    py: "4",
+                  })}
+                >
                   Log an Item
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle>Log an Item</DialogTitle>
-                <DialogDescription className={css({ mb: "4" })}>
+                <DialogTitle className={css({ color: "brand.solid!" })}>
+                  Log an Item
+                </DialogTitle>
+                <DialogDescription className={css({ mb: "4", pt: "2" })}>
                   What did you eat? Be honest—this is for you, not judgment.
                 </DialogDescription>
                 <form
@@ -292,7 +318,12 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                       gap: "2",
                     })}
                   >
-                    <Label htmlFor="foodName">Food or Drink</Label>
+                    <Label
+                      htmlFor="foodName"
+                      className={css({ color: "brand.solid!" })}
+                    >
+                      Food or Drink
+                    </Label>
                     <Input
                       id="foodName"
                       placeholder="e.g., Ice cream, Soda, Cake..."
@@ -318,7 +349,12 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                         justifyContent: "space-between",
                       })}
                     >
-                      <Label htmlFor="notes">Notes (optional)</Label>
+                      <Label
+                        htmlFor="notes"
+                        className={css({ color: "brand.solid!" })}
+                      >
+                        Notes (optional)
+                      </Label>
                       <span
                         className={css({
                           fontSize: "xs",
@@ -368,10 +404,15 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                       variant="outline"
                       onClick={() => setDialogOpen(false)}
                       disabled={loading}
+                      className={css({ color: "brand.solid!" })}
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={loading}>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className={css({ color: "brand.solid!" })}
+                    >
                       {loading ? "Logging..." : "Log Item"}
                     </Button>
                   </div>
