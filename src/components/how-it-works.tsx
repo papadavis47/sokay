@@ -16,6 +16,23 @@ export function HowItWorks() {
         pb: { base: "6", md: "8" },
       })}
     >
+      <blockquote
+        className={css({
+          textAlign: "center",
+          color: "fg.default",
+          fontSize: { base: "3xl", md: "5xl" },
+          fontWeight: "bold",
+          letterSpacing: "tight",
+          lineHeight: "tight",
+          maxW: "3xl",
+          mx: "auto",
+          textWrap: "balance",
+          mb: { base: "12", md: "16" },
+        })}
+      >
+        Don't let perfection be the enemy of good
+      </blockquote>
+
       <div
         className={css({
           display: "grid",

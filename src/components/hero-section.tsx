@@ -10,7 +10,8 @@ export function HeroSection() {
       className={css({
         position: "relative",
         overflow: "hidden",
-        py: { base: "16", md: "28" },
+        pt: { base: "12", md: "16" },
+        pb: { base: "16", md: "24" },
       })}
     >
       {/* Faint, far-reaching warm wash — a wide low-opacity radial gradient
@@ -42,26 +43,6 @@ export function HeroSection() {
           gap: "6",
         })}
       >
-        {/* Eyebrow pill */}
-        <span
-          className={css({
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "2",
-            px: "4",
-            py: "1.5",
-            borderRadius: "full",
-            bg: "brand.subtle",
-            borderWidth: "1px",
-            borderColor: "brand.border",
-            color: "brand.solid",
-            fontSize: "sm",
-            fontWeight: "medium",
-          })}
-        >
-          Process, not perfection
-        </span>
-
         {/* Headline */}
         <h1
           className={css({
