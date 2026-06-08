@@ -7,7 +7,15 @@ import { MobileNav } from '@/components/mobile-nav'
 import { logout } from '@/server/auth'
 import type { User } from '@supabase/supabase-js'
 
-export function DashboardNav({ user }: { user: User }) {
+export function DashboardNav({
+  user,
+  displayName,
+}: {
+  user: User
+  displayName: string | null
+}) {
+  const shownName = displayName ?? user.email
+
   const handleLogout = async () => {
     await logout()
   }
@@ -52,6 +60,11 @@ export function DashboardNav({ user }: { user: User }) {
                 History
               </Button>
             </Link>
+            <Link to="/dashboard/settings">
+              <Button variant="plain" size="sm">
+                Settings
+              </Button>
+            </Link>
           </nav>
         </div>
 
@@ -64,7 +77,7 @@ export function DashboardNav({ user }: { user: User }) {
           })}
         >
           <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-            {user.email}
+            {shownName}
           </span>
           <ThemeToggle />
           <Button
@@ -101,7 +114,7 @@ export function DashboardNav({ user }: { user: User }) {
                     wordBreak: 'break-all',
                   })}
                 >
-                  {user.email}
+                  {shownName}
                 </span>
                 <Link to="/dashboard" onClick={close}>
                   <Button
@@ -117,6 +130,14 @@ export function DashboardNav({ user }: { user: User }) {
                     className={css({ w: 'full', justifyContent: 'flex-start' })}
                   >
                     History
+                  </Button>
+                </Link>
+                <Link to="/dashboard/settings" onClick={close}>
+                  <Button
+                    variant="plain"
+                    className={css({ w: 'full', justifyContent: 'flex-start' })}
+                  >
+                    Settings
                   </Button>
                 </Link>
                 <Button
