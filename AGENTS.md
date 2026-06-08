@@ -24,6 +24,27 @@ pnpm prepare        # panda codegen — regenerates styled-system/
 
 Always use **pnpm**, never npm or yarn. Run `pnpm prepare` after changing `panda.config.ts` or adding new Panda tokens.
 
+### Local Supabase (dev)
+
+Dev runs against a **local Supabase stack** in Docker (free, unlimited); the cloud
+free-tier project is reserved for prod. Requires Docker running.
+
+```bash
+supabase start            # boot local stack (API :54321, Studio :54323, DB :54322)
+supabase status           # print URLs + keys (note: new CLI uses sb_publishable_* keys)
+supabase db reset         # rebuild local DB from ALL migrations (wipes local data)
+supabase migration up     # apply only pending migrations (preserves local data)
+supabase stop             # shut the stack down
+```
+
+- `.env.local` points at the **local** stack for dev; the `VITE_SUPABASE_ANON_KEY`
+  value is the local `sb_publishable_*` key. Prod values live commented below the
+  DEV block (and in the deploy provider's env).
+- **Migrations are the schema source of truth.** Add a new file under
+  `supabase/migrations/` for any schema change — never edit an applied migration.
+- Prod sync (later): `supabase link --project-ref <ref>` then `supabase db push`.
+  See `learning/git-safety-and-prod-sync.md`.
+
 ## Project Layout
 
 ```
@@ -31,24 +52,28 @@ src/
 ├── routes/                  # TanStack Router file-based routes
 │   ├── __root.tsx           # root layout, theme bootstrap
 │   ├── index.tsx            # marketing/landing (composes HomeNav + HeroSection + HowItWorks + OriginStory)
-│   ├── login.tsx, signup.tsx
-│   ├── dashboard.tsx        # /dashboard layout (auth-gated via beforeLoad)
+│   ├── login.tsx, signup.tsx  # email/password + "Continue with GitHub" button
+│   ├── auth/callback.tsx     # /auth/callback — OAuth code exchange, then redirect
+│   ├── dashboard.tsx        # /dashboard layout (auth-gated; loads profile for nav)
 │   ├── dashboard/
 │   │   ├── index.tsx        # /dashboard — active goal or setup form
-│   │   └── history.tsx      # /dashboard/history
+│   │   ├── history.tsx      # /dashboard/history
+│   │   └── settings.tsx     # /dashboard/settings — edit display name
 │   └── goal/review/$id.tsx  # /goal/review/:id — end-of-cycle review
 ├── components/
 │   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
 │   ├── brand-mark.tsx       # shared "sokay / Process, not perfection" wordmark
 │   ├── home-nav.tsx         # landing-page header (responsive; hamburger below md)
-│   ├── dashboard-nav.tsx    # auth header (responsive; hamburger below md)
+│   ├── dashboard-nav.tsx    # auth header (responsive; shows display name + Settings link)
 │   ├── mobile-nav.tsx       # shared Motion slide-out drawer used by both navs
+│   ├── github-auth-button.tsx # shared "Continue with GitHub" button (inline SVG)
 │   ├── hero-section.tsx, how-it-works.tsx, origin-story.tsx  # landing-page sections
 │   ├── footer.tsx, theme-provider.tsx, theme-toggle.tsx
 │   ├── goal-setup-form.tsx, goal-dashboard.tsx, goal-review.tsx
 │   └── history-view.tsx
 ├── server/                  # server functions (createServerFn)
-│   ├── auth.ts              # getUser, requireUser, logout
+│   ├── auth.ts              # getUser, requireUser, logout, exchangeCode
+│   ├── profiles.ts          # getProfile, updateProfile
 │   ├── goals.ts             # createGoal, startGoalReview, completeGoal
 │   └── debits.ts            # createDebit, updateDebit, deleteDebit
 ├── lib/
@@ -56,6 +81,11 @@ src/
 │   └── supabase/            # client.ts (browser), server.ts (SSR cookies)
 ├── types/database.ts        # re-exports + view-model types
 ├── router.tsx, routeTree.gen.ts, index.css
+
+supabase/                    # local Supabase stack config + migrations (committed)
+├── config.toml             # stack + auth config (secrets via env() refs — safe to commit)
+├── migrations/             # SQL migrations = schema source of truth (run local + prod)
+└── .env.local              # GitHub OAuth creds for local dev (gitignored)
 ```
 
 `routeTree.gen.ts` is **generated** by the TanStack Start Vite plugin — do not hand-edit it.
@@ -71,10 +101,11 @@ Always import via aliases (e.g. `import { Button } from '@/components/ui/button'
 
 ## Data Model
 
-Two tables defined in both `src/lib/db/schema.ts` (Drizzle) and `supabase-schema.sql` (SQL with RLS). **Keep them in sync.**
+Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` (SQL with RLS), **and** `supabase/migrations/` (the applied source of truth). **Keep all three in sync.**
 
 - `goals` — `userId`, `totalCredits` (5–20), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
+- `profiles` — `id` (PK = `auth.users.id`, cascade delete), `displayName`, `avatarUrl`. One row per user, kept 1-to-1 with `auth.users` by an `on auth.users` insert trigger (`handle_new_user`, `security definer`). `display_name` is seeded with precedence: signup `options.data.display_name` → OAuth `full_name`/`name` → email local part. Editable later via `/dashboard/settings`.
 
 ### Goal lifecycle
 
@@ -111,9 +142,21 @@ Rules:
 
 ## Routing & Auth
 
-- Auth-gated subtree: `src/routes/dashboard.tsx` uses `beforeLoad: async () => ({ user: await requireUser() })` and exposes the user via `Route.useRouteContext()`.
+- Auth-gated subtree: `src/routes/dashboard.tsx` uses `beforeLoad: async () => ({ user: await requireUser() })` and exposes the user via `Route.useRouteContext()`. Its `loader` also fetches the profile so the nav can show `displayName`.
 - Page data is fetched in route `loader`s by calling a `createServerFn` (see `src/routes/dashboard/index.tsx`).
 - Use `redirect({ to: '/...' })` from server functions / loaders for navigation guards (e.g. force a user with a `reviewing` goal to `/goal/review/$id`).
+
+### Auth methods
+
+- **Email/password** — `signInWithPassword` / `signUp` from the browser client on `login.tsx` / `signup.tsx`. Signup passes `options.data.display_name` from a "Display name" field.
+- **GitHub OAuth** — `signInWithOAuth({ provider: 'github' })` via the shared `github-auth-button.tsx`, with `redirectTo` set to `/auth/callback`. The `/auth/callback` route's `beforeLoad` calls the `exchangeCode` server fn (`exchangeCodeForSession`), which sets the session cookies and redirects to `/dashboard`. Same-email accounts auto-link (one user, two identities).
+- **Cookies** — `src/lib/supabase/server.ts` uses `getCookies` + `setCookie` from `@tanstack/react-start/server`. Use `setCookie` (which appends), **never** `setResponseHeader('Set-Cookie', …)` in a loop — that overwrites and drops Supabase's chunked auth cookies.
+- **Client-side navigation after auth mutations** — server fns like `logout` just sign out and return; the component then does `router.invalidate()` + `router.navigate(...)`. A server-side `throw redirect()` does **not** navigate the browser when a server fn is called from a click handler (only inside loaders/`beforeLoad`).
+
+### GitHub OAuth setup (env-specific)
+
+- **Local**: a GitHub OAuth App with callback `http://127.0.0.1:54321/auth/v1/callback`; creds in `supabase/.env.local`; `enabled = true` in `[auth.external.github]` in `config.toml`.
+- **Prod**: a *separate* GitHub OAuth App with callback `https://<prod-ref>.supabase.co/auth/v1/callback`; creds entered in the cloud dashboard (Authentication → Providers → GitHub), not `config.toml`.
 
 ## Styling
 
@@ -128,17 +171,19 @@ Rules:
 
 ## Environment
 
-Required (read on both client and server):
+Required (read on both client and server) — in `.env.local` (gitignored):
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `DATABASE_URL` — Postgres connection string for Drizzle (server only)
+- `VITE_SUPABASE_URL` — local: `http://127.0.0.1:54321`; prod: `https://<ref>.supabase.co`
+- `VITE_SUPABASE_ANON_KEY` — local: `sb_publishable_*` from `supabase status`; prod: cloud key
+- `DATABASE_URL` — Postgres connection string for Drizzle (server only); local: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
 
 Browser code uses `import.meta.env.VITE_*`; server code uses `process.env.*`.
 
+GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase/.env.local` (read by `config.toml` via `env()`), prod creds in the cloud dashboard.
+
 ## Conventions
 
-- TypeScript strict mode; no `any`. Re-use the Drizzle-inferred types (`Goal`, `Debit`, `NewGoal`, `NewDebit`) from `@/lib/db/schema` (also re-exported via `@/types/database`).
+- TypeScript strict mode; no `any`. Re-use the Drizzle-inferred types (`Goal`, `Debit`, `Profile`, `NewGoal`, `NewDebit`, `NewProfile`) from `@/lib/db/schema` (also re-exported via `@/types/database`).
 - Components are function declarations with explicit prop interfaces (see `HistoryViewProps` in `src/components/history-view.tsx`).
 - File naming: kebab-case for component files (`goal-setup-form.tsx`), PascalCase exports.
 - Keep server logic out of components — call server functions from event handlers / loaders.
@@ -151,3 +196,33 @@ Browser code uses `import.meta.env.VITE_*`; server code uses `process.env.*`.
 - Don't bypass `requireUser` / `getUser` checks in server functions.
 - Don't change the Drizzle schema without also updating `supabase-schema.sql` and the SQL `check` constraints (credits 5–20, duration in {1,2,3,6,12}, status enum).
 - Don't introduce a new ORM, query builder, or HTTP framework — server functions + Drizzle is the pattern.
+
+## Status & Checklist (pick up here)
+
+### Done ✅
+- Local Supabase dev stack (Docker) wired up; `.env.local` points at local, prod values commented.
+- Migrations as schema source of truth: `init_goals_debits` + `profiles`.
+- Auth: email/password **and** GitHub OAuth (login/signup button + `/auth/callback`), same-email linking.
+- Fixed `Set-Cookie` overwrite bug in `lib/supabase/server.ts` (now `getCookies`/`setCookie`).
+- Fixed logout (client-side `invalidate` + `navigate`, no more dead-end).
+- `profiles` table + insert trigger + RLS + backfill; "Display name" on signup.
+- Editable display name at `/dashboard/settings`; nav shows display name; redirects to dashboard on save.
+- Learning notes: `learning/auth-and-dev-prod-supabase.md`, `learning/git-safety-and-prod-sync.md`.
+
+### To commit (uncommitted work — group into separate commits)
+1. **Cookie fix** — `src/lib/supabase/server.ts`
+2. **GitHub OAuth** — `src/server/auth.ts` (exchangeCode), `src/routes/auth/callback.tsx`, `src/components/github-auth-button.tsx`, `src/routes/login.tsx`, `src/routes/signup.tsx` (button), `supabase/config.toml`
+3. **Profiles** — `supabase/migrations/*_profiles.sql`, `src/lib/db/schema.ts`, `supabase-schema.sql`, `src/routes/signup.tsx` (display name field), `src/server/profiles.ts`
+4. **Settings + nav** — `src/routes/dashboard/settings.tsx`, `src/routes/dashboard.tsx`, `src/components/dashboard-nav.tsx`
+5. **Logout fix** — `src/components/dashboard-nav.tsx`, `src/server/auth.ts` (overlaps #2/#4 — stage hunks carefully)
+6. **Supabase scaffold + env docs** — `supabase/` (config.toml, migrations, .gitignore), `.env.local.example`
+- ⚠️ `routeTree.gen.ts` regenerates on dev/build — let it; don't hand-edit. It now includes `/auth/callback` and `/dashboard/settings`.
+- ⚠️ Never `git add` `.env*` or `supabase/.env.local` (already gitignored).
+
+### TODO (next steps)
+- [ ] Tests: Vitest for server fns (`profiles`, `goals`, `debits` scoping); Playwright for auth flows (email, GitHub, logout, protected-route redirect).
+- [ ] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
+- [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).
+- [ ] Session refresh on navigation (tokens can go stale).
+- [ ] Prod: create cloud GitHub OAuth app, `supabase link` + `supabase db push`, set deploy env vars.
+- [ ] Decide deploy target (Netlify lowest-friction now; Cloudflare later — see `learning/auth-and-dev-prod-supabase.md` §6).
