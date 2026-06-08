@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -14,10 +14,13 @@ export function DashboardNav({
   user: User
   displayName: string | null
 }) {
+  const router = useRouter()
   const shownName = displayName ?? user.email
 
   const handleLogout = async () => {
     await logout()
+    await router.invalidate()
+    await router.navigate({ to: '/' })
   }
 
   return (

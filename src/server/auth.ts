@@ -20,7 +20,7 @@ export const requireUser = createServerFn({ method: 'GET' }).handler(async () =>
 export const logout = createServerFn({ method: 'POST' }).handler(async () => {
   const supabase = createClient()
   await supabase.auth.signOut()
-  throw redirect({ to: '/' })
+  return { success: true }
 })
 
 export const exchangeCode = createServerFn({ method: 'GET' })
