@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardHeader, CardBody, CardTitle, CardDescription } from '@/components/ui/card'
+import { GithubAuthButton } from '@/components/github-auth-button'
 import { getUser } from '@/server/auth'
 
 export const Route = createFileRoute('/login')({
@@ -101,6 +102,14 @@ function LoginPage() {
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
+
+          <div className={css({ display: 'flex', alignItems: 'center', gap: '3', my: '5' })}>
+            <span className={css({ flex: '1', h: '1px', bg: 'border.default' })} />
+            <span className={css({ fontSize: 'xs', color: 'fg.muted', textTransform: 'uppercase' })}>or</span>
+            <span className={css({ flex: '1', h: '1px', bg: 'border.default' })} />
+          </div>
+
+          <GithubAuthButton label="Continue with GitHub" />
 
           <div className={css({ mt: '6', textAlign: 'center', fontSize: 'sm' })}>
             <span className={css({ color: 'fg.muted' })}>Don't have an account? </span>

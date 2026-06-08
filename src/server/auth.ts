@@ -22,3 +22,14 @@ export const logout = createServerFn({ method: 'POST' }).handler(async () => {
   await supabase.auth.signOut()
   throw redirect({ to: '/' })
 })
+
+export const exchangeCode = createServerFn({ method: 'GET' })
+  .inputValidator((code: string) => code)
+  .handler(async ({ data: code }) => {
+    const supabase = createClient()
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) {
+      throw redirect({ to: '/login' })
+    }
+    throw redirect({ to: '/dashboard' })
+  })
