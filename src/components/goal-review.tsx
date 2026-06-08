@@ -101,7 +101,9 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
         </p>
       </div>
 
-      <Card className={css({ bg: "brand.subtle!", borderColor: "brand.border!" })}>
+      <Card
+        className={css({ bg: "brand.subtle!", borderColor: "brand.border!" })}
+      >
         <CardHeader className={css({ textAlign: "center" })}>
           <CardTitle className={css({ fontSize: "3xl!" })}>{title}</CardTitle>
           <CardDescription className={css({ fontSize: "base!" })}>
@@ -127,7 +129,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               {remainingCredits}
             </div>
             <div className={css({ fontSize: "xl", color: "fg.muted" })}>
-              credits remaining out of {goal.totalCredits}
+              items remaining out of {goal.totalCredits}
             </div>
             <div
               className={css({ fontSize: "sm", color: "fg.muted", mt: "2" })}
@@ -155,7 +157,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
                 {successRate.toFixed(0)}%
               </div>
               <div className={css({ fontSize: "sm", color: "fg.muted" })}>
-                Credits Saved
+                Items Saved
               </div>
             </div>
             <div

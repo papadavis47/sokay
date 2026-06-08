@@ -111,7 +111,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
     >
       <Card>
         <CardHeader>
-          <CardTitle className={css({ fontSize: "3xl!", color: "brand.solid" })}>
+          <CardTitle
+            className={css({ fontSize: "3xl!", color: "brand.solid" })}
+          >
             Your Sokay Balance
           </CardTitle>
           <CardDescription>
@@ -145,7 +147,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 {remainingCredits}
               </div>
               <div className={css({ fontSize: "xl", color: "fg.muted" })}>
-                credit{remainingCredits !== 1 ? "s" : ""} remaining
+                item{remainingCredits !== 1 ? "s" : ""} remaining
               </div>
               <div
                 className={css({ fontSize: "sm", color: "fg.muted", mt: "2" })}
@@ -207,12 +209,12 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle>You've used all your credits</DialogTitle>
+                <DialogTitle>You've used all your items</DialogTitle>
                 <DialogDescription className={css({ mb: "4" })}>
-                  You've logged all {goal.totalCredits} of your sokay credits
-                  for this period, so there are none left to spend. That's the
-                  limit working as intended—no overlogging. When you're ready,
-                  review how this round went and start a fresh goal.
+                  You've logged all {goal.totalCredits} of your sokay items for
+                  this period, so there are none left to spend. That's the limit
+                  working as intended—no overlogging. When you're ready, review
+                  how this round went and start a fresh goal.
                 </DialogDescription>
                 {error && (
                   <div
@@ -462,7 +464,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
         </Card>
       )}
 
-      <Card className={css({ bg: "brand.subtle!", borderColor: "brand.border!" })}>
+      <Card
+        className={css({ bg: "brand.subtle!", borderColor: "brand.border!" })}
+      >
         <CardBody className={css({ pt: "6" })}>
           <p
             className={css({
@@ -475,7 +479,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
             {remainingCredits > goal.totalCredits * 0.5
               ? "You're doing great! Keep being mindful."
               : remainingCredits > 0
-                ? "You've got this. Make each credit count."
+                ? "You've got this. Make each item count."
                 : "Goal complete! Time to review your progress."}
           </p>
         </CardBody>
