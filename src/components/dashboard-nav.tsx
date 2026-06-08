@@ -4,15 +4,18 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { BrandMark } from '@/components/brand-mark'
 import { MobileNav } from '@/components/mobile-nav'
+import { Avatar } from '@/components/avatar'
 import { logout } from '@/server/auth'
 import type { User } from '@supabase/supabase-js'
 
 export function DashboardNav({
   user,
   displayName,
+  avatarUrl,
 }: {
   user: User
   displayName: string | null
+  avatarUrl: string | null
 }) {
   const router = useRouter()
   const shownName = displayName ?? user.email
@@ -79,6 +82,7 @@ export function DashboardNav({
             gap: '3',
           })}
         >
+          <Avatar src={avatarUrl} name={shownName} size={32} />
           <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
             {shownName}
           </span>
@@ -108,17 +112,26 @@ export function DashboardNav({
           <MobileNav label="Dashboard menu">
             {(close) => (
               <>
-                <span
+                <div
                   className={css({
-                    fontSize: 'sm',
-                    color: 'fg.muted',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '3',
                     px: '3',
                     py: '2',
-                    wordBreak: 'break-all',
                   })}
                 >
-                  {shownName}
-                </span>
+                  <Avatar src={avatarUrl} name={shownName} size={40} />
+                  <span
+                    className={css({
+                      fontSize: 'sm',
+                      color: 'fg.muted',
+                      wordBreak: 'break-all',
+                    })}
+                  >
+                    {shownName}
+                  </span>
+                </div>
                 <Link to="/dashboard" onClick={close}>
                   <Button
                     variant="plain"

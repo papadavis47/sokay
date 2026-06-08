@@ -63,6 +63,7 @@ src/
 ├── components/
 │   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
 │   ├── brand-mark.tsx       # shared "sokay / Process, not perfection" wordmark
+│   ├── avatar.tsx           # round avatar: image, or initials fallback on brand.subtle
 │   ├── home-nav.tsx         # landing-page header (responsive; hamburger below md)
 │   ├── dashboard-nav.tsx    # auth header (responsive; shows display name + Settings link)
 │   ├── mobile-nav.tsx       # shared Motion slide-out drawer used by both navs
@@ -73,7 +74,7 @@ src/
 │   └── history-view.tsx
 ├── server/                  # server functions (createServerFn)
 │   ├── auth.ts              # getUser, requireUser, logout, exchangeCode
-│   ├── profiles.ts          # getProfile, updateProfile
+│   ├── profiles.ts          # getProfile, updateProfile, updateAvatar
 │   ├── goals.ts             # createGoal, startGoalReview, completeGoal
 │   └── debits.ts            # createDebit, updateDebit, deleteDebit
 ├── lib/
@@ -105,7 +106,13 @@ Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` 
 
 - `goals` — `userId`, `totalItems` (5–20, column `total_items`), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
-- `profiles` — `id` (PK = `auth.users.id`, cascade delete), `displayName`, `avatarUrl`. One row per user, kept 1-to-1 with `auth.users` by an `on auth.users` insert trigger (`handle_new_user`, `security definer`). `display_name` is seeded with precedence: signup `options.data.display_name` → OAuth `full_name`/`name` → email local part. Editable later via `/dashboard/settings`.
+- `profiles` — `id` (PK = `auth.users.id`, cascade delete), `displayName`, `avatarUrl`. One row per user, kept 1-to-1 with `auth.users` by an `on auth.users` insert trigger (`handle_new_user`, `security definer`). `display_name` is seeded with precedence: signup `options.data.display_name` → OAuth `full_name`/`name` → email local part. `display_name` and `avatar_url` are both editable later via `/dashboard/settings`; the avatar shows in `dashboard-nav.tsx` (falling back to initials via `avatar.tsx`).
+
+### Avatars (Supabase Storage)
+
+Avatar images live in a **public `avatars` storage bucket** (created in `supabase/migrations/*_avatars_bucket.sql`, mirrored in `supabase-schema.sql`). Files are stored per-user at `<user_id>/avatar.<ext>`; the folder name is the user id so `storage.objects` RLS can scope writes to the owner (`(storage.foldername(name))[1] = auth.uid()::text`) while reads stay public. The bucket caps uploads at 2 MiB and allows `image/jpeg|png|webp|gif`.
+
+The **upload flow is client-side then server-persist**: the settings page uploads the file straight to Storage with the browser client (`upsert: true`), clears any prior file in the user's folder first (so a changed extension leaves no orphan), then calls the `updateAvatar` server fn to save the public URL (with a `?t=` cache-buster). "Remove" deletes the file(s) and sets `avatar_url` to `null`. Storage upsert needs INSERT + SELECT + UPDATE policies (all present), plus DELETE for remove/replace.
 
 ### Goal lifecycle
 
@@ -209,6 +216,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Fixed logout (client-side `invalidate` + `navigate`, no more dead-end).
 - `profiles` table + insert trigger + RLS + backfill; "Display name" on signup.
 - Editable display name at `/dashboard/settings`; nav shows display name; redirects to dashboard on save.
+- Avatar support: public `avatars` Storage bucket + owner-scoped RLS; upload/change/remove on `/dashboard/settings`; avatar shown in nav (initials fallback).
 - Learning notes: `learning/auth-and-dev-prod-supabase.md`, `learning/git-safety-and-prod-sync.md`.
 
 ### To commit (uncommitted work — group into separate commits)
@@ -226,7 +234,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 ### TODO (next steps)
 
 - [ ] Tests: Vitest for server fns (`profiles`, `goals`, `debits` scoping); Playwright for auth flows (email, GitHub, logout, protected-route redirect).
-- [ ] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
+- [x] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
 - [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).
 - [ ] Session refresh on navigation (tokens can go stale).
 - [ ] Prod: create cloud GitHub OAuth app, `supabase link` + `supabase db push`, set deploy env vars.

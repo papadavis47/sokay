@@ -19,7 +19,11 @@ function DashboardLayout() {
 
   return (
     <div className={css({ minH: 'screen', bg: 'bg.canvas' })}>
-      <DashboardNav user={user} displayName={profile?.displayName ?? null} />
+      <DashboardNav
+        user={user}
+        displayName={profile?.displayName ?? null}
+        avatarUrl={profile?.avatarUrl ?? null}
+      />
       <main className={css({ maxW: '7xl', mx: 'auto', px: '4', py: '8' })}>
         <Outlet />
       </main>

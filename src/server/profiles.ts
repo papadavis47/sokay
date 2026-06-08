@@ -36,3 +36,17 @@ export const updateProfile = createServerFn({ method: 'POST' })
 
     return { success: true }
   })
+
+export const updateAvatar = createServerFn({ method: 'POST' })
+  .inputValidator((data: { avatarUrl: string | null }) => data)
+  .handler(async ({ data }) => {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw redirect({ to: '/login' })
+
+    await db.update(profiles)
+      .set({ avatarUrl: data.avatarUrl })
+      .where(eq(profiles.id, user.id))
+
+    return { success: true }
+  })
