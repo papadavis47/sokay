@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI agents working on **Sokay** — a mindful-eating tracker where users set a small "sokay items" limit over a time window and log treats against that limit.
+Guidance for AI agents working on **Sokay** — a mindful-eating tracker where users set a small "sokay items" limit over a time window and log less than ideal against that limit.
 
 ## Tech Stack
 
@@ -62,7 +62,7 @@ src/
 │   └── goal/review/$id.tsx  # /goal/review/:id — end-of-cycle review
 ├── components/
 │   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
-│   ├── brand-mark.tsx       # shared "sokay / Process, not perfection" wordmark
+│   ├── brand-mark.tsx       # shared "sokay / Progress, not perfection" wordmark
 │   ├── avatar.tsx           # round avatar: image, or initials fallback on brand.subtle
 │   ├── home-nav.tsx         # landing-page header (responsive; hamburger below md)
 │   ├── dashboard-nav.tsx    # auth header (responsive; shows display name + Settings link)
@@ -205,6 +205,10 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Don't change the Drizzle schema without also updating `supabase-schema.sql` and the SQL `check` constraints (items 5–20, duration in {1,2,3,6,12}, status enum).
 - Don't introduce a new ORM, query builder, or HTTP framework — server functions + Drizzle is the pattern.
 
+## Learning Folder
+
+- There is a gitignored folder in the root of this project - place information into this folder in the form of .md files - when asked to do so. Everything in the folder will also be gitignored. This is for educational purposes for learning more and more about web dev and programming, and this project as it is built. Do not place anything in this folder unless asked to do so.
+
 ## Status & Checklist (pick up here)
 
 ### Done ✅
@@ -218,18 +222,6 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Editable display name at `/dashboard/settings`; nav shows display name; redirects to dashboard on save.
 - Avatar support: public `avatars` Storage bucket + owner-scoped RLS; upload/change/remove on `/dashboard/settings`; avatar shown in nav (initials fallback).
 - Learning notes: `learning/auth-and-dev-prod-supabase.md`, `learning/git-safety-and-prod-sync.md`.
-
-### To commit (uncommitted work — group into separate commits)
-
-1. **Cookie fix** — `src/lib/supabase/server.ts`
-2. **GitHub OAuth** — `src/server/auth.ts` (exchangeCode), `src/routes/auth/callback.tsx`, `src/components/github-auth-button.tsx`, `src/routes/login.tsx`, `src/routes/signup.tsx` (button), `supabase/config.toml`
-3. **Profiles** — `supabase/migrations/*_profiles.sql`, `src/lib/db/schema.ts`, `supabase-schema.sql`, `src/routes/signup.tsx` (display name field), `src/server/profiles.ts`
-4. **Settings + nav** — `src/routes/dashboard/settings.tsx`, `src/routes/dashboard.tsx`, `src/components/dashboard-nav.tsx`
-5. **Logout fix** — `src/components/dashboard-nav.tsx`, `src/server/auth.ts` (overlaps #2/#4 — stage hunks carefully)
-6. **Supabase scaffold + env docs** — `supabase/` (config.toml, migrations, .gitignore), `.env.local.example`
-
-- ⚠️ `routeTree.gen.ts` regenerates on dev/build — let it; don't hand-edit. It now includes `/auth/callback` and `/dashboard/settings`.
-- ⚠️ Never `git add` `.env*` or `supabase/.env.local` (already gitignored).
 
 ### TODO (next steps)
 
