@@ -6,7 +6,13 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['styled-system/**', '.output/**', '.vinxi/**', 'dist/**', '.tanstack/**'],
+    ignores: [
+      'styled-system/**',
+      '.output/**',
+      '.vinxi/**',
+      'dist/**',
+      '.tanstack/**',
+    ],
   },
   // Must stay last: disables ESLint stylistic rules that conflict with Prettier.
   eslintConfigPrettier,

@@ -46,7 +46,9 @@ export function DashboardNav({
           justifyContent: 'space-between',
         })}
       >
-        <div className={css({ display: 'flex', alignItems: 'center', gap: '6' })}>
+        <div
+          className={css({ display: 'flex', alignItems: 'center', gap: '6' })}
+        >
           <BrandMark to="/dashboard" />
           {/* Desktop nav */}
           <nav

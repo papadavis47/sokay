@@ -47,19 +47,20 @@ const thumbStyles = css({
 
 export type SliderProps = ComponentProps<typeof ArkSlider.Root>
 
-export const Slider = forwardRef<HTMLDivElement, SliderProps>(
-  function Slider({ className, ...props }, ref) {
-    return (
-      <ArkSlider.Root ref={ref} className={cx(rootStyles, className)} {...props}>
-        <ArkSlider.Control className={controlStyles}>
-          <ArkSlider.Track className={trackStyles}>
-            <ArkSlider.Range className={rangeStyles} />
-          </ArkSlider.Track>
-          <ArkSlider.Thumb index={0} className={thumbStyles}>
-            <ArkSlider.HiddenInput />
-          </ArkSlider.Thumb>
-        </ArkSlider.Control>
-      </ArkSlider.Root>
-    )
-  },
-)
+export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
+  { className, ...props },
+  ref,
+) {
+  return (
+    <ArkSlider.Root ref={ref} className={cx(rootStyles, className)} {...props}>
+      <ArkSlider.Control className={controlStyles}>
+        <ArkSlider.Track className={trackStyles}>
+          <ArkSlider.Range className={rangeStyles} />
+        </ArkSlider.Track>
+        <ArkSlider.Thumb index={0} className={thumbStyles}>
+          <ArkSlider.HiddenInput />
+        </ArkSlider.Thumb>
+      </ArkSlider.Control>
+    </ArkSlider.Root>
+  )
+})

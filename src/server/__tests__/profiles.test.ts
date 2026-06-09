@@ -17,7 +17,8 @@ vi.mock('@/lib/db', () => ({
 const USER = { id: 'user-1' }
 const PROFILE = { id: USER.id, displayName: 'Ada', avatarUrl: null }
 
-const { getProfile, updateProfile, updateAvatar } = await import('@/server/profiles')
+const { getProfile, updateProfile, updateAvatar } =
+  await import('@/server/profiles')
 
 beforeEach(() => {
   supabaseMock = createSupabaseMock(USER)
@@ -75,7 +76,9 @@ describe('updateProfile', () => {
       updateProfile({ data: { displayName: '  Ada Lovelace  ' } }),
     )
     expect(dbMock.db.update).toHaveBeenCalledOnce()
-    expect(dbMock.builders[0].calls.set).toEqual({ displayName: 'Ada Lovelace' })
+    expect(dbMock.builders[0].calls.set).toEqual({
+      displayName: 'Ada Lovelace',
+    })
   })
 })
 

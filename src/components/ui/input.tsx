@@ -29,8 +29,9 @@ const inputStyles = css({
 
 export type InputProps = ComponentProps<'input'>
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  function Input({ className, ...props }, ref) {
-    return <input ref={ref} className={cx(inputStyles, className)} {...props} />
-  },
-)
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { className, ...props },
+  ref,
+) {
+  return <input ref={ref} className={cx(inputStyles, className)} {...props} />
+})

@@ -44,9 +44,18 @@ export interface QueryBuilderStub {
   set: ReturnType<typeof vi.fn>
   values: ReturnType<typeof vi.fn>
   limit: ReturnType<typeof vi.fn>
-  then: (resolve: (v: unknown) => unknown, reject?: (e: unknown) => unknown) => Promise<unknown>
+  then: (
+    resolve: (v: unknown) => unknown,
+    reject?: (e: unknown) => unknown,
+  ) => Promise<unknown>
   // Captured arguments for assertions.
-  calls: { from?: unknown; where?: unknown; set?: unknown; values?: unknown; limit?: unknown }
+  calls: {
+    from?: unknown
+    where?: unknown
+    set?: unknown
+    values?: unknown
+    limit?: unknown
+  }
 }
 
 function makeBuilder(result: unknown): QueryBuilderStub {
@@ -75,7 +84,8 @@ function makeBuilder(result: unknown): QueryBuilderStub {
     return builder
   })
   // Make the builder awaitable so `await db.update(...).where(...)` resolves.
-  builder.then = (resolve, reject) => Promise.resolve(result).then(resolve, reject)
+  builder.then = (resolve, reject) =>
+    Promise.resolve(result).then(resolve, reject)
 
   return builder
 }

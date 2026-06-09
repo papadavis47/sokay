@@ -1,52 +1,52 @@
-import { useState } from "react";
-import { useRouter, Link } from "@tanstack/react-router";
-import { css } from "styled-system/css";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react'
+import { useRouter, Link } from '@tanstack/react-router'
+import { css } from 'styled-system/css'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import {
   DialogRoot,
   DialogTrigger,
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { createDebit } from "@/server/debits";
-import { startGoalReview } from "@/server/goals";
-import type { Goal, Debit } from "@/types/database";
+} from '@/components/ui/dialog'
+import { createDebit } from '@/server/debits'
+import { startGoalReview } from '@/server/goals'
+import type { Goal, Debit } from '@/types/database'
 
-const NOTES_MAX_LENGTH = 250;
+const NOTES_MAX_LENGTH = 250
 
 interface GoalDashboardProps {
-  goal: Goal;
-  debits: Debit[];
+  goal: Goal
+  debits: Debit[]
 }
 
 export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
-  const [foodName, setFoodName] = useState("");
-  const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [limitDialogOpen, setLimitDialogOpen] = useState(false);
-  const router = useRouter();
+  const [foodName, setFoodName] = useState('')
+  const [notes, setNotes] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [limitDialogOpen, setLimitDialogOpen] = useState(false)
+  const router = useRouter()
 
-  const usedItems = debits.length;
-  const remainingItems = goal.totalItems - usedItems;
-  const percentageUsed = (usedItems / goal.totalItems) * 100;
+  const usedItems = debits.length
+  const remainingItems = goal.totalItems - usedItems
+  const percentageUsed = (usedItems / goal.totalItems) * 100
 
   const handleDebit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     try {
       await createDebit({
@@ -55,106 +55,106 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
           foodName: foodName.trim(),
           notes: notes.trim() || undefined,
         },
-      });
-      setFoodName("");
-      setNotes("");
-      setDialogOpen(false);
-      router.invalidate();
+      })
+      setFoodName('')
+      setNotes('')
+      setDialogOpen(false)
+      router.invalidate()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const formatDate = (date: Date | null) => {
-    if (!date) return "";
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+    if (!date) return ''
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  }
 
   const getDaysRemaining = () => {
-    const now = new Date();
-    const end = goal.endDate;
-    const diffTime = end.getTime() - now.getTime();
+    const now = new Date()
+    const end = goal.endDate
+    const diffTime = end.getTime() - now.getTime()
     // Never show a negative countdown — the window can't have "less than zero"
     // time left. An expired goal is moved to review on the next dashboard load.
-    return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-  };
+    return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)))
+  }
 
-  const daysRemaining = getDaysRemaining();
+  const daysRemaining = getDaysRemaining()
 
   const handleStartOver = async () => {
-    setError("");
-    setLoading(true);
+    setError('')
+    setLoading(true)
     try {
-      await startGoalReview({ data: { goalId: goal.id } });
-      router.navigate({ to: "/goal/review/$id", params: { id: goal.id } });
+      await startGoalReview({ data: { goalId: goal.id } })
+      router.navigate({ to: '/goal/review/$id', params: { id: goal.id } })
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-      setLoading(false);
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div
       className={css({
-        maxW: "4xl",
-        mx: "auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: "6",
+        maxW: '4xl',
+        mx: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6',
       })}
     >
       <Card>
         <CardHeader>
           <CardTitle
             className={css({
-              fontSize: "2xl!",
-              color: "brand.solid",
-              textTransform: "uppercase",
+              fontSize: '2xl!',
+              color: 'brand.solid',
+              textTransform: 'uppercase',
             })}
           >
             sokay balance
           </CardTitle>
           <CardDescription>
-            Goal period: {formatDate(goal.startDate)} -{" "}
+            Goal period: {formatDate(goal.startDate)} -{' '}
             {formatDate(goal.endDate)} ({daysRemaining} days remaining)
           </CardDescription>
         </CardHeader>
         <CardBody
           className={css({
-            display: "flex",
-            flexDirection: "column",
-            gap: "6",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6',
           })}
         >
           <div
             className={css({
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             })}
           >
-            <div className={css({ textAlign: "center" })}>
+            <div className={css({ textAlign: 'center' })}>
               <div
                 className={css({
-                  fontSize: "6xl",
-                  fontWeight: "bold",
-                  color: "brand.solid",
-                  mb: "2",
+                  fontSize: '6xl',
+                  fontWeight: 'bold',
+                  color: 'brand.solid',
+                  mb: '2',
                 })}
               >
                 {remainingItems}
               </div>
-              <div className={css({ fontSize: "xl", color: "fg.muted" })}>
-                item{remainingItems !== 1 ? "s" : ""} remaining
+              <div className={css({ fontSize: 'xl', color: 'fg.muted' })}>
+                item{remainingItems !== 1 ? 's' : ''} remaining
               </div>
               <div
-                className={css({ fontSize: "sm", color: "fg.muted", mt: "2" })}
+                className={css({ fontSize: 'sm', color: 'fg.muted', mt: '2' })}
               >
                 {usedItems} of {goal.totalItems} used
               </div>
@@ -163,35 +163,35 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
 
           <div
             className={css({
-              display: "flex",
-              flexDirection: "column",
-              gap: "2",
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2',
             })}
           >
             <div
               className={css({
-                w: "full",
-                bg: "gray.a3",
-                borderRadius: "full",
-                h: "4",
-                overflow: "hidden",
+                w: 'full',
+                bg: 'gray.a3',
+                borderRadius: 'full',
+                h: '4',
+                overflow: 'hidden',
               })}
             >
               <div
                 className={css({
-                  h: "full",
-                  bg: "colorPalette.solid.bg",
-                  transition: "all 0.3s",
+                  h: 'full',
+                  bg: 'colorPalette.solid.bg',
+                  transition: 'all 0.3s',
                 })}
                 style={{ width: `${percentageUsed}%` }}
               />
             </div>
             <div
               className={css({
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "md",
-                color: "brand.solid",
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: 'md',
+                color: 'brand.solid',
               })}
             >
               <span>0</span>
@@ -203,20 +203,20 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
             <DialogRoot
               open={limitDialogOpen}
               onOpenChange={(e) => {
-                setLimitDialogOpen(e.open);
-                if (!e.open) setError("");
+                setLimitDialogOpen(e.open)
+                if (!e.open) setError('')
               }}
             >
               <DialogTrigger asChild>
                 <Button
                   size="lg"
                   className={css({
-                    w: "full",
-                    color: "brand.solid!",
-                    borderWidth: "1px",
-                    borderColor: "brand.solid",
-                    h: "auto!",
-                    py: "4",
+                    w: 'full',
+                    color: 'brand.solid!',
+                    borderWidth: '1px',
+                    borderColor: 'brand.solid',
+                    h: 'auto!',
+                    py: '4',
                   })}
                 >
                   Log an Item
@@ -224,7 +224,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle>You've used all your items</DialogTitle>
-                <DialogDescription className={css({ mb: "4" })}>
+                <DialogDescription className={css({ mb: '4' })}>
                   You've logged all {goal.totalItems} of your sokay items for
                   this period. That's the limit working as intended—no
                   overlogging. When you're ready, review how this round went and
@@ -233,12 +233,12 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 {error && (
                   <div
                     className={css({
-                      fontSize: "sm",
-                      color: "red.11",
-                      bg: "red.a3",
-                      p: "3",
-                      borderRadius: "l2",
-                      mb: "4",
+                      fontSize: 'sm',
+                      color: 'red.11',
+                      bg: 'red.a3',
+                      p: '3',
+                      borderRadius: 'l2',
+                      mb: '4',
                     })}
                   >
                     {error}
@@ -246,9 +246,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 )}
                 <div
                   className={css({
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: "2",
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: '2',
                   })}
                 >
                   <Button
@@ -264,7 +264,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     onClick={handleStartOver}
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Review & Start Over"}
+                    {loading ? 'Loading...' : 'Review & Start Over'}
                   </Button>
                 </div>
               </DialogContent>
@@ -273,11 +273,11 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
             <DialogRoot
               open={dialogOpen}
               onOpenChange={(e) => {
-                setDialogOpen(e.open);
+                setDialogOpen(e.open)
                 if (!e.open) {
-                  setFoodName("");
-                  setNotes("");
-                  setError("");
+                  setFoodName('')
+                  setNotes('')
+                  setError('')
                 }
               }}
             >
@@ -285,42 +285,42 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 <Button
                   size="lg"
                   className={css({
-                    w: "full",
-                    color: "brand.solid!",
-                    borderWidth: "1px",
-                    borderColor: "brand.solid",
-                    h: "auto!",
-                    py: "4",
+                    w: 'full',
+                    color: 'brand.solid!',
+                    borderWidth: '1px',
+                    borderColor: 'brand.solid',
+                    h: 'auto!',
+                    py: '4',
                   })}
                 >
                   Log an Item
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle className={css({ color: "brand.solid!" })}>
+                <DialogTitle className={css({ color: 'brand.solid!' })}>
                   Log an Item
                 </DialogTitle>
-                <DialogDescription className={css({ mb: "4", pt: "2" })}>
+                <DialogDescription className={css({ mb: '4', pt: '2' })}>
                   What did you eat? Be honest—this is for you, not judgment.
                 </DialogDescription>
                 <form
                   onSubmit={handleDebit}
                   className={css({
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "4",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4',
                   })}
                 >
                   <div
                     className={css({
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2',
                     })}
                   >
                     <Label
                       htmlFor="foodName"
-                      className={css({ color: "brand.solid!" })}
+                      className={css({ color: 'brand.solid!' })}
                     >
                       Food or Drink
                     </Label>
@@ -337,31 +337,31 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
 
                   <div
                     className={css({
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2',
                     })}
                   >
                     <div
                       className={css({
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                       })}
                     >
                       <Label
                         htmlFor="notes"
-                        className={css({ color: "brand.solid!" })}
+                        className={css({ color: 'brand.solid!' })}
                       >
                         Notes (optional)
                       </Label>
                       <span
                         className={css({
-                          fontSize: "xs",
+                          fontSize: 'xs',
                           color:
                             notes.length > NOTES_MAX_LENGTH
-                              ? "red.11"
-                              : "fg.muted",
+                              ? 'red.11'
+                              : 'fg.muted',
                         })}
                       >
                         {notes.length} / {NOTES_MAX_LENGTH}
@@ -381,11 +381,11 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   {error && (
                     <div
                       className={css({
-                        fontSize: "sm",
-                        color: "red.11",
-                        bg: "red.a3",
-                        p: "3",
-                        borderRadius: "l2",
+                        fontSize: 'sm',
+                        color: 'red.11',
+                        bg: 'red.a3',
+                        p: '3',
+                        borderRadius: 'l2',
                       })}
                     >
                       {error}
@@ -394,9 +394,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
 
                   <div
                     className={css({
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      gap: "2",
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      gap: '2',
                     })}
                   >
                     <Button
@@ -404,16 +404,16 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                       variant="outline"
                       onClick={() => setDialogOpen(false)}
                       disabled={loading}
-                      className={css({ color: "brand.solid!" })}
+                      className={css({ color: 'brand.solid!' })}
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={loading}
-                      className={css({ color: "brand.solid!" })}
+                      className={css({ color: 'brand.solid!' })}
                     >
-                      {loading ? "Logging..." : "Log Item"}
+                      {loading ? 'Logging...' : 'Log Item'}
                     </Button>
                   </div>
                 </form>
@@ -432,43 +432,43 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
           <CardBody>
             <div
               className={css({
-                display: "flex",
-                flexDirection: "column",
-                gap: "3",
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '3',
               })}
             >
               {debits.slice(0, 5).map((debit) => (
                 <div
                   key={debit.id}
                   className={css({
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: "3",
-                    p: "3",
-                    borderRadius: "l2",
-                    bg: "gray.a2",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '3',
+                    p: '3',
+                    borderRadius: 'l2',
+                    bg: 'gray.a2',
                   })}
                 >
                   <div
                     className={css({
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "1",
-                      minW: "0",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1',
+                      minW: '0',
                     })}
                   >
-                    <span className={css({ fontWeight: "medium" })}>
+                    <span className={css({ fontWeight: 'medium' })}>
                       {debit.foodName}
                     </span>
                     {debit.notes && (
                       <span
                         className={css({
-                          fontSize: "sm",
-                          fontStyle: "italic",
-                          color: "fg.muted",
-                          whiteSpace: "pre-wrap",
-                          wordBreak: "break-word",
+                          fontSize: 'sm',
+                          fontStyle: 'italic',
+                          color: 'fg.muted',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
                         })}
                       >
                         {debit.notes}
@@ -477,9 +477,9 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   </div>
                   <span
                     className={css({
-                      fontSize: "sm",
-                      color: "fg.muted",
-                      whiteSpace: "nowrap",
+                      fontSize: 'sm',
+                      color: 'fg.muted',
+                      whiteSpace: 'nowrap',
                     })}
                   >
                     {formatDate(debit.debitedAt)}
@@ -491,12 +491,12 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               <Link
                 to="/dashboard/history"
                 className={css({
-                  display: "block",
-                  textAlign: "center",
-                  mt: "4",
-                  fontSize: "sm",
-                  color: "colorPalette.default",
-                  _hover: { textDecoration: "underline" },
+                  display: 'block',
+                  textAlign: 'center',
+                  mt: '4',
+                  fontSize: 'sm',
+                  color: 'colorPalette.default',
+                  _hover: { textDecoration: 'underline' },
                 })}
               >
                 View all activity →
@@ -507,25 +507,25 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
       )}
 
       <Card
-        className={css({ bg: "brand.subtle!", borderColor: "brand.border!" })}
+        className={css({ bg: 'brand.subtle!', borderColor: 'brand.border!' })}
       >
-        <CardBody className={css({ pt: "6" })}>
+        <CardBody className={css({ pt: '6' })}>
           <p
             className={css({
-              textAlign: "center",
-              fontSize: "lg",
-              fontStyle: "italic",
-              color: "fg.default",
+              textAlign: 'center',
+              fontSize: 'lg',
+              fontStyle: 'italic',
+              color: 'fg.default',
             })}
           >
             {remainingItems > goal.totalItems * 0.5
               ? "You're doing great!"
               : remainingItems > 0
-                ? "Progress, not perfection."
-                : "Goal complete! Time to review your progress."}
+                ? 'Progress, not perfection.'
+                : 'Goal complete! Time to review your progress.'}
           </p>
         </CardBody>
       </Card>
     </div>
-  );
+  )
 }

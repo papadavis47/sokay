@@ -7,7 +7,13 @@ import { Avatar } from '@/components/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardHeader, CardBody, CardTitle, CardDescription } from '@/components/ui/card'
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
 
 export const Route = createFileRoute('/dashboard/settings')({
   loader: () => getProfile(),
@@ -62,7 +68,9 @@ function SettingsPage() {
       const supabase = createClient()
 
       // Clear any previous avatar so changing file type leaves no orphans.
-      const { data: existing } = await supabase.storage.from('avatars').list(userId)
+      const { data: existing } = await supabase.storage
+        .from('avatars')
+        .list(userId)
       if (existing?.length) {
         await supabase.storage
           .from('avatars')
@@ -75,12 +83,18 @@ function SettingsPage() {
         .upload(path, file, { upsert: true, contentType: file.type })
       if (uploadError) throw uploadError
 
-      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('avatars').getPublicUrl(path)
       // Cache-bust so the new image shows immediately at the same path.
-      await updateAvatar({ data: { avatarUrl: `${publicUrl}?t=${Date.now()}` } })
+      await updateAvatar({
+        data: { avatarUrl: `${publicUrl}?t=${Date.now()}` },
+      })
       await router.invalidate()
     } catch (err) {
-      setAvatarError(err instanceof Error ? err.message : 'Could not upload image')
+      setAvatarError(
+        err instanceof Error ? err.message : 'Could not upload image',
+      )
     } finally {
       setAvatarBusy(false)
     }
@@ -92,7 +106,9 @@ function SettingsPage() {
     setAvatarBusy(true)
     try {
       const supabase = createClient()
-      const { data: existing } = await supabase.storage.from('avatars').list(userId)
+      const { data: existing } = await supabase.storage
+        .from('avatars')
+        .list(userId)
       if (existing?.length) {
         await supabase.storage
           .from('avatars')
@@ -101,7 +117,9 @@ function SettingsPage() {
       await updateAvatar({ data: { avatarUrl: null } })
       await router.invalidate()
     } catch (err) {
-      setAvatarError(err instanceof Error ? err.message : 'Could not remove image')
+      setAvatarError(
+        err instanceof Error ? err.message : 'Could not remove image',
+      )
     } finally {
       setAvatarBusy(false)
     }
@@ -116,12 +134,40 @@ function SettingsPage() {
         <CardDescription>Choose how you appear in the app.</CardDescription>
       </CardHeader>
       <CardBody>
-        <div className={css({ display: 'flex', flexDirection: 'column', gap: '6' })}>
-          <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
+        <div
+          className={css({
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6',
+          })}
+        >
+          <div
+            className={css({
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2',
+            })}
+          >
             <Label>Avatar</Label>
-            <div className={css({ display: 'flex', alignItems: 'center', gap: '4' })}>
-              <Avatar src={profile?.avatarUrl ?? null} name={shownName} size="lg" />
-              <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
+            <div
+              className={css({
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4',
+              })}
+            >
+              <Avatar
+                src={profile?.avatarUrl ?? null}
+                name={shownName}
+                size="lg"
+              />
+              <div
+                className={css({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2',
+                })}
+              >
                 <div className={css({ display: 'flex', gap: '2' })}>
                   <Button
                     type="button"
@@ -130,7 +176,11 @@ function SettingsPage() {
                     disabled={avatarBusy || !userId}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    {avatarBusy ? 'Working...' : profile?.avatarUrl ? 'Change' : 'Upload'}
+                    {avatarBusy
+                      ? 'Working...'
+                      : profile?.avatarUrl
+                        ? 'Change'
+                        : 'Upload'}
                   </Button>
                   {profile?.avatarUrl && (
                     <Button
@@ -158,14 +208,35 @@ function SettingsPage() {
               className={css({ display: 'none' })}
             />
             {avatarError && (
-              <div className={css({ fontSize: 'sm', color: 'red.11', bg: 'red.a3', p: '3', borderRadius: 'l2' })}>
+              <div
+                className={css({
+                  fontSize: 'sm',
+                  color: 'red.11',
+                  bg: 'red.a3',
+                  p: '3',
+                  borderRadius: 'l2',
+                })}
+              >
                 {avatarError}
               </div>
             )}
           </div>
 
-          <form onSubmit={handleSubmit} className={css({ display: 'flex', flexDirection: 'column', gap: '4' })}>
-            <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
+          <form
+            onSubmit={handleSubmit}
+            className={css({
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4',
+            })}
+          >
+            <div
+              className={css({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2',
+              })}
+            >
               <Label htmlFor="displayName">Display name</Label>
               <Input
                 id="displayName"
@@ -179,12 +250,24 @@ function SettingsPage() {
             </div>
 
             {error && (
-              <div className={css({ fontSize: 'sm', color: 'red.11', bg: 'red.a3', p: '3', borderRadius: 'l2' })}>
+              <div
+                className={css({
+                  fontSize: 'sm',
+                  color: 'red.11',
+                  bg: 'red.a3',
+                  p: '3',
+                  borderRadius: 'l2',
+                })}
+              >
                 {error}
               </div>
             )}
 
-            <Button type="submit" disabled={saving || displayName.trim().length === 0} className={css({ alignSelf: 'flex-start' })}>
+            <Button
+              type="submit"
+              disabled={saving || displayName.trim().length === 0}
+              className={css({ alignSelf: 'flex-start' })}
+            >
               {saving ? 'Saving...' : 'Save changes'}
             </Button>
           </form>

@@ -35,7 +35,11 @@ export type TextareaProps = ComponentProps<'textarea'>
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea({ className, ...props }, ref) {
     return (
-      <textarea ref={ref} className={cx(textareaStyles, className)} {...props} />
+      <textarea
+        ref={ref}
+        className={cx(textareaStyles, className)}
+        {...props}
+      />
     )
   },
 )

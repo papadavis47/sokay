@@ -6,10 +6,14 @@ import { goals } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 
 export const createGoal = createServerFn({ method: 'POST' })
-  .inputValidator((data: { totalItems: number; durationMonths: number }) => data)
+  .inputValidator(
+    (data: { totalItems: number; durationMonths: number }) => data,
+  )
   .handler(async ({ data }) => {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) throw redirect({ to: '/login' })
 
     const startDate = new Date()
@@ -32,10 +36,13 @@ export const startGoalReview = createServerFn({ method: 'POST' })
   .inputValidator((data: { goalId: string }) => data)
   .handler(async ({ data }) => {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) throw redirect({ to: '/login' })
 
-    await db.update(goals)
+    await db
+      .update(goals)
       .set({ status: 'reviewing' })
       .where(and(eq(goals.id, data.goalId), eq(goals.userId, user.id)))
 
@@ -46,10 +53,13 @@ export const completeGoal = createServerFn({ method: 'POST' })
   .inputValidator((data: { goalId: string }) => data)
   .handler(async ({ data }) => {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) throw redirect({ to: '/login' })
 
-    await db.update(goals)
+    await db
+      .update(goals)
       .set({ status: 'completed' })
       .where(and(eq(goals.id, data.goalId), eq(goals.userId, user.id)))
 

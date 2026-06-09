@@ -48,31 +48,50 @@ const descriptionStyles = css({
 export const DialogRoot = ArkDialog.Root
 export const DialogTrigger = ArkDialog.Trigger
 
-export const DialogContent = forwardRef<HTMLDivElement, ComponentProps<typeof ArkDialog.Content>>(
-  function DialogContent({ className, children, ...props }, ref) {
-    return (
-      <Portal>
-        <ArkDialog.Backdrop className={backdropStyles} />
-        <ArkDialog.Positioner className={positionerStyles}>
-          <ArkDialog.Content ref={ref} className={cx(contentStyles, className)} {...props}>
-            {children}
-          </ArkDialog.Content>
-        </ArkDialog.Positioner>
-      </Portal>
-    )
-  },
-)
+export const DialogContent = forwardRef<
+  HTMLDivElement,
+  ComponentProps<typeof ArkDialog.Content>
+>(function DialogContent({ className, children, ...props }, ref) {
+  return (
+    <Portal>
+      <ArkDialog.Backdrop className={backdropStyles} />
+      <ArkDialog.Positioner className={positionerStyles}>
+        <ArkDialog.Content
+          ref={ref}
+          className={cx(contentStyles, className)}
+          {...props}
+        >
+          {children}
+        </ArkDialog.Content>
+      </ArkDialog.Positioner>
+    </Portal>
+  )
+})
 
-export const DialogTitle = forwardRef<HTMLHeadingElement, ComponentProps<typeof ArkDialog.Title>>(
-  function DialogTitle({ className, ...props }, ref) {
-    return <ArkDialog.Title ref={ref} className={cx(titleStyles, className)} {...props} />
-  },
-)
+export const DialogTitle = forwardRef<
+  HTMLHeadingElement,
+  ComponentProps<typeof ArkDialog.Title>
+>(function DialogTitle({ className, ...props }, ref) {
+  return (
+    <ArkDialog.Title
+      ref={ref}
+      className={cx(titleStyles, className)}
+      {...props}
+    />
+  )
+})
 
-export const DialogDescription = forwardRef<HTMLParagraphElement, ComponentProps<typeof ArkDialog.Description>>(
-  function DialogDescription({ className, ...props }, ref) {
-    return <ArkDialog.Description ref={ref} className={cx(descriptionStyles, className)} {...props} />
-  },
-)
+export const DialogDescription = forwardRef<
+  HTMLParagraphElement,
+  ComponentProps<typeof ArkDialog.Description>
+>(function DialogDescription({ className, ...props }, ref) {
+  return (
+    <ArkDialog.Description
+      ref={ref}
+      className={cx(descriptionStyles, className)}
+      {...props}
+    />
+  )
+})
 
 export const DialogCloseTrigger = ArkDialog.CloseTrigger

@@ -1,29 +1,29 @@
-import { css } from "styled-system/css";
-import { SokayMark } from "@/components/sokay-mark";
+import { css } from 'styled-system/css'
+import { SokayMark } from '@/components/sokay-mark'
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
+} from '@/components/ui/card'
 
 export function HowItWorks() {
   return (
     <div
       className={css({
-        maxW: "7xl",
-        mx: "auto",
-        px: "4",
-        pb: { base: "6", md: "8" },
+        maxW: '7xl',
+        mx: 'auto',
+        px: '4',
+        pb: { base: '6', md: '8' },
       })}
     >
       {/* Brand ring, centered above the quote */}
       <div
         className={css({
-          display: "flex",
-          justifyContent: "center",
-          color: "brand.solid",
-          mb: { base: "6", md: "8" },
+          display: 'flex',
+          justifyContent: 'center',
+          color: 'brand.solid',
+          mb: { base: '6', md: '8' },
         })}
       >
         <SokayMark size={144} />
@@ -31,16 +31,16 @@ export function HowItWorks() {
 
       <blockquote
         className={css({
-          textAlign: "center",
-          color: "fg.default",
-          fontSize: { base: "3xl", md: "5xl" },
-          fontWeight: "bold",
-          letterSpacing: "tight",
-          lineHeight: "tight",
-          maxW: "3xl",
-          mx: "auto",
-          textWrap: "balance",
-          mb: { base: "12", md: "16" },
+          textAlign: 'center',
+          color: 'fg.default',
+          fontSize: { base: '3xl', md: '5xl' },
+          fontWeight: 'bold',
+          letterSpacing: 'tight',
+          lineHeight: 'tight',
+          maxW: '3xl',
+          mx: 'auto',
+          textWrap: 'balance',
+          mb: { base: '12', md: '16' },
         })}
       >
         Don't let perfection be the enemy of good
@@ -48,9 +48,9 @@ export function HowItWorks() {
 
       <div
         className={css({
-          display: "grid",
-          gridTemplateColumns: { base: "1fr", md: "repeat(3, 1fr)" },
-          gap: "6",
+          display: 'grid',
+          gridTemplateColumns: { base: '1fr', md: 'repeat(3, 1fr)' },
+          gap: '6',
         })}
       >
         <Card size="lg">
@@ -69,7 +69,7 @@ export function HowItWorks() {
             <CardDescription>
               Log food items when you feel you have strayed from your ideal way
               of eating. Stay aware without judgment. Remember where you want to
-              go - and stay realistic about the environment you live in.{" "}
+              go - and stay realistic about the environment you live in.{' '}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -77,12 +77,12 @@ export function HowItWorks() {
           <CardHeader>
             <CardTitle>Build In Forgiveness</CardTitle>
             <CardDescription>
-              The process is about{" "}
+              The process is about{' '}
               <span
-                className={css({ color: "fg.default", fontWeight: "medium" })}
+                className={css({ color: 'fg.default', fontWeight: 'medium' })}
               >
                 not
-              </span>{" "}
+              </span>{' '}
               beating yourself up. The important thing is staying on the path.
               There will be ups and downs. Plan for them and anticipate falls.
               Simply pick yourself up and keep moving forward.
@@ -91,5 +91,5 @@ export function HowItWorks() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

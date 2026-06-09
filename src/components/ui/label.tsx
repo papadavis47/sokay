@@ -11,8 +11,9 @@ const labelStyles = css({
 
 export type LabelProps = ComponentProps<'label'>
 
-export const Label = forwardRef<HTMLLabelElement, LabelProps>(
-  function Label({ className, ...props }, ref) {
-    return <label ref={ref} className={cx(labelStyles, className)} {...props} />
-  },
-)
+export const Label = forwardRef<HTMLLabelElement, LabelProps>(function Label(
+  { className, ...props },
+  ref,
+) {
+  return <label ref={ref} className={cx(labelStyles, className)} {...props} />
+})

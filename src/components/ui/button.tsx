@@ -76,7 +76,10 @@ export interface ButtonProps extends ComponentProps<typeof ark.button> {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ variant = 'solid', size = 'md', className, ...props }, ref) {
+  function Button(
+    { variant = 'solid', size = 'md', className, ...props },
+    ref,
+  ) {
     return (
       <ark.button
         type="button"

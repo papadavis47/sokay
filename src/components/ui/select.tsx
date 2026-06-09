@@ -105,11 +105,7 @@ export const SelectItem = forwardRef<
   ComponentProps<typeof ArkSelect.Item>
 >(function SelectItem({ className, children, ...props }, ref) {
   return (
-    <ArkSelect.Item
-      ref={ref}
-      className={cx(itemStyles, className)}
-      {...props}
-    >
+    <ArkSelect.Item ref={ref} className={cx(itemStyles, className)} {...props}>
       <ArkSelect.ItemText>{children}</ArkSelect.ItemText>
     </ArkSelect.Item>
   )

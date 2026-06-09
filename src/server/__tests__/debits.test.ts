@@ -24,7 +24,8 @@ const ACTIVE_GOAL = {
 }
 
 // Imported after mocks are registered.
-const { createDebit, updateDebit, deleteDebit } = await import('@/server/debits')
+const { createDebit, updateDebit, deleteDebit } =
+  await import('@/server/debits')
 
 beforeEach(() => {
   supabaseMock = createSupabaseMock(USER)
@@ -106,7 +107,9 @@ describe('createDebit', () => {
   it('stores null notes when notes are blank', async () => {
     dbMock = createDbMock([[ACTIVE_GOAL], [{ used: 0 }]])
     await callServerFn(() =>
-      createDebit({ data: { goalId: 'goal-1', foodName: 'Cake', notes: '   ' } }),
+      createDebit({
+        data: { goalId: 'goal-1', foodName: 'Cake', notes: '   ' },
+      }),
     )
     expect(dbMock.builders[2].calls.values).toMatchObject({ notes: null })
   })
@@ -128,7 +131,9 @@ describe('updateDebit', () => {
   it('updates with the new values', async () => {
     dbMock = createDbMock([undefined])
     await callServerFn(() =>
-      updateDebit({ data: { debitId: 'd-1', foodName: 'Pie', notes: 'a slice' } }),
+      updateDebit({
+        data: { debitId: 'd-1', foodName: 'Pie', notes: 'a slice' },
+      }),
     )
     expect(dbMock.db.update).toHaveBeenCalledOnce()
     expect(dbMock.builders[0].calls.set).toEqual({

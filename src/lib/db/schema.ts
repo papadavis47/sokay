@@ -5,16 +5,22 @@ export const goals = pgTable('goals', {
   userId: uuid('user_id').notNull(),
   totalItems: integer('total_items').notNull(),
   durationMonths: integer('duration_months').notNull(),
-  startDate: timestamp('start_date', { withTimezone: true }).notNull().defaultNow(),
+  startDate: timestamp('start_date', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   endDate: timestamp('end_date', { withTimezone: true }).notNull(),
-  status: text('status', { enum: ['active', 'completed', 'reviewing'] }).notNull().default('active'),
+  status: text('status', { enum: ['active', 'completed', 'reviewing'] })
+    .notNull()
+    .default('active'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 })
 
 export const debits = pgTable('debits', {
   id: uuid('id').defaultRandom().primaryKey(),
-  goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
+  goalId: uuid('goal_id')
+    .notNull()
+    .references(() => goals.id, { onDelete: 'cascade' }),
   userId: uuid('user_id').notNull(),
   foodName: text('food_name').notNull(),
   notes: text('notes'),

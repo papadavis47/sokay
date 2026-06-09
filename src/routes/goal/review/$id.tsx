@@ -16,7 +16,8 @@ const getReviewData = createServerFn({ method: 'GET' })
     } = await supabase.auth.getUser()
     if (!user) throw redirect({ to: '/login' })
 
-    const [goal] = await db.select()
+    const [goal] = await db
+      .select()
       .from(goals)
       .where(and(eq(goals.id, data.id), eq(goals.userId, user.id)))
       .limit(1)
@@ -25,7 +26,8 @@ const getReviewData = createServerFn({ method: 'GET' })
       throw redirect({ to: '/dashboard' })
     }
 
-    const goalDebits = await db.select()
+    const goalDebits = await db
+      .select()
       .from(debits)
       .where(eq(debits.goalId, goal.id))
       .orderBy(desc(debits.debitedAt))

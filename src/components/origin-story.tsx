@@ -1,55 +1,55 @@
-import { css } from "styled-system/css";
+import { css } from 'styled-system/css'
 
 export function OriginStory() {
   return (
     <section
       className={css({
-        maxW: "5xl",
-        mx: "auto",
-        px: "4",
-        py: { base: "12", md: "20" },
-        display: "flex",
-        flexDirection: "column",
-        gap: { base: "8", md: "12" },
+        maxW: '5xl',
+        mx: 'auto',
+        px: '4',
+        py: { base: '12', md: '20' },
+        display: 'flex',
+        flexDirection: 'column',
+        gap: { base: '8', md: '12' },
       })}
     >
       {/* Pull-quote lead-in */}
       <blockquote
         className={css({
-          textAlign: "center",
-          fontSize: { base: "2xl", md: "4xl" },
-          fontWeight: "bold",
-          letterSpacing: "tight",
-          lineHeight: "tight",
-          color: "fg.default",
-          maxW: "3xl",
-          mx: "auto",
-          textWrap: "balance",
+          textAlign: 'center',
+          fontSize: { base: '2xl', md: '4xl' },
+          fontWeight: 'bold',
+          letterSpacing: 'tight',
+          lineHeight: 'tight',
+          color: 'fg.default',
+          maxW: '3xl',
+          mx: 'auto',
+          textWrap: 'balance',
         })}
       >
-        This app was born out of my own{" "}
-        <span className={css({ color: "brand.solid" })}>personal struggle</span>
+        This app was born out of my own{' '}
+        <span className={css({ color: 'brand.solid' })}>personal struggle</span>
         .
       </blockquote>
 
       {/* Single-column story: the problem & the reframe */}
       <div
         className={css({
-          display: "flex",
-          flexDirection: "column",
-          gap: "4",
-          color: "fg.muted",
-          fontSize: "lg",
-          lineHeight: "relaxed",
-          maxW: "2xl",
-          mx: "auto",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4',
+          color: 'fg.muted',
+          fontSize: 'lg',
+          lineHeight: 'relaxed',
+          maxW: '2xl',
+          mx: 'auto',
         })}
       >
         <h3
           className={css({
-            fontSize: "2xl",
-            fontWeight: "semibold",
-            color: "fg.default",
+            fontSize: '2xl',
+            fontWeight: 'semibold',
+            color: 'fg.default',
           })}
         >
           The current we're swimming against
@@ -63,10 +63,10 @@ export function OriginStory() {
           completely.
         </p>
         <p>
-          Many people resolve to avoid junk food—items they{" "}
-          <span className={css({ color: "fg.default", fontWeight: "medium" })}>
+          Many people resolve to avoid junk food—items they{' '}
+          <span className={css({ color: 'fg.default', fontWeight: 'medium' })}>
             fully know
-          </span>{" "}
+          </span>{' '}
           are not good for their health. But short-term ease, comfort, or
           pleasure can take precedence over long-term health and happiness.
         </p>
@@ -82,10 +82,10 @@ export function OriginStory() {
           healthy way of eating.
         </p>
         <p>
-          It is about the{" "}
-          <span className={css({ color: "fg.default", fontWeight: "medium" })}>
+          It is about the{' '}
+          <span className={css({ color: 'fg.default', fontWeight: 'medium' })}>
             process
-          </span>{" "}
+          </span>{' '}
           of nurturing the body every day. It is about focusing on the things
           that truly nurture us—while including self-forgiveness and simply
           getting back on track.
@@ -95,21 +95,21 @@ export function OriginStory() {
       {/* Closing mantra */}
       <div
         className={css({
-          display: "flex",
-          flexDirection: "column",
-          gap: "2",
-          textAlign: "center",
-          fontSize: { base: "xl", md: "2xl" },
-          fontWeight: "medium",
-          color: "fg.default",
-          maxW: "2xl",
-          mx: "auto",
-          textWrap: "balance",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2',
+          textAlign: 'center',
+          fontSize: { base: 'xl', md: '2xl' },
+          fontWeight: 'medium',
+          color: 'fg.default',
+          maxW: '2xl',
+          mx: 'auto',
+          textWrap: 'balance',
         })}
       >
         <p>Everyone is going to fall prey to this from time to time.</p>
         <p>But the journey goes on.</p>
       </div>
     </section>
-  );
+  )
 }

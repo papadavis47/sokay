@@ -16,7 +16,8 @@ vi.mock('@/lib/db', () => ({
 
 const USER = { id: 'user-1' }
 
-const { createGoal, startGoalReview, completeGoal } = await import('@/server/goals')
+const { createGoal, startGoalReview, completeGoal } =
+  await import('@/server/goals')
 
 beforeEach(() => {
   supabaseMock = createSupabaseMock(USER)

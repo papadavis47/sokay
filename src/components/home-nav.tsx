@@ -1,49 +1,49 @@
-import { Link } from "@tanstack/react-router";
-import { css } from "styled-system/css";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { BrandMark } from "@/components/brand-mark";
-import { MobileNav } from "@/components/mobile-nav";
+import { Link } from '@tanstack/react-router'
+import { css } from 'styled-system/css'
+import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { BrandMark } from '@/components/brand-mark'
+import { MobileNav } from '@/components/mobile-nav'
 
 const brandLinkStyles = css({
-  color: "brand.solid",
-  _hover: { bg: "brand.subtle" },
-});
+  color: 'brand.solid',
+  _hover: { bg: 'brand.subtle' },
+})
 
 export function HomeNav() {
   return (
     <header
       className={css({
-        borderBottomWidth: "1px",
-        borderColor: "border.default",
-        bg: "bg.default/95",
-        backdropFilter: "blur(8px)",
+        borderBottomWidth: '1px',
+        borderColor: 'border.default',
+        bg: 'bg.default/95',
+        backdropFilter: 'blur(8px)',
       })}
     >
       <div
         className={css({
-          maxW: "7xl",
-          mx: "auto",
-          px: "4",
-          display: "flex",
-          h: "16",
-          alignItems: "center",
-          justifyContent: "space-between",
+          maxW: '7xl',
+          mx: 'auto',
+          px: '4',
+          display: 'flex',
+          h: '16',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         })}
       >
         <BrandMark to="/" />
 
         <div
-          className={css({ display: "flex", alignItems: "center", gap: "3" })}
+          className={css({ display: 'flex', alignItems: 'center', gap: '3' })}
         >
           <ThemeToggle />
 
           {/* Desktop nav */}
           <nav
             className={css({
-              display: { base: "none", md: "flex" },
-              alignItems: "center",
-              gap: "3",
+              display: { base: 'none', md: 'flex' },
+              alignItems: 'center',
+              gap: '3',
             })}
           >
             <Link to="/login">
@@ -59,7 +59,7 @@ export function HomeNav() {
           </nav>
 
           {/* Mobile nav */}
-          <div className={css({ display: { base: "block", md: "none" } })}>
+          <div className={css({ display: { base: 'block', md: 'none' } })}>
             <MobileNav label="Menu">
               {(close) => (
                 <>
@@ -67,10 +67,10 @@ export function HomeNav() {
                     <Button
                       variant="plain"
                       className={css({
-                        w: "full",
-                        justifyContent: "flex-start",
-                        color: "brand.solid",
-                        _hover: { bg: "brand.subtle" },
+                        w: 'full',
+                        justifyContent: 'flex-start',
+                        color: 'brand.solid',
+                        _hover: { bg: 'brand.subtle' },
                       })}
                     >
                       Log in
@@ -80,10 +80,10 @@ export function HomeNav() {
                     <Button
                       variant="plain"
                       className={css({
-                        w: "full",
-                        justifyContent: "flex-start",
-                        color: "brand.solid",
-                        _hover: { bg: "brand.subtle" },
+                        w: 'full',
+                        justifyContent: 'flex-start',
+                        color: 'brand.solid',
+                        _hover: { bg: 'brand.subtle' },
                       })}
                     >
                       Get Started
@@ -96,5 +96,5 @@ export function HomeNav() {
         </div>
       </div>
     </header>
-  );
+  )
 }
