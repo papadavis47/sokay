@@ -10,7 +10,7 @@ Guidance for AI agents working on **Sokay** — a mindful-eating tracker where u
 - **Backend**: TanStack Start server functions (`createServerFn`) running in the same Vite app
 - **Auth**: Supabase Auth via `@supabase/ssr` (browser + server clients)
 - **Database**: Supabase Postgres accessed through Drizzle ORM (`postgres-js` driver)
-- **Tooling**: Vite, TypeScript (strict), ESLint, pnpm, Panda CSS codegen
+- **Tooling**: Vite, TypeScript (strict), ESLint, Prettier (formatting), pnpm, Panda CSS codegen
 
 ## Commands
 
@@ -19,6 +19,8 @@ pnpm dev            # vite dev server on http://localhost:3000
 pnpm build          # production build
 pnpm start          # run built server (node .output/server/index.mjs)
 pnpm lint           # eslint src
+pnpm format         # prettier --write . (format all files)
+pnpm format:check   # prettier --check . (CI-safe, no writes)
 pnpm prepare        # panda codegen — regenerates styled-system/
 ```
 
@@ -196,7 +198,8 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Components are function declarations with explicit prop interfaces (see `HistoryViewProps` in `src/components/history-view.tsx`).
 - File naming: kebab-case for component files (`goal-setup-form.tsx`), PascalCase exports.
 - Keep server logic out of components — call server functions from event handlers / loaders.
-- Run `pnpm lint` before declaring a task done.
+- **Formatting is Prettier** (`.prettierrc.json`: `semi: false`, `singleQuote: true`). Run `pnpm format` (or rely on format-on-save) — don't hand-format. `eslint-config-prettier` sits last in `eslint.config.mjs`, so ESLint defers all style to Prettier; lint is for correctness only.
+- Run `pnpm lint` and `pnpm format` before declaring a task done.
 
 ## Things Not to Do
 
