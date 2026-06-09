@@ -225,7 +225,8 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 
 ### TODO (next steps)
 
-- [ ] Tests: Vitest for server fns (`profiles`, `goals`, `debits` scoping); Playwright for auth flows (email, GitHub, logout, protected-route redirect).
+- [x] Tests (Vitest, server fns): `goals`, `debits`, `profiles` covered (auth-guard redirects, validation, hard-cap, scoping). Run with `pnpm test`. Config in `vitest.config.ts` deliberately omits the `tanstackStart()` plugin so `createServerFn` handlers run inline; helpers + mocks in `src/server/__tests__/helpers.ts`. Caveat: that transform-free path doesn't surface handler return values, so tests assert side effects (db calls) + thrown errors, not resolved values.
+- [ ] Tests (Playwright): auth flows (email, GitHub, logout, protected-route redirect).
 - [x] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
 - [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).
 - [ ] Session refresh on navigation (tokens can go stale).
