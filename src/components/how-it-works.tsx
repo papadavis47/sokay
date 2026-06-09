@@ -1,4 +1,5 @@
 import { css } from "styled-system/css";
+import { SokayMark } from "@/components/sokay-mark";
 import {
   Card,
   CardHeader,
@@ -16,6 +17,18 @@ export function HowItWorks() {
         pb: { base: "6", md: "8" },
       })}
     >
+      {/* Brand ring, centered above the quote */}
+      <div
+        className={css({
+          display: "flex",
+          justifyContent: "center",
+          color: "brand.solid",
+          mb: { base: "6", md: "8" },
+        })}
+      >
+        <SokayMark size={144} />
+      </div>
+
       <blockquote
         className={css({
           textAlign: "center",

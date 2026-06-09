@@ -42,8 +42,8 @@ export function Footer() {
           <Link
             to="/"
             className={css({
-              color: "fg.muted",
-              _hover: { color: "fg.default" },
+              color: "brand.solid",
+              _hover: { color: "brand.solidHover" },
               transition: "colors",
             })}
           >
@@ -52,8 +52,8 @@ export function Footer() {
           <Link
             to="/login"
             className={css({
-              color: "fg.muted",
-              _hover: { color: "fg.default" },
+              color: "brand.solid",
+              _hover: { color: "brand.solidHover" },
               transition: "colors",
             })}
           >
@@ -62,8 +62,8 @@ export function Footer() {
           <Link
             to="/signup"
             className={css({
-              color: "fg.muted",
-              _hover: { color: "fg.default" },
+              color: "brand.solid",
+              _hover: { color: "brand.solidHover" },
               transition: "colors",
             })}
           >
