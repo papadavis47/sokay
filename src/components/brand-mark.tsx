@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { css } from "styled-system/css";
+import { SokayMark } from "@/components/sokay-mark";
 
 interface BrandMarkProps {
   /** Optional route to wrap the mark in a link. */
@@ -11,32 +12,45 @@ interface BrandMarkProps {
 export function BrandMark({ to, size = "md" }: BrandMarkProps) {
   const titleSize = size === "md" ? "2xl" : "lg";
   const taglineSize = size === "md" ? "sm" : "xs";
+  const markSize = size === "md" ? 28 : 20;
 
   const content = (
     <div
       className={css({
         display: "flex",
-        flexDirection: "column",
+        alignItems: "center",
+        gap: "2.5",
         lineHeight: "tight",
       })}
     >
-      <span
+      <span className={css({ color: "brand.solid", display: "inline-flex" })}>
+        <SokayMark size={markSize} />
+      </span>
+      <div
         className={css({
-          fontSize: titleSize,
-          fontWeight: "bold",
-          color: "brand.solid",
+          display: "flex",
+          flexDirection: "column",
+          lineHeight: "tight",
         })}
       >
-        sokay
-      </span>
-      <span
-        className={css({
-          fontSize: taglineSize,
-          color: "fg.muted",
-        })}
-      >
-        Progress, not perfection
-      </span>
+        <span
+          className={css({
+            fontSize: titleSize,
+            fontWeight: "bold",
+            color: "brand.solid",
+          })}
+        >
+          sokay
+        </span>
+        <span
+          className={css({
+            fontSize: taglineSize,
+            color: "fg.muted",
+          })}
+        >
+          Progress, not perfection
+        </span>
+      </div>
     </div>
   );
 

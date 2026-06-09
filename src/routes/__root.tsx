@@ -18,6 +18,17 @@ export const Route = createRootRoute({
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'sokay' },
       { name: 'description', content: 'an application to improve eating habits' },
+      // Browser chrome color: track the app's page background per scheme.
+      { name: 'theme-color', media: '(prefers-color-scheme: light)', content: '#ffffff' },
+      { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: '#111111' },
+    ],
+    links: [
+      { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+      { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+      { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      { rel: 'manifest', href: '/site.webmanifest' },
     ],
     scripts: [
       {

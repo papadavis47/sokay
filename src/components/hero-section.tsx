@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { css } from "styled-system/css";
 import { token } from "styled-system/tokens";
 import { Button } from "@/components/ui/button";
+import { SokayMark } from "@/components/sokay-mark";
 
 export function HeroSection() {
   return (
@@ -43,6 +44,11 @@ export function HeroSection() {
           gap: "6",
         })}
       >
+        {/* Brand ring above the headline */}
+        <span className={css({ color: "brand.solid", display: "inline-flex" })}>
+          <SokayMark size={72} />
+        </span>
+
         {/* Headline */}
         <h1
           className={css({
