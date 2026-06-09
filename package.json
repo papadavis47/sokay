@@ -10,7 +10,8 @@
     "prepare": "panda codegen",
     "lint": "eslint src",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ark-ui/react": "^5.37.0",
@@ -31,6 +32,7 @@
     "@pandacss/dev": "^1.11.1",
     "@pandacss/preset-base": "^1.11.1",
     "@park-ui/panda-preset": "^0.43.1",
+    "@playwright/test": "1.60.0",
     "@types/node": "^25.9.1",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",

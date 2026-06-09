@@ -54,3 +54,8 @@ learning/*
 ## Panda
 styled-system
 styled-system-studio
+
+## Playwright
+test-results
+playwright-report
+playwright/.cache

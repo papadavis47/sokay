@@ -226,7 +226,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 ### TODO (next steps)
 
 - [x] Tests (Vitest, server fns): `goals`, `debits`, `profiles` covered (auth-guard redirects, validation, hard-cap, scoping). Run with `pnpm test`. Config in `vitest.config.ts` deliberately omits the `tanstackStart()` plugin so `createServerFn` handlers run inline; helpers + mocks in `src/server/__tests__/helpers.ts`. Caveat: that transform-free path doesn't surface handler return values, so tests assert side effects (db calls) + thrown errors, not resolved values.
-- [ ] Tests (Playwright): auth flows (email, GitHub, logout, protected-route redirect).
+- [x] Tests (Playwright, auth flows): protected-route redirect, email signup (+ password-mismatch error), email login (+ invalid-creds error), logout/re-protect, and GitHub OAuth initiation. Run with `pnpm test:e2e` against the **local** dev server (:3000) + local Supabase (:54321), both of which must be running. Config in `playwright.config.ts` (`testDir: ./e2e`, reuses an already-running dev server). Specs + helpers in `e2e/`; `ensureTestUser` seeds a confirmed user via GoTrue's signup endpoint, and `waitForHydration` avoids the SSR-form native-submit race by waiting for React's `__reactProps$` keys before interacting. Signup tests use unique emails (cleared by `supabase db reset`).
 - [x] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
 - [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).
 - [ ] Session refresh on navigation (tokens can go stale).
