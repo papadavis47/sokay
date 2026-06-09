@@ -1,0 +1,11 @@
+# generated
+styled-system/
+.output/
+.vinxi/
+.tanstack/
+dist/
+build/
+coverage/
+
+# lockfiles / vendor
+pnpm-lock.yaml
