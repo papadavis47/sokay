@@ -1,9 +1,19 @@
-import { css } from 'styled-system/css'
+import { css, cx } from 'styled-system/css'
+
+type AvatarSize = 'sm' | 'md' | 'lg'
 
 interface AvatarProps {
   src: string | null
   name: string | null | undefined
-  size?: number
+  size?: AvatarSize
+}
+
+// Panda extracts styles statically at build time, so dimensions must be literal
+// values (it can't read a runtime `${size}px`). Enumerate the sizes we use.
+const boxBySize: Record<AvatarSize, string> = {
+  sm: css({ w: '32px', h: '32px', fontSize: '13px' }),
+  md: css({ w: '40px', h: '40px', fontSize: '16px' }),
+  lg: css({ w: '56px', h: '56px', fontSize: '22px' }),
 }
 
 function initials(name: string | null | undefined): string {
@@ -14,22 +24,22 @@ function initials(name: string | null | undefined): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
-export function Avatar({ src, name, size = 32 }: AvatarProps) {
-  const dimensions = { w: `${size}px`, h: `${size}px` }
-
+export function Avatar({ src, name, size = 'sm' }: AvatarProps) {
   if (src) {
     return (
       <img
         src={src}
         alt={name ?? 'Avatar'}
-        className={css({
-          ...dimensions,
-          borderRadius: 'full',
-          objectFit: 'cover',
-          borderWidth: '1px',
-          borderColor: 'border.default',
-          flexShrink: 0,
-        })}
+        className={cx(
+          boxBySize[size],
+          css({
+            borderRadius: 'full',
+            objectFit: 'cover',
+            borderWidth: '1px',
+            borderColor: 'border.default',
+            flexShrink: 0,
+          }),
+        )}
       />
     )
   }
@@ -37,19 +47,20 @@ export function Avatar({ src, name, size = 32 }: AvatarProps) {
   return (
     <span
       aria-hidden="true"
-      className={css({
-        ...dimensions,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 'full',
-        bg: 'brand.subtle',
-        color: 'brand.solid',
-        fontWeight: 'semibold',
-        fontSize: `${Math.round(size * 0.4)}px`,
-        flexShrink: 0,
-        userSelect: 'none',
-      })}
+      className={cx(
+        boxBySize[size],
+        css({
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 'full',
+          bg: 'brand.subtle',
+          color: 'brand.solid',
+          fontWeight: 'semibold',
+          flexShrink: 0,
+          userSelect: 'none',
+        }),
+      )}
     >
       {initials(name)}
     </span>

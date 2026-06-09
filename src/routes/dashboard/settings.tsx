@@ -120,7 +120,7 @@ function SettingsPage() {
           <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
             <Label>Avatar</Label>
             <div className={css({ display: 'flex', alignItems: 'center', gap: '4' })}>
-              <Avatar src={profile?.avatarUrl ?? null} name={shownName} size={64} />
+              <Avatar src={profile?.avatarUrl ?? null} name={shownName} size="lg" />
               <div className={css({ display: 'flex', flexDirection: 'column', gap: '2' })}>
                 <div className={css({ display: 'flex', gap: '2' })}>
                   <Button

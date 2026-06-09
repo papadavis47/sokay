@@ -82,7 +82,7 @@ export function DashboardNav({
             gap: '3',
           })}
         >
-          <Avatar src={avatarUrl} name={shownName} size={32} />
+          <Avatar src={avatarUrl} name={shownName} size="sm" />
           <span className={css({ fontSize: 'sm', color: 'fg.muted' })}>
             {shownName}
           </span>
@@ -121,7 +121,7 @@ export function DashboardNav({
                     py: '2',
                   })}
                 >
-                  <Avatar src={avatarUrl} name={shownName} size={40} />
+                  <Avatar src={avatarUrl} name={shownName} size="md" />
                   <span
                     className={css({
                       fontSize: 'sm',

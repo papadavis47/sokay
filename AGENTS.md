@@ -63,7 +63,7 @@ src/
 ├── components/
 │   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
 │   ├── brand-mark.tsx       # shared "sokay / Progress, not perfection" wordmark
-│   ├── avatar.tsx           # round avatar: image, or initials fallback on brand.subtle
+│   ├── avatar.tsx           # round avatar: image, or initials fallback on brand.subtle; size variant `sm` (32px, nav) | `md` (40px) | `lg` (56px, settings)
 │   ├── home-nav.tsx         # landing-page header (responsive; hamburger below md)
 │   ├── dashboard-nav.tsx    # auth header (responsive; shows display name + Settings link)
 │   ├── mobile-nav.tsx       # shared Motion slide-out drawer used by both navs
@@ -176,6 +176,7 @@ Rules:
 - **Responsive nav**: both `home-nav.tsx` and `dashboard-nav.tsx` show an inline nav at `md+` and a hamburger below `md`. The hamburger opens the shared `mobile-nav.tsx` drawer — a Motion (`AnimatePresence`) slide-in panel portaled to `document.body` with a fading backdrop, Esc-to-close, body scroll-lock, and a render-prop `close` so links dismiss it on tap. Reuse `MobileNav` for any new responsive header rather than rolling another drawer.
 - The Inter latin subset is **inlined as a base64 data URI** in `src/index.css` (`font-display: block`) so the font ships with the render-blocking CSS and is present at first paint — no FOUT / layout shift. Don't swap it back to an external `@font-face` + `<link rel="preload">`.
 - Dark mode is toggled by adding/removing `dark` on `<html>` — the inline script in `__root.tsx` hydrates it from `localStorage('sokay-theme')`. Use `ThemeProvider` / `ThemeToggle` rather than touching the DOM directly.
+- **Panda extracts styles statically at build time**, so values inside `css({...})` must be **literal** — a runtime expression like ``w: `${size}px` `` emits a class name with no matching CSS rule (the element silently falls back to content/intrinsic size). For prop-driven sizes, enumerate discrete variants with literal values and pick one via a lookup map (see the `boxBySize` `sm`/`md`/`lg` pattern in `avatar.tsx`), then combine with `cx`.
 
 ## Environment
 
