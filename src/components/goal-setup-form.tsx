@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
-import { css } from 'styled-system/css'
+import { css, cx } from 'styled-system/css'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,6 +28,18 @@ import {
   formatDuration,
 } from '@/lib/duration'
 import type { DurationUnit } from '@/types/database'
+
+const unitButtonStyles = {
+  active: css({
+    bg: 'brand.solid!',
+    color: 'brand.onSolid!',
+    _hover: { bg: 'brand.solidHover!' },
+  }),
+  inactive: css({
+    color: 'brand.solid!',
+    borderColor: 'brand.solid!',
+  }),
+}
 
 const durationCollections: Record<
   DurationUnit,
@@ -100,7 +112,7 @@ export function GoalSetupForm() {
   return (
     <Card className={css({ maxW: '2xl', mx: 'auto' })}>
       <CardHeader>
-        <CardTitle className={css({ fontSize: '2xl!' })}>
+        <CardTitle className={css({ fontSize: '2xl!', color: 'brand.solid' })}>
           Set Your Sokay Goal
         </CardTitle>
         <CardDescription className={css({ lineHeight: 'relaxed' })}>
@@ -142,7 +154,12 @@ export function GoalSetupForm() {
                   alignItems: 'center',
                 })}
               >
-                <Label htmlFor="totalItems">Sokay Items</Label>
+                <Label
+                  htmlFor="totalItems"
+                  className={css({ color: 'brand.solid!' })}
+                >
+                  Sokay Items
+                </Label>
                 <Input
                   id="totalItems"
                   type="number"
@@ -157,7 +174,7 @@ export function GoalSetupForm() {
                     textAlign: 'center',
                     fontSize: 'xl',
                     fontWeight: 'bold',
-                    color: 'colorPalette.default',
+                    color: 'brand.solid',
                   })}
                 />
               </div>
@@ -182,12 +199,19 @@ export function GoalSetupForm() {
                 gap: '2',
               })}
             >
-              <Label>Goal Duration</Label>
+              <Label className={css({ color: 'brand.solid!' })}>
+                Goal Duration
+              </Label>
               <div className={css({ display: 'flex', gap: '2' })}>
                 <Button
                   type="button"
                   variant={durationUnit === 'week' ? 'solid' : 'outline'}
-                  className={css({ flex: '1' })}
+                  className={cx(
+                    css({ flex: '1' }),
+                    durationUnit === 'week'
+                      ? unitButtonStyles.active
+                      : unitButtonStyles.inactive,
+                  )}
                   onClick={() => handleUnitChange('week')}
                 >
                   Weeks
@@ -195,7 +219,12 @@ export function GoalSetupForm() {
                 <Button
                   type="button"
                   variant={durationUnit === 'month' ? 'solid' : 'outline'}
-                  className={css({ flex: '1' })}
+                  className={cx(
+                    css({ flex: '1' }),
+                    durationUnit === 'month'
+                      ? unitButtonStyles.active
+                      : unitButtonStyles.inactive,
+                  )}
                   onClick={() => handleUnitChange('month')}
                 >
                   Months
@@ -207,7 +236,12 @@ export function GoalSetupForm() {
                 value={[durationValue.toString()]}
                 onValueChange={(e) => setDurationValue(parseInt(e.value[0]))}
               >
-                <SelectTrigger>
+                <SelectTrigger
+                  className={css({
+                    color: 'brand.solid',
+                    fontWeight: 'medium',
+                  })}
+                >
                   <SelectValueText placeholder="Select duration" />
                 </SelectTrigger>
                 <SelectContent>
@@ -249,7 +283,13 @@ export function GoalSetupForm() {
               gap: '3',
             })}
           >
-            <p className={css({ fontSize: 'sm', fontWeight: 'medium' })}>
+            <p
+              className={css({
+                fontSize: 'sm',
+                fontWeight: 'medium',
+                color: 'brand.solid',
+              })}
+            >
               Your Goal Summary
             </p>
             <p
@@ -260,11 +300,14 @@ export function GoalSetupForm() {
               })}
             >
               I will track my items and limit myself to{' '}
-              <strong>
+              <strong className={css({ color: 'brand.solid' })}>
                 {items} sokay item{items !== 1 ? 's' : ''}
               </strong>{' '}
               over the next{' '}
-              <strong>{formatDuration(durationValue, durationUnit)}</strong>.
+              <strong className={css({ color: 'brand.solid' })}>
+                {formatDuration(durationValue, durationUnit)}
+              </strong>
+              .
             </p>
             <p
               className={css({
@@ -288,6 +331,7 @@ export function GoalSetupForm() {
 
           <Button
             type="submit"
+            variant="cta"
             size="lg"
             className={css({ w: 'full' })}
             disabled={loading}
