@@ -32,7 +32,7 @@ pnpm panda codegen  # regenerate styled-system
 
 ## How It Works
 
-1. Sign up and set a goal: 5-20 limit over 1-12 months
+1. Sign up and set a limit goal: 1-100 limit over weeks or months. You decide.
 2. Log splurges as you go, see remaining balance
 3. Review and reflect when goal ends, then start fresh
 
