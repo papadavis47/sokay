@@ -261,7 +261,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
           })}
         >
           <p className={css({ textAlign: 'center', color: 'fg.muted' })}>
-            Ready to start a new goal and continue your journey?
+            Ready to start a new goal?
           </p>
           <Button
             onClick={handleComplete}
