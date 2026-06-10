@@ -71,7 +71,7 @@ function DashboardPage() {
               fontSize: '4xl',
               fontWeight: 'bold',
               mb: '2',
-              color: 'fg.default',
+              color: 'brand.solid',
             })}
           >
             Welcome to Sokay!
