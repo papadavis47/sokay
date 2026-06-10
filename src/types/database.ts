@@ -1,7 +1,7 @@
 import type { Goal, Debit } from '@/lib/db/schema'
 
 export type GoalStatus = 'active' | 'completed' | 'reviewing'
-export type DurationMonths = 1 | 2 | 3 | 6 | 12
+export type DurationUnit = 'week' | 'month'
 
 export type { Goal, Debit }
 

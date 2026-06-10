@@ -4,7 +4,10 @@ export const goals = pgTable('goals', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id').notNull(),
   totalItems: integer('total_items').notNull(),
-  durationMonths: integer('duration_months').notNull(),
+  durationValue: integer('duration_value').notNull(),
+  durationUnit: text('duration_unit', { enum: ['week', 'month'] })
+    .notNull()
+    .default('month'),
   startDate: timestamp('start_date', { withTimezone: true })
     .notNull()
     .defaultNow(),

@@ -10,6 +10,7 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { completeGoal } from '@/server/goals'
+import { formatDuration } from '@/lib/duration'
 import type { Goal, Debit } from '@/types/database'
 
 interface GoalReviewProps {
@@ -44,12 +45,6 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
       day: 'numeric',
       year: 'numeric',
     })
-  }
-
-  const getDurationLabel = (months: number) => {
-    if (months === 1) return '1 month'
-    if (months === 12) return '1 year'
-    return `${months} months`
   }
 
   const getMessage = () => {
@@ -168,7 +163,7 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
               })}
             >
               <div className={css({ fontSize: '2xl', fontWeight: 'bold' })}>
-                {getDurationLabel(goal.durationMonths)}
+                {formatDuration(goal.durationValue, goal.durationUnit)}
               </div>
               <div className={css({ fontSize: 'sm', color: 'fg.muted' })}>
                 Goal Duration

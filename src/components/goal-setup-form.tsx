@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import {
@@ -20,24 +21,62 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { createGoal } from '@/server/goals'
-import type { DurationMonths } from '@/types/database'
+import {
+  DURATION_MAX,
+  TOTAL_ITEMS_MIN,
+  TOTAL_ITEMS_MAX,
+  formatDuration,
+} from '@/lib/duration'
+import type { DurationUnit } from '@/types/database'
 
-const durationCollection = createListCollection({
-  items: [
-    { label: '1 month', value: '1' },
-    { label: '2 months', value: '2' },
-    { label: '3 months', value: '3' },
-    { label: '6 months', value: '6' },
-    { label: '1 year', value: '12' },
-  ],
-})
+const durationCollections: Record<
+  DurationUnit,
+  ReturnType<typeof createListCollection<{ label: string; value: string }>>
+> = {
+  week: createListCollection({
+    items: Array.from({ length: DURATION_MAX.week }, (_, i) => ({
+      label: formatDuration(i + 1, 'week'),
+      value: String(i + 1),
+    })),
+  }),
+  month: createListCollection({
+    items: Array.from({ length: DURATION_MAX.month }, (_, i) => ({
+      label: formatDuration(i + 1, 'month'),
+      value: String(i + 1),
+    })),
+  }),
+}
 
 export function GoalSetupForm() {
-  const [items, setItems] = useState([10])
-  const [duration, setDuration] = useState<DurationMonths>(1)
+  const [items, setItems] = useState(10)
+  const [itemsText, setItemsText] = useState('10')
+  const [durationUnit, setDurationUnit] = useState<DurationUnit>('month')
+  const [durationValue, setDurationValue] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+
+  const clampItems = (value: number) =>
+    Math.min(TOTAL_ITEMS_MAX, Math.max(TOTAL_ITEMS_MIN, value))
+
+  const handleSliderChange = (value: number) => {
+    setItems(value)
+    setItemsText(String(value))
+  }
+
+  const handleItemsInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setItemsText(e.target.value)
+    const parsed = parseInt(e.target.value, 10)
+    if (!Number.isNaN(parsed)) setItems(clampItems(parsed))
+  }
+
+  const handleItemsInputBlur = () => setItemsText(String(items))
+
+  const handleUnitChange = (unit: DurationUnit) => {
+    setDurationUnit(unit)
+    // Keep the chosen value where possible; clamp to the new unit's range.
+    setDurationValue((value) => Math.min(value, DURATION_MAX[unit]))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,7 +85,7 @@ export function GoalSetupForm() {
 
     try {
       await createGoal({
-        data: { totalItems: items[0], durationMonths: duration },
+        data: { totalItems: items, durationValue, durationUnit },
       })
       router.invalidate()
     } catch (err) {
@@ -56,11 +95,7 @@ export function GoalSetupForm() {
     }
   }
 
-  const getDurationLabel = (months: number) => {
-    if (months === 1) return '1 month'
-    if (months === 12) return '1 year'
-    return `${months} months`
-  }
+  const collection = durationCollections[durationUnit]
 
   return (
     <Card className={css({ maxW: '2xl', mx: 'auto' })}>
@@ -68,9 +103,13 @@ export function GoalSetupForm() {
         <CardTitle className={css({ fontSize: '2xl!' })}>
           Set Your Sokay Goal
         </CardTitle>
-        <CardDescription>
-          Choose how many items you'll allow yourself and for how long.
-          Remember, this is about balance, not restriction.
+        <CardDescription className={css({ lineHeight: 'relaxed' })}>
+          <span className={css({ display: 'block' })}>
+            Choose how many items you'll allow yourself and for how long.
+          </span>
+          <span className={css({ display: 'block', mt: '2' })}>
+            Remember, this is about balance, not restriction.
+          </span>
         </CardDescription>
       </CardHeader>
       <CardBody>
@@ -103,27 +142,36 @@ export function GoalSetupForm() {
                   alignItems: 'center',
                 })}
               >
-                <Label>Sokay Items</Label>
-                <span
+                <Label htmlFor="totalItems">Sokay Items</Label>
+                <Input
+                  id="totalItems"
+                  type="number"
+                  inputMode="numeric"
+                  min={TOTAL_ITEMS_MIN}
+                  max={TOTAL_ITEMS_MAX}
+                  value={itemsText}
+                  onChange={handleItemsInputChange}
+                  onBlur={handleItemsInputBlur}
                   className={css({
-                    fontSize: '2xl',
+                    w: '24',
+                    textAlign: 'center',
+                    fontSize: 'xl',
                     fontWeight: 'bold',
                     color: 'colorPalette.default',
                   })}
-                >
-                  {items[0]}
-                </span>
+                />
               </div>
               <Slider
-                value={items}
-                onValueChange={(e) => setItems(e.value)}
-                min={5}
-                max={20}
+                value={[items]}
+                onValueChange={(e) => handleSliderChange(e.value[0])}
+                min={TOTAL_ITEMS_MIN}
+                max={TOTAL_ITEMS_MAX}
                 step={1}
               />
               <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-                You can enjoy up to {items[0]} item
-                {items[0] !== 1 ? 's' : ''} during your goal period.
+                You can use up to {items} item
+                {items !== 1 ? 's' : ''} during your goal period. Pick anywhere
+                from {TOTAL_ITEMS_MIN} to {TOTAL_ITEMS_MAX}.
               </p>
             </div>
 
@@ -135,18 +183,35 @@ export function GoalSetupForm() {
               })}
             >
               <Label>Goal Duration</Label>
+              <div className={css({ display: 'flex', gap: '2' })}>
+                <Button
+                  type="button"
+                  variant={durationUnit === 'week' ? 'solid' : 'outline'}
+                  className={css({ flex: '1' })}
+                  onClick={() => handleUnitChange('week')}
+                >
+                  Weeks
+                </Button>
+                <Button
+                  type="button"
+                  variant={durationUnit === 'month' ? 'solid' : 'outline'}
+                  className={css({ flex: '1' })}
+                  onClick={() => handleUnitChange('month')}
+                >
+                  Months
+                </Button>
+              </div>
               <SelectRoot
-                collection={durationCollection}
-                value={[duration.toString()]}
-                onValueChange={(e) =>
-                  setDuration(parseInt(e.value[0]) as DurationMonths)
-                }
+                key={durationUnit}
+                collection={collection}
+                value={[durationValue.toString()]}
+                onValueChange={(e) => setDurationValue(parseInt(e.value[0]))}
               >
                 <SelectTrigger>
                   <SelectValueText placeholder="Select duration" />
                 </SelectTrigger>
                 <SelectContent>
-                  {durationCollection.items.map((item) => (
+                  {collection.items.map((item) => (
                     <SelectItem key={item.value} item={item}>
                       {item.label}
                     </SelectItem>
@@ -154,7 +219,8 @@ export function GoalSetupForm() {
                 </SelectContent>
               </SelectRoot>
               <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-                Your goal will run for {getDurationLabel(duration)}.
+                Your goal will run for{' '}
+                {formatDuration(durationValue, durationUnit)}.
               </p>
             </div>
           </div>
@@ -176,21 +242,47 @@ export function GoalSetupForm() {
           <div
             className={css({
               bg: 'gray.a2',
-              p: '4',
+              p: '5',
               borderRadius: 'l2',
               display: 'flex',
               flexDirection: 'column',
-              gap: '2',
+              gap: '3',
             })}
           >
             <p className={css({ fontSize: 'sm', fontWeight: 'medium' })}>
               Your Goal Summary
             </p>
-            <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
+            <p
+              className={css({
+                fontSize: 'sm',
+                color: 'fg.muted',
+                lineHeight: 'relaxed',
+              })}
+            >
               I will track my items and limit myself to{' '}
-              <strong>{items[0]} sokay items</strong> over the next{' '}
-              <strong>{getDurationLabel(duration)}</strong>. I'm building a
-              healthier relationship with food, one mindful choice at a time.
+              <strong>
+                {items} sokay item{items !== 1 ? 's' : ''}
+              </strong>{' '}
+              over the next{' '}
+              <strong>{formatDuration(durationValue, durationUnit)}</strong>.
+            </p>
+            <p
+              className={css({
+                fontSize: 'sm',
+                color: 'fg.muted',
+                lineHeight: 'relaxed',
+              })}
+            >
+              I'm building a healthier relationship with food.
+            </p>
+            <p
+              className={css({
+                fontSize: 'sm',
+                color: 'fg.muted',
+                lineHeight: 'relaxed',
+              })}
+            >
+              One mindful choice at a time.
             </p>
           </div>
 
