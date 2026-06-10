@@ -81,6 +81,7 @@ src/
 │   └── debits.ts            # createDebit, updateDebit, deleteDebit
 ├── lib/
 │   ├── db/                  # drizzle client + schema
+│   ├── duration.ts          # goal bounds (items 1-100, weeks/months max) + formatDuration
 │   └── supabase/            # client.ts (browser), server.ts (SSR cookies)
 ├── types/database.ts        # re-exports + view-model types
 ├── router.tsx, routeTree.gen.ts, index.css
@@ -106,7 +107,7 @@ Always import via aliases (e.g. `import { Button } from '@/components/ui/button'
 
 Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` (SQL with RLS), **and** `supabase/migrations/` (the applied source of truth). **Keep all three in sync.**
 
-- `goals` — `userId`, `totalItems` (5–20, column `total_items`), `durationMonths` (1|2|3|6|12), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`)
+- `goals` — `userId`, `totalItems` (1–100, column `total_items`), `durationValue` + `durationUnit` (`'week'` 1–52 | `'month'` 1–12 — one unit per goal, never mixed), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`). Limits + `formatDuration` live in `src/lib/duration.ts` — import from there, don't re-hardcode bounds.
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
 - `profiles` — `id` (PK = `auth.users.id`, cascade delete), `displayName`, `avatarUrl`. One row per user, kept 1-to-1 with `auth.users` by an `on auth.users` insert trigger (`handle_new_user`, `security definer`). `display_name` is seeded with precedence: signup `options.data.display_name` → OAuth `full_name`/`name` → email local part. `display_name` and `avatar_url` are both editable later via `/dashboard/settings`; the avatar shows in `dashboard-nav.tsx` (falling back to initials via `avatar.tsx`).
 
@@ -121,7 +122,8 @@ The **upload flow is client-side then server-persist**: the settings page upload
 A goal moves `active → reviewing → completed`. Data is **never deleted** — completed goals and their debits stay queryable so users can review past cycles.
 
 - **Time runs out:** the dashboard loader (`src/routes/dashboard/index.tsx`) lazily flips an `active` goal whose `endDate <= now` to `reviewing` and redirects to `/goal/review/$id`. There is no cron — the transition happens on the next dashboard load. The countdown UI clamps days-remaining at `0` (never negative).
-- **Items run out:** logging is a **hard cap** — `createDebit` rejects inserts once `usedItems >= totalItems` (the active goal also can't be `reviewing`/`completed`). When the user clicks "Log an Item" at 0 items, the dashboard shows a dialog offering "Review & Start Over", which calls `startGoalReview` (sets `reviewing`) and routes to the review page.
+- **Items run out:** logging is a **hard cap** — `createDebit` rejects inserts once `usedItems >= totalItems` (the active goal also can't be `reviewing`/`completed`). At 0 items the "Log an Item" button does **not render at all**; the dashboard shows an inline notice card with a direct "Review & Start Over" button, which calls `startGoalReview` (sets `reviewing`) and routes to the review page.
+- **End early (user in control):** while items remain, the dashboard shows an "End this goal early" link → confirm dialog → same `startGoalReview` path. Users can always bail on a goal and start fresh with new settings; settings of an existing goal are never edited in place.
 - **Review → fresh start:** the review page's "Complete Goal & Start Fresh" calls `completeGoal` (sets `completed`); the dashboard then shows the setup form for a new goal.
 - **History** (`/dashboard/history`) lists **all** of the user's goals (active + past) with status badges; selecting one shows its debits — editable only for the `active` goal, read-only otherwise.
 
@@ -147,7 +149,7 @@ Rules:
 
 - Always call `supabase.auth.getUser()` and redirect if missing.
 - Always include `eq(table.userId, user.id)` in `where(and(...))` for updates/deletes.
-- Validate inputs in `.inputValidator` — keep payload shapes minimal.
+- Validate inputs **inside the handler**, not (only) `.inputValidator` — the Vitest transform-free path skips the validator, so handler-side checks are what tests exercise and what every call path enforces (see `validateGoalInput` in `goals.ts`). Keep payload shapes minimal.
 - After a mutation on the client, call `router.invalidate()` to refresh loader data.
 
 ## Routing & Auth
@@ -206,7 +208,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Don't edit `routeTree.gen.ts`, `styled-system/`, `.output/`, `.tanstack/`, or `dist/`.
 - Don't add a second styling system (Tailwind, CSS modules, emotion).
 - Don't bypass `requireUser` / `getUser` checks in server functions.
-- Don't change the Drizzle schema without also updating `supabase-schema.sql` and the SQL `check` constraints (items 5–20, duration in {1,2,3,6,12}, status enum).
+- Don't change the Drizzle schema without also updating `supabase-schema.sql`, a new migration, and the SQL `check` constraints (items 1–100, duration 1–52 weeks / 1–12 months, status enum) — plus the bounds in `src/lib/duration.ts`.
 - Don't introduce a new ORM, query builder, or HTTP framework — server functions + Drizzle is the pattern.
 
 ## Learning Folder
@@ -225,6 +227,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - `profiles` table + insert trigger + RLS + backfill; "Display name" on signup.
 - Editable display name at `/dashboard/settings`; nav shows display name; redirects to dashboard on save.
 - Avatar support: public `avatars` Storage bucket + owner-scoped RLS; upload/change/remove on `/dashboard/settings`; avatar shown in nav (initials fallback).
+- Flexible goals (`flexible_goal_limits` migration): items 1–100 (slider + synced number input), duration in weeks (1–52) **or** months (1–12) via unit toggle + per-unit dropdowns; handler-side validation; at-limit inline notice (no log button); "End this goal early" dialog.
 - Learning notes: `learning/auth-and-dev-prod-supabase.md`, `learning/git-safety-and-prod-sync.md`.
 
 ### TODO (next steps)

@@ -8,8 +8,13 @@ create extension if not exists "uuid-ossp";
 create table public.goals (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references auth.users not null,
-  total_items integer not null check (total_items >= 5 and total_items <= 20),
-  duration_months integer not null check (duration_months in (1, 2, 3, 6, 12)),
+  total_items integer not null check (total_items >= 1 and total_items <= 100),
+  duration_value integer not null,
+  duration_unit text not null default 'month' check (duration_unit in ('week', 'month')),
+  constraint goals_duration_value_check check (
+    (duration_unit = 'week' and duration_value between 1 and 52)
+    or (duration_unit = 'month' and duration_value between 1 and 12)
+  ),
   start_date timestamp with time zone not null default now(),
   end_date timestamp with time zone not null,
   status text not null default 'active' check (status in ('active', 'completed', 'reviewing')),
