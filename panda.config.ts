@@ -40,6 +40,13 @@ export default defineConfig({
                 _dark: 'rgba(253, 186, 116, 0.28)',
               },
             },
+            // Quiet brand-tinted text for low-emphasis actions.
+            mutedFg: {
+              value: {
+                base: 'rgba(234, 88, 12, 0.65)',
+                _dark: 'rgba(253, 186, 116, 0.65)',
+              },
+            },
           },
         },
         shadows: {

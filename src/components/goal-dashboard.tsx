@@ -151,7 +151,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 {remainingItems}
               </div>
               <div className={css({ fontSize: 'xl', color: 'fg.muted' })}>
-                item{remainingItems !== 1 ? 's' : ''} remaining
+                Item{remainingItems !== 1 ? 's' : ''} Remaining
               </div>
               <div
                 className={css({ fontSize: 'sm', color: 'fg.muted', mt: '2' })}
@@ -394,6 +394,82 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               </DialogContent>
             </DialogRoot>
           )}
+
+          {remainingItems > 0 && (
+            <DialogRoot
+              open={endEarlyDialogOpen}
+              onOpenChange={(e) => {
+                setEndEarlyDialogOpen(e.open)
+                if (!e.open) setError('')
+              }}
+            >
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className={css({
+                    alignSelf: 'flex-end',
+                    fontSize: 'sm',
+                    color: 'fg.subtle',
+                    cursor: 'pointer',
+                    bg: 'transparent',
+                    _hover: { color: 'brand.mutedFg' },
+                    _focusVisible: { color: 'brand.mutedFg' },
+                  })}
+                >
+                  End goal early
+                </button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle className={css({ color: 'brand.solid!' })}>
+                  End this goal early?
+                </DialogTitle>
+                <DialogDescription className={css({ mb: '4', pt: '2' })}>
+                  You're in control. Ending now takes you to a review of this
+                  goal, and from there you can start a fresh one with new
+                  settings. Your logged items stay in your history.
+                </DialogDescription>
+                {error && (
+                  <div
+                    className={css({
+                      fontSize: 'sm',
+                      color: 'red.11',
+                      bg: 'red.a3',
+                      p: '3',
+                      borderRadius: 'l2',
+                      mb: '4',
+                    })}
+                  >
+                    {error}
+                  </div>
+                )}
+                <div
+                  className={css({
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: '2',
+                  })}
+                >
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setEndEarlyDialogOpen(false)}
+                    disabled={loading}
+                    className={css({ color: 'brand.solid!' })}
+                  >
+                    Keep going
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleStartOver}
+                    disabled={loading}
+                    className={css({ color: 'brand.solid!' })}
+                  >
+                    {loading ? 'Loading...' : 'End & Review'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </DialogRoot>
+          )}
         </CardBody>
       </Card>
 
@@ -500,69 +576,6 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
           </p>
         </CardBody>
       </Card>
-
-      {remainingItems > 0 && (
-        <div className={css({ textAlign: 'center' })}>
-          <DialogRoot
-            open={endEarlyDialogOpen}
-            onOpenChange={(e) => {
-              setEndEarlyDialogOpen(e.open)
-              if (!e.open) setError('')
-            }}
-          >
-            <DialogTrigger asChild>
-              <Button variant="plain" className={css({ color: 'fg.muted!' })}>
-                End this goal early
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogTitle>End this goal early?</DialogTitle>
-              <DialogDescription className={css({ mb: '4' })}>
-                You're in control. Ending now takes you to a review of this
-                goal, and from there you can start a fresh one with new
-                settings. Your logged items stay in your history.
-              </DialogDescription>
-              {error && (
-                <div
-                  className={css({
-                    fontSize: 'sm',
-                    color: 'red.11',
-                    bg: 'red.a3',
-                    p: '3',
-                    borderRadius: 'l2',
-                    mb: '4',
-                  })}
-                >
-                  {error}
-                </div>
-              )}
-              <div
-                className={css({
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: '2',
-                })}
-              >
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setEndEarlyDialogOpen(false)}
-                  disabled={loading}
-                >
-                  Keep going
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleStartOver}
-                  disabled={loading}
-                >
-                  {loading ? 'Loading...' : 'End & Review'}
-                </Button>
-              </div>
-            </DialogContent>
-          </DialogRoot>
-        </div>
-      )}
     </div>
   )
 }
