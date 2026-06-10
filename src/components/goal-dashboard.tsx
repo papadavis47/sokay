@@ -36,7 +36,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [limitDialogOpen, setLimitDialogOpen] = useState(false)
+  const [endEarlyDialogOpen, setEndEarlyDialogOpen] = useState(false)
   const router = useRouter()
 
   const usedItems = debits.length
@@ -200,75 +200,49 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
           </div>
 
           {remainingItems <= 0 ? (
-            <DialogRoot
-              open={limitDialogOpen}
-              onOpenChange={(e) => {
-                setLimitDialogOpen(e.open)
-                if (!e.open) setError('')
-              }}
+            <div
+              className={css({
+                bg: 'brand.subtle',
+                borderWidth: '1px',
+                borderColor: 'brand.border',
+                borderRadius: 'l2',
+                p: '4',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '3',
+                textAlign: 'center',
+              })}
             >
-              <DialogTrigger asChild>
-                <Button
-                  size="lg"
-                  className={css({
-                    w: 'full',
-                    color: 'brand.solid!',
-                    borderWidth: '1px',
-                    borderColor: 'brand.solid',
-                    h: 'auto!',
-                    py: '4',
-                  })}
-                >
-                  Log an Item
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogTitle>You've used all your items</DialogTitle>
-                <DialogDescription className={css({ mb: '4' })}>
-                  You've logged all {goal.totalItems} of your sokay items for
-                  this period. That's the limit working as intended—no
-                  overlogging. When you're ready, review how this round went and
-                  start a fresh goal.
-                </DialogDescription>
-                {error && (
-                  <div
-                    className={css({
-                      fontSize: 'sm',
-                      color: 'red.11',
-                      bg: 'red.a3',
-                      p: '3',
-                      borderRadius: 'l2',
-                      mb: '4',
-                    })}
-                  >
-                    {error}
-                  </div>
-                )}
+              <p className={css({ fontWeight: 'semibold' })}>
+                You've used all {goal.totalItems} of your sokay items
+              </p>
+              <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
+                That's the limit working as intended—no more items can be logged
+                this period. When you're ready, review how this round went and
+                start a fresh goal.
+              </p>
+              {error && (
                 <div
                   className={css({
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    gap: '2',
+                    fontSize: 'sm',
+                    color: 'red.11',
+                    bg: 'red.a3',
+                    p: '3',
+                    borderRadius: 'l2',
                   })}
                 >
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setLimitDialogOpen(false)}
-                    disabled={loading}
-                  >
-                    Not now
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={handleStartOver}
-                    disabled={loading}
-                  >
-                    {loading ? 'Loading...' : 'Review & Start Over'}
-                  </Button>
+                  {error}
                 </div>
-              </DialogContent>
-            </DialogRoot>
+              )}
+              <Button
+                type="button"
+                size="lg"
+                onClick={handleStartOver}
+                disabled={loading}
+              >
+                {loading ? 'Loading...' : 'Review & Start Over'}
+              </Button>
+            </div>
           ) : (
             <DialogRoot
               open={dialogOpen}
@@ -526,6 +500,69 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
           </p>
         </CardBody>
       </Card>
+
+      {remainingItems > 0 && (
+        <div className={css({ textAlign: 'center' })}>
+          <DialogRoot
+            open={endEarlyDialogOpen}
+            onOpenChange={(e) => {
+              setEndEarlyDialogOpen(e.open)
+              if (!e.open) setError('')
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button variant="plain" className={css({ color: 'fg.muted!' })}>
+                End this goal early
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>End this goal early?</DialogTitle>
+              <DialogDescription className={css({ mb: '4' })}>
+                You're in control. Ending now takes you to a review of this
+                goal, and from there you can start a fresh one with new
+                settings. Your logged items stay in your history.
+              </DialogDescription>
+              {error && (
+                <div
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'red.11',
+                    bg: 'red.a3',
+                    p: '3',
+                    borderRadius: 'l2',
+                    mb: '4',
+                  })}
+                >
+                  {error}
+                </div>
+              )}
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '2',
+                })}
+              >
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEndEarlyDialogOpen(false)}
+                  disabled={loading}
+                >
+                  Keep going
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleStartOver}
+                  disabled={loading}
+                >
+                  {loading ? 'Loading...' : 'End & Review'}
+                </Button>
+              </div>
+            </DialogContent>
+          </DialogRoot>
+        </div>
+      )}
     </div>
   )
 }
