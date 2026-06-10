@@ -1,19 +1,19 @@
 import { useRef, useState } from 'react'
 import { createFileRoute, useRouter, useNavigate } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
-import { getProfile, updateProfile, updateAvatar } from '@/server/profiles'
+import { getProfile, updateProfile, updateAvatar } from '@/profile/profiles'
 import { createClient } from '@/lib/supabase/client'
-import { Avatar } from '@/components/avatar'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Avatar } from 'design-system/avatar'
+import { Button } from 'design-system/button'
+import { Input } from 'design-system/input'
+import { Label } from 'design-system/label'
 import {
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
+} from 'design-system/card'
 
 export const Route = createFileRoute('/dashboard/settings')({
   loader: () => getProfile(),

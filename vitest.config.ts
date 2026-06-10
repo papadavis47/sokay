@@ -14,6 +14,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'design-system': fileURLToPath(
+        new URL('./src/design-system', import.meta.url),
+      ),
       'styled-system': fileURLToPath(
         new URL('./styled-system', import.meta.url),
       ),

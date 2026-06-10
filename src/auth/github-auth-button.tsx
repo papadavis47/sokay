@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { css } from 'styled-system/css'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
+import { Button } from 'design-system/button'
 
 interface GithubAuthButtonProps {
   label: string

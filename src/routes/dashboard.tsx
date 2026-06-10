@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { DashboardNav } from '@/components/dashboard-nav'
-import { requireUser } from '@/server/auth'
-import { getProfile } from '@/server/profiles'
+import { DashboardNav } from '@/layout/dashboard-nav'
+import { requireUser } from '@/auth/auth'
+import { getProfile } from '@/profile/profiles'
 import { css } from 'styled-system/css'
 
 export const Route = createFileRoute('/dashboard')({

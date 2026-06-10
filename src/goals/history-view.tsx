@@ -2,25 +2,25 @@ import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { Pencil, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from 'design-system/button'
 import {
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
+} from 'design-system/card'
+import { Input } from 'design-system/input'
+import { Textarea } from 'design-system/textarea'
+import { Label } from 'design-system/label'
 import {
   DialogRoot,
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog'
-import { updateDebit, deleteDebit } from '@/server/debits'
-import type { Goal, Debit } from '@/types/database'
+} from 'design-system/dialog'
+import { updateDebit, deleteDebit } from '@/goals/debits'
+import type { Goal, Debit } from '@/goals/types'
 
 const NOTES_MAX_LENGTH = 250
 

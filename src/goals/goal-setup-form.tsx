@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { css, cx } from 'styled-system/css'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
+import { Button } from 'design-system/button'
+import { Input } from 'design-system/input'
+import { Label } from 'design-system/label'
+import { Slider } from 'design-system/slider'
 import {
   SelectRoot,
   SelectTrigger,
@@ -12,22 +12,22 @@ import {
   SelectItem,
   SelectValueText,
   createListCollection,
-} from '@/components/ui/select'
+} from 'design-system/select'
 import {
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
-import { createGoal } from '@/server/goals'
+} from 'design-system/card'
+import { createGoal } from '@/goals/goals'
 import {
   DURATION_MAX,
   TOTAL_ITEMS_MIN,
   TOTAL_ITEMS_MAX,
   formatDuration,
-} from '@/lib/duration'
-import type { DurationUnit } from '@/types/database'
+} from '@/goals/duration'
+import type { DurationUnit } from '@/goals/types'
 
 const unitButtonStyles = {
   active: css({

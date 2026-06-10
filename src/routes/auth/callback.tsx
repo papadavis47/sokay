@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { exchangeCode } from '@/server/auth'
+import { exchangeCode } from '@/auth/auth'
 
 export const Route = createFileRoute('/auth/callback')({
   validateSearch: (search: Record<string, unknown>): { code?: string } => ({

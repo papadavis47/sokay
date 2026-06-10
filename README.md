@@ -1,6 +1,8 @@
 # Sokay - Mindful Eating Tracker
 
-**"It's okay."** Track eating habits mindfully. Set a limit of "sokay items," log indulgences without guilt, build sustainable habits through realistic goals and self-forgiveness.
+**"It's okay."** - Track eating habits mindfully.
+
+Set a limit of "sokay items," log indulgences without guilt, build sustainable habits through realistic goals and self-forgiveness.
 
 ## Tech Stack
 
@@ -32,11 +34,15 @@ pnpm panda codegen  # regenerate styled-system
 
 ## How It Works
 
-1. Sign up and set a limit goal: 1-100 limit over weeks or months. You decide.
-2. Log splurges as you go, see remaining balance
-3. Review and reflect when goal ends, then start fresh
+1. Sign up and set a limit goal: 1-100 limit of sokay items over weeks or months. You decide.
+2. Log sokay items ( less than ideal food choices ) as you go, see remaining balance for chosen goal length
+3. Review and reflect when goal ends or end goal early ( your choice ), then start fresh
+
+---
 
 RLS ensures users only access their own data.
+
+---
 
 ## License
 

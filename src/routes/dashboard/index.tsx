@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { goals, debits } from '@/lib/db/schema'
 import { eq, and, desc } from 'drizzle-orm'
-import { GoalSetupForm } from '@/components/goal-setup-form'
-import { GoalDashboard } from '@/components/goal-dashboard'
+import { GoalSetupForm } from '@/goals/goal-setup-form'
+import { GoalDashboard } from '@/goals/goal-dashboard'
 import { css } from 'styled-system/css'
 
 const getDashboardData = createServerFn({ method: 'GET' }).handler(async () => {

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { goals, debits } from '@/lib/db/schema'
 import { eq, and, desc } from 'drizzle-orm'
-import { GoalReview } from '@/components/goal-review'
+import { GoalReview } from '@/goals/goal-review'
 import { css } from 'styled-system/css'
 
 const getReviewData = createServerFn({ method: 'GET' })

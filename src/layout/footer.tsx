@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
-import { BrandMark } from '@/components/brand-mark'
+import { BrandMark } from '@/layout/brand-mark'
 
 export function Footer() {
   const year = new Date().getFullYear()

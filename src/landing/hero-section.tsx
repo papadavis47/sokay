@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { css } from 'styled-system/css'
 import { token } from 'styled-system/tokens'
-import { Button } from '@/components/ui/button'
+import { Button } from 'design-system/button'
 
 export function HeroSection() {
   return (

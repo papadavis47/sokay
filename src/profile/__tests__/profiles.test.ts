@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { isRedirect } from '@tanstack/react-router'
-import { callServerFn, createDbMock, createSupabaseMock } from './helpers'
+import { callServerFn, createDbMock, createSupabaseMock } from '@/test/helpers'
 
 let supabaseMock: ReturnType<typeof createSupabaseMock>
 let dbMock: ReturnType<typeof createDbMock>
@@ -18,7 +18,7 @@ const USER = { id: 'user-1' }
 const PROFILE = { id: USER.id, displayName: 'Ada', avatarUrl: null }
 
 const { getProfile, updateProfile, updateAvatar } =
-  await import('@/server/profiles')
+  await import('@/profile/profiles')
 
 beforeEach(() => {
   supabaseMock = createSupabaseMock(USER)

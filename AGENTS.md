@@ -49,9 +49,16 @@ supabase stop             # shut the stack down
 
 ## Project Layout
 
+The codebase is organized into **verticals** — top-level folders grouped by what
+code _does_ (the domain), not by what it _is_ (component vs server fn vs util).
+Everything for a domain — components, server functions, utils, types, tests —
+lives together. See `learning/vertical-codebase-reorg.md` for the rationale.
+Routes stay in `src/routes/` (TanStack file-based routing owns that tree) and act
+as **thin entry points** that import the substance from the verticals.
+
 ```
 src/
-├── routes/                  # TanStack Router file-based routes
+├── routes/                  # TanStack Router file-based routes (thin: loaders + wiring)
 │   ├── __root.tsx           # root layout, theme bootstrap
 │   ├── index.tsx            # marketing/landing (composes HomeNav + HeroSection + HowItWorks + OriginStory)
 │   ├── login.tsx, signup.tsx  # email/password + "Continue with GitHub" button
@@ -62,28 +69,37 @@ src/
 │   │   ├── history.tsx      # /dashboard/history
 │   │   └── settings.tsx     # /dashboard/settings — edit display name
 │   └── goal/review/$id.tsx  # /goal/review/:id — end-of-cycle review
-├── components/
-│   ├── ui/                  # primitives (button, card, dialog, input, textarea, label, select, slider)
+├── design-system/           # reusable, domain-agnostic UI (the "core"); has a barrel index.ts
+│   ├── index.ts            # barrel — import primitives via `design-system`
+│   ├── button.tsx, card.tsx, dialog.tsx, input.tsx, textarea.tsx, label.tsx, select.tsx, slider.tsx
+│   └── avatar.tsx          # round avatar: image, or initials fallback on brand.subtle; size `sm` (32px, nav) | `md` (40px) | `lg` (56px, settings)
+├── layout/                  # app chrome (shared vertical)
 │   ├── brand-mark.tsx       # shared "sokay / Progress, not perfection" wordmark
-│   ├── avatar.tsx           # round avatar: image, or initials fallback on brand.subtle; size variant `sm` (32px, nav) | `md` (40px) | `lg` (56px, settings)
+│   ├── sokay-mark.tsx
 │   ├── home-nav.tsx         # landing-page header (responsive; hamburger below md)
 │   ├── dashboard-nav.tsx    # auth header (responsive; shows display name + Settings link)
 │   ├── mobile-nav.tsx       # shared Motion slide-out drawer used by both navs
+│   ├── footer.tsx
+│   └── theme-provider.tsx, theme-toggle.tsx
+├── landing/                 # marketing-page sections vertical
+│   └── hero-section.tsx, how-it-works.tsx, origin-story.tsx
+├── auth/                    # auth vertical
 │   ├── github-auth-button.tsx # shared "Continue with GitHub" button (inline SVG)
-│   ├── hero-section.tsx, how-it-works.tsx, origin-story.tsx  # landing-page sections
-│   ├── footer.tsx, theme-provider.tsx, theme-toggle.tsx
-│   ├── goal-setup-form.tsx, goal-dashboard.tsx, goal-review.tsx
-│   └── history-view.tsx
-├── server/                  # server functions (createServerFn)
-│   ├── auth.ts              # getUser, requireUser, logout, exchangeCode
-│   ├── profiles.ts          # getProfile, updateProfile, updateAvatar
-│   ├── goals.ts             # createGoal, startGoalReview, completeGoal
-│   └── debits.ts            # createDebit, updateDebit, deleteDebit
-├── lib/
+│   └── auth.ts             # server fns: getUser, requireUser, logout, exchangeCode
+├── goals/                   # goals vertical (the core domain)
+│   ├── goal-setup-form.tsx, goal-dashboard.tsx, goal-review.tsx, history-view.tsx
+│   ├── goals.ts            # server fns: createGoal, startGoalReview, completeGoal
+│   ├── debits.ts           # server fns: createDebit, updateDebit, deleteDebit
+│   ├── duration.ts         # goal bounds (items 1-100, weeks/months max) + formatDuration
+│   ├── types.ts           # re-exports (Goal, Debit) + view-model types (GoalWithDebits, GoalStatus, DurationUnit)
+│   └── __tests__/         # goals.test.ts, debits.test.ts
+├── profile/                 # profile vertical
+│   ├── profiles.ts        # server fns: getProfile, updateProfile, updateAvatar
+│   └── __tests__/profiles.test.ts
+├── test/                    # shared test support (helpers.ts: createServerFn harness + db/supabase mocks)
+├── lib/                     # truly generic infra only
 │   ├── db/                  # drizzle client + schema
-│   ├── duration.ts          # goal bounds (items 1-100, weeks/months max) + formatDuration
 │   └── supabase/            # client.ts (browser), server.ts (SSR cookies)
-├── types/database.ts        # re-exports + view-model types
 ├── router.tsx, routeTree.gen.ts, index.css
 
 supabase/                    # local Supabase stack config + migrations (committed)
@@ -92,6 +108,13 @@ supabase/                    # local Supabase stack config + migrations (committ
 └── .env.local              # GitHub OAuth creds for local dev (gitignored)
 ```
 
+**Adding code:** put it in the vertical that owns its behavior. Reusable,
+domain-agnostic UI → `design-system/`; app chrome → `layout/`. Server functions
+are plain `.ts` files inside their vertical (e.g. `goals/goals.ts`) — **never**
+`*.server.ts`: TanStack reserves the `*.server.*` filename for server-only
+modules that must not reach the client, but `createServerFn` files are imported
+by client routes/components, so that suffix breaks the build.
+
 `routeTree.gen.ts` is **generated** by the TanStack Start Vite plugin — do not hand-edit it.
 
 `styled-system/` is **generated** by Panda — do not hand-edit it; it's gitignored from lint via `eslint.config.mjs`.
@@ -99,15 +122,22 @@ supabase/                    # local Supabase stack config + migrations (committ
 ## Path Aliases
 
 - `@/*` → `./src/*`
+- `design-system/*` → `./src/design-system/*`
 - `styled-system/*` → `./styled-system/*`
 
-Always import via aliases (e.g. `import { Button } from '@/components/ui/button'`, `import { css } from 'styled-system/css'`). No relative `../../` imports across top-level directories.
+Always import via aliases. Design-system primitives come from the `design-system`
+barrel (e.g. `import { Button, Card } from 'design-system'`) or a direct file
+(`import { Avatar } from 'design-system/avatar'`). Other verticals use `@/`
+direct file imports (e.g. `import { createGoal } from '@/goals/goals'`,
+`import { css } from 'styled-system/css'`). No relative `../../` imports across
+top-level directories. (Aliases are declared in `tsconfig.json` and mirrored in
+`vitest.config.ts`; Vite picks them up via `resolve.tsconfigPaths`.)
 
 ## Data Model
 
 Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` (SQL with RLS), **and** `supabase/migrations/` (the applied source of truth). **Keep all three in sync.**
 
-- `goals` — `userId`, `totalItems` (1–100, column `total_items`), `durationValue` + `durationUnit` (`'week'` 1–52 | `'month'` 1–12 — one unit per goal, never mixed), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`). Limits + `formatDuration` live in `src/lib/duration.ts` — import from there, don't re-hardcode bounds.
+- `goals` — `userId`, `totalItems` (1–100, column `total_items`), `durationValue` + `durationUnit` (`'week'` 1–52 | `'month'` 1–12 — one unit per goal, never mixed), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`). Limits + `formatDuration` live in `src/goals/duration.ts` — import from there, don't re-hardcode bounds.
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
 - `profiles` — `id` (PK = `auth.users.id`, cascade delete), `displayName`, `avatarUrl`. One row per user, kept 1-to-1 with `auth.users` by an `on auth.users` insert trigger (`handle_new_user`, `security definer`). `display_name` is seeded with precedence: signup `options.data.display_name` → OAuth `full_name`/`name` → email local part. `display_name` and `avatar_url` are both editable later via `/dashboard/settings`; the avatar shows in `dashboard-nav.tsx` (falling back to initials via `avatar.tsx`).
 
@@ -131,7 +161,7 @@ Row Level Security is enforced in Supabase: every row is filtered by `auth.uid()
 
 ## Server Functions Pattern
 
-All mutations and protected reads live in `src/server/*.ts` using `createServerFn`. The canonical shape:
+All mutations and protected reads live in each vertical (e.g. `src/goals/goals.ts`, `src/auth/auth.ts`) using `createServerFn`. The canonical shape:
 
 ```ts
 export const doThing = createServerFn({ method: 'POST' })
@@ -175,12 +205,12 @@ Rules:
 - Use Panda's `css({...})` from `styled-system/css` for all styling. No CSS modules, no inline `style`, no Tailwind.
 - Use the theme tokens from `@park-ui/panda-preset` (teal accent, neutral gray, `radius: 'md'`): `bg.canvas`, `fg.default`, `fg.muted`, `colorPalette.*`, `gray.a2`, `red.11`, etc.
 - **Brand accent** (warm orange) lives as custom semantic tokens in `panda.config.ts` — use these, never hardcoded hex: colors `brand.solid`, `brand.solidHover`, `brand.onSolid`, the soft surface pair `brand.subtle` (tinted background) / `brand.border`, and shadows `brand` / `brandHover`. They carry their own light/dark values, so no `_dark` override is needed. Used for the "sokay" wordmark (`brand-mark.tsx`), landing heading highlights, the `cta` button, the balance/review item counts, the tinted summary cards, and the History goal selector. Prefer these over the teal `colorPalette.*` accent for anything that should read as "brand".
-- Button variants (`@/components/ui/button.tsx`): `solid` (default), `outline`, `subtle`, `plain`, and `cta` — the warm brand-fill primary call-to-action (lifting shadow + a trailing `<svg>` icon that slides on hover). Use `cta` for the main conversion action on a page, not in dense nav.
-- Compose primitives from `@/components/ui/*` instead of reaching into Ark UI directly.
+- Button variants (`src/design-system/button.tsx`): `solid` (default), `outline`, `subtle`, `plain`, and `cta` — the warm brand-fill primary call-to-action (lifting shadow + a trailing `<svg>` icon that slides on hover). Use `cta` for the main conversion action on a page, not in dense nav.
+- Compose primitives from `design-system` instead of reaching into Ark UI directly.
 - **Responsive nav**: both `home-nav.tsx` and `dashboard-nav.tsx` show an inline nav at `md+` and a hamburger below `md`. The hamburger opens the shared `mobile-nav.tsx` drawer — a Motion (`AnimatePresence`) slide-in panel portaled to `document.body` with a fading backdrop, Esc-to-close, body scroll-lock, and a render-prop `close` so links dismiss it on tap. Reuse `MobileNav` for any new responsive header rather than rolling another drawer.
 - The Inter latin subset is **inlined as a base64 data URI** in `src/index.css` (`font-display: block`) so the font ships with the render-blocking CSS and is present at first paint — no FOUT / layout shift. Don't swap it back to an external `@font-face` + `<link rel="preload">`.
 - Dark mode is toggled by adding/removing `dark` on `<html>` — the inline script in `__root.tsx` hydrates it from `localStorage('sokay-theme')`. Use `ThemeProvider` / `ThemeToggle` rather than touching the DOM directly.
-- **Panda extracts styles statically at build time**, so values inside `css({...})` must be **literal** — a runtime expression like ``w: `${size}px` `` emits a class name with no matching CSS rule (the element silently falls back to content/intrinsic size). For prop-driven sizes, enumerate discrete variants with literal values and pick one via a lookup map (see the `boxBySize` `sm`/`md`/`lg` pattern in `avatar.tsx`), then combine with `cx`.
+- **Panda extracts styles statically at build time**, so values inside `css({...})` must be **literal** — a runtime expression like ``w: `${size}px` `` emits a class name with no matching CSS rule (the element silently falls back to content/intrinsic size). For prop-driven sizes, enumerate discrete variants with literal values and pick one via a lookup map (see the `boxBySize` `sm`/`md`/`lg` pattern in `src/design-system/avatar.tsx`), then combine with `cx`.
 
 ## Environment
 
@@ -196,8 +226,8 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 
 ## Conventions
 
-- TypeScript strict mode; no `any`. Re-use the Drizzle-inferred types (`Goal`, `Debit`, `Profile`, `NewGoal`, `NewDebit`, `NewProfile`) from `@/lib/db/schema` (also re-exported via `@/types/database`).
-- Components are function declarations with explicit prop interfaces (see `HistoryViewProps` in `src/components/history-view.tsx`).
+- TypeScript strict mode; no `any`. Re-use the Drizzle-inferred types (`Goal`, `Debit`, `Profile`, `NewGoal`, `NewDebit`, `NewProfile`) from `@/lib/db/schema` (also re-exported via `@/goals/types`).
+- Components are function declarations with explicit prop interfaces (see `HistoryViewProps` in `src/goals/history-view.tsx`).
 - File naming: kebab-case for component files (`goal-setup-form.tsx`), PascalCase exports.
 - Keep server logic out of components — call server functions from event handlers / loaders.
 - **Formatting is Prettier** (`.prettierrc.json`: `semi: false`, `singleQuote: true`). Run `pnpm format` (or rely on format-on-save) — don't hand-format. `eslint-config-prettier` sits last in `eslint.config.mjs`, so ESLint defers all style to Prettier; lint is for correctness only.
@@ -208,7 +238,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Don't edit `routeTree.gen.ts`, `styled-system/`, `.output/`, `.tanstack/`, or `dist/`.
 - Don't add a second styling system (Tailwind, CSS modules, emotion).
 - Don't bypass `requireUser` / `getUser` checks in server functions.
-- Don't change the Drizzle schema without also updating `supabase-schema.sql`, a new migration, and the SQL `check` constraints (items 1–100, duration 1–52 weeks / 1–12 months, status enum) — plus the bounds in `src/lib/duration.ts`.
+- Don't change the Drizzle schema without also updating `supabase-schema.sql`, a new migration, and the SQL `check` constraints (items 1–100, duration 1–52 weeks / 1–12 months, status enum) — plus the bounds in `src/goals/duration.ts`.
 - Don't introduce a new ORM, query builder, or HTTP framework — server functions + Drizzle is the pattern.
 
 ## Learning Folder
@@ -232,8 +262,9 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 
 ### TODO (next steps)
 
-- [x] Tests (Vitest, server fns): `goals`, `debits`, `profiles` covered (auth-guard redirects, validation, hard-cap, scoping). Run with `pnpm test`. Config in `vitest.config.ts` deliberately omits the `tanstackStart()` plugin so `createServerFn` handlers run inline; helpers + mocks in `src/server/__tests__/helpers.ts`. Caveat: that transform-free path doesn't surface handler return values, so tests assert side effects (db calls) + thrown errors, not resolved values.
+- [x] Tests (Vitest, server fns): `goals`, `debits`, `profiles` covered (auth-guard redirects, validation, hard-cap, scoping). Run with `pnpm test`. Config in `vitest.config.ts` deliberately omits the `tanstackStart()` plugin so `createServerFn` handlers run inline; helpers + mocks in `src/test/helpers.ts`. Caveat: that transform-free path doesn't surface handler return values, so tests assert side effects (db calls) + thrown errors, not resolved values.
 - [x] Tests (Playwright, auth flows): protected-route redirect, email signup (+ password-mismatch error), email login (+ invalid-creds error), logout/re-protect, and GitHub OAuth initiation. Run with `pnpm test:e2e` against the **local** dev server (:3000) + local Supabase (:54321), both of which must be running. Config in `playwright.config.ts` (`testDir: ./e2e`, reuses an already-running dev server). Specs + helpers in `e2e/`; `ensureTestUser` seeds a confirmed user via GoTrue's signup endpoint, and `waitForHydration` avoids the SSR-form native-submit race by waiting for React's `__reactProps$` keys before interacting. Signup tests use unique emails (cleared by `supabase db reset`).
+- [x] Tests (Playwright, goal flow — `e2e/goal-flow.spec.ts`): goal setup with weeks duration (verifies 14-day countdown), logging an item, hard cap (log button hidden + at-limit notice), end-goal-early dialog → review → start fresh, and "Keep going" dismissal. Each test signs up a **fresh user** so tests stay isolated and fully parallel. Locator note: the Ark UI select trigger exposes as role `combobox` (no accessible name), not `button`.
 - [x] Avatar support on `profiles` (upload via Supabase Storage, show in nav).
 - [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).
 - [ ] Session refresh on navigation (tokens can go stale).

@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
-import { Button } from '@/components/ui/button'
+import { Button } from 'design-system/button'
 import {
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
-import { completeGoal } from '@/server/goals'
-import { formatDuration } from '@/lib/duration'
-import type { Goal, Debit } from '@/types/database'
+} from 'design-system/card'
+import { completeGoal } from '@/goals/goals'
+import { formatDuration } from '@/goals/duration'
+import type { Goal, Debit } from '@/goals/types'
 
 interface GoalReviewProps {
   goal: Goal

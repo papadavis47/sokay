@@ -7,18 +7,18 @@ import {
 } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from 'design-system/button'
+import { Input } from 'design-system/input'
+import { Label } from 'design-system/label'
 import {
   Card,
   CardHeader,
   CardBody,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
-import { GithubAuthButton } from '@/components/github-auth-button'
-import { getUser } from '@/server/auth'
+} from 'design-system/card'
+import { GithubAuthButton } from '@/auth/github-auth-button'
+import { getUser } from '@/auth/auth'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async () => {

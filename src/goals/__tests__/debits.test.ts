@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { isRedirect } from '@tanstack/react-router'
-import { callServerFn, createDbMock, createSupabaseMock } from './helpers'
+import { callServerFn, createDbMock, createSupabaseMock } from '@/test/helpers'
 
 // Mocks are reassigned per-test via the closures below.
 let supabaseMock: ReturnType<typeof createSupabaseMock>
@@ -24,8 +24,7 @@ const ACTIVE_GOAL = {
 }
 
 // Imported after mocks are registered.
-const { createDebit, updateDebit, deleteDebit } =
-  await import('@/server/debits')
+const { createDebit, updateDebit, deleteDebit } = await import('@/goals/debits')
 
 beforeEach(() => {
   supabaseMock = createSupabaseMock(USER)

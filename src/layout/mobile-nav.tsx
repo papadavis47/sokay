@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Menu, X } from 'lucide-react'
 import { css } from 'styled-system/css'
-import { Button } from '@/components/ui/button'
+import { Button } from 'design-system/button'
 
 interface MobileNavProps {
   /**

@@ -4,8 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { goals } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { DURATION_MAX, TOTAL_ITEMS_MIN, TOTAL_ITEMS_MAX } from '@/lib/duration'
-import type { DurationUnit } from '@/types/database'
+import {
+  DURATION_MAX,
+  TOTAL_ITEMS_MIN,
+  TOTAL_ITEMS_MAX,
+} from '@/goals/duration'
+import type { DurationUnit } from '@/goals/types'
 
 interface CreateGoalInput {
   totalItems: number

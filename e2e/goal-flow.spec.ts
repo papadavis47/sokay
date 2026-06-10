@@ -45,7 +45,9 @@ test.describe('goal setup', () => {
     // Switch the duration unit to weeks, then pick a value from the
     // weeks-only dropdown.
     await page.getByRole('button', { name: /^weeks$/i }).click()
-    await expect(page.getByText(/your goal will run for 1 week\./i)).toBeVisible()
+    await expect(
+      page.getByText(/your goal will run for 1 week\./i),
+    ).toBeVisible()
     await page.getByRole('combobox').click()
     await page.getByRole('option', { name: /^2 weeks$/i }).click()
     await expect(

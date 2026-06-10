@@ -1,11 +1,11 @@
 import { css } from 'styled-system/css'
-import { SokayMark } from '@/components/sokay-mark'
+import { SokayMark } from '@/layout/sokay-mark'
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
+} from 'design-system/card'
 
 export function HowItWorks() {
   return (

@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
-import { SokayMark } from '@/components/sokay-mark'
+import { SokayMark } from '@/layout/sokay-mark'
 
 interface BrandMarkProps {
   /** Optional route to wrap the mark in a link. */

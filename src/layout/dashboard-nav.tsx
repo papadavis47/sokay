@@ -1,11 +1,11 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
-import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { BrandMark } from '@/components/brand-mark'
-import { MobileNav } from '@/components/mobile-nav'
-import { Avatar } from '@/components/avatar'
-import { logout } from '@/server/auth'
+import { Button } from 'design-system/button'
+import { ThemeToggle } from '@/layout/theme-toggle'
+import { BrandMark } from '@/layout/brand-mark'
+import { MobileNav } from '@/layout/mobile-nav'
+import { Avatar } from 'design-system/avatar'
+import { logout } from '@/auth/auth'
 import type { User } from '@supabase/supabase-js'
 
 export function DashboardNav({

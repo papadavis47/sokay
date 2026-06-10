@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/db'
 import { goals, debits } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
-import { HistoryView } from '@/components/history-view'
+import { HistoryView } from '@/goals/history-view'
 import { css } from 'styled-system/css'
 
 const getHistoryData = createServerFn({ method: 'GET' }).handler(async () => {

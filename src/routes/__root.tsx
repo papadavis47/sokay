@@ -7,8 +7,8 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
-import { ThemeProvider } from '@/components/theme-provider'
-import { Footer } from '@/components/footer'
+import { ThemeProvider } from '@/layout/theme-provider'
+import { Footer } from '@/layout/footer'
 import '@/index.css'
 
 export const Route = createRootRoute({

@@ -1,4 +1,4 @@
-import type { DurationUnit } from '@/types/database'
+import type { DurationUnit } from '@/goals/types'
 
 export const TOTAL_ITEMS_MIN = 1
 export const TOTAL_ITEMS_MAX = 100
