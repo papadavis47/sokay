@@ -4,7 +4,7 @@ import { css } from 'styled-system/css'
 import { token } from 'styled-system/tokens'
 import { Button } from 'design-system/button'
 
-export function HeroSection() {
+export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   return (
     <section
       className={css({
@@ -72,47 +72,65 @@ export function HeroSection() {
         </p>
 
         {/* Calls to action */}
-        <div
-          className={css({
-            display: 'flex',
-            flexDirection: { base: 'column', sm: 'row' },
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '3',
-            w: { base: 'full', sm: 'auto' },
-            mt: '2',
-          })}
-        >
+        {isLoggedIn ? (
           <Link
-            to="/signup"
-            className={css({ w: { base: 'full', sm: 'auto' } })}
+            to="/dashboard"
+            className={css({ w: { base: 'full', sm: 'auto' }, mt: '2' })}
           >
             <Button
               size="lg"
               variant="cta"
               className={css({ w: { base: 'full', sm: 'auto' } })}
             >
-              Sign Up — it's free
+              Go to Dashboard
               <ArrowRight className={css({ w: '5', h: '5' })} />
             </Button>
           </Link>
-          <Link
-            to="/login"
-            className={css({ w: { base: 'full', sm: 'auto' } })}
-          >
-            <Button
-              size="lg"
-              variant="outline"
-              className={css({ w: { base: 'full', sm: 'auto' } })}
+        ) : (
+          <>
+            <div
+              className={css({
+                display: 'flex',
+                flexDirection: { base: 'column', sm: 'row' },
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '3',
+                w: { base: 'full', sm: 'auto' },
+                mt: '2',
+              })}
             >
-              Log in
-            </Button>
-          </Link>
-        </div>
+              <Link
+                to="/signup"
+                className={css({ w: { base: 'full', sm: 'auto' } })}
+              >
+                <Button
+                  size="lg"
+                  variant="cta"
+                  className={css({ w: { base: 'full', sm: 'auto' } })}
+                >
+                  Sign Up — it's free
+                  <ArrowRight className={css({ w: '5', h: '5' })} />
+                </Button>
+              </Link>
+              <Link
+                to="/login"
+                className={css({ w: { base: 'full', sm: 'auto' } })}
+              >
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className={css({ w: { base: 'full', sm: 'auto' } })}
+                >
+                  Log in
+                </Button>
+              </Link>
+            </div>
 
-        <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
-          No credit card. Just you and the process.
-        </p>
+            <p className={css({ fontSize: 'sm', color: 'fg.muted' })}>
+              No credit card. Just you and the process.
+            </p>
+          </>
+        )}
       </div>
     </section>
   )

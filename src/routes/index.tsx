@@ -19,7 +19,7 @@ function Home() {
       <HomeNav isLoggedIn={isLoggedIn} />
 
       <main>
-        <HeroSection />
+        <HeroSection isLoggedIn={isLoggedIn} />
 
         <HowItWorks />
 
