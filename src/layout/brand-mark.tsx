@@ -4,7 +4,7 @@ import { SokayMark } from '@/layout/sokay-mark'
 
 interface BrandMarkProps {
   /** Optional route to wrap the mark in a link. */
-  to?: '/' | '/dashboard'
+  to?: '/'
   /** Visual size — `md` for headers (default), `sm` for the footer. */
   size?: 'sm' | 'md'
 }

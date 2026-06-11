@@ -1,4 +1,4 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { Button } from 'design-system/button'
 import { ThemeToggle } from '@/layout/theme-toggle'
@@ -18,6 +18,7 @@ export function DashboardNav({
   avatarUrl: string | null
 }) {
   const router = useRouter()
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   const shownName = displayName ?? user.email
 
   const handleLogout = async () => {
@@ -49,7 +50,7 @@ export function DashboardNav({
         <div
           className={css({ display: 'flex', alignItems: 'center', gap: '6' })}
         >
-          <BrandMark to="/dashboard" />
+          <BrandMark to="/" />
           {/* Desktop nav */}
           <nav
             className={css({
@@ -58,21 +59,27 @@ export function DashboardNav({
               gap: '2',
             })}
           >
-            <Link to="/dashboard">
-              <Button variant="plain" size="sm">
-                Dashboard
-              </Button>
-            </Link>
-            <Link to="/dashboard/history">
-              <Button variant="plain" size="sm">
-                History
-              </Button>
-            </Link>
-            <Link to="/dashboard/settings">
-              <Button variant="plain" size="sm">
-                Settings
-              </Button>
-            </Link>
+            {pathname !== '/dashboard' && (
+              <Link to="/dashboard">
+                <Button variant="plain" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
+            )}
+            {pathname !== '/dashboard/history' && (
+              <Link to="/dashboard/history">
+                <Button variant="plain" size="sm">
+                  History
+                </Button>
+              </Link>
+            )}
+            {pathname !== '/dashboard/settings' && (
+              <Link to="/dashboard/settings">
+                <Button variant="plain" size="sm">
+                  Settings
+                </Button>
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -134,30 +141,45 @@ export function DashboardNav({
                     {shownName}
                   </span>
                 </div>
-                <Link to="/dashboard" onClick={close}>
-                  <Button
-                    variant="plain"
-                    className={css({ w: 'full', justifyContent: 'flex-start' })}
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link to="/dashboard/history" onClick={close}>
-                  <Button
-                    variant="plain"
-                    className={css({ w: 'full', justifyContent: 'flex-start' })}
-                  >
-                    History
-                  </Button>
-                </Link>
-                <Link to="/dashboard/settings" onClick={close}>
-                  <Button
-                    variant="plain"
-                    className={css({ w: 'full', justifyContent: 'flex-start' })}
-                  >
-                    Settings
-                  </Button>
-                </Link>
+                {pathname !== '/dashboard' && (
+                  <Link to="/dashboard" onClick={close}>
+                    <Button
+                      variant="plain"
+                      className={css({
+                        w: 'full',
+                        justifyContent: 'flex-start',
+                      })}
+                    >
+                      Dashboard
+                    </Button>
+                  </Link>
+                )}
+                {pathname !== '/dashboard/history' && (
+                  <Link to="/dashboard/history" onClick={close}>
+                    <Button
+                      variant="plain"
+                      className={css({
+                        w: 'full',
+                        justifyContent: 'flex-start',
+                      })}
+                    >
+                      History
+                    </Button>
+                  </Link>
+                )}
+                {pathname !== '/dashboard/settings' && (
+                  <Link to="/dashboard/settings" onClick={close}>
+                    <Button
+                      variant="plain"
+                      className={css({
+                        w: 'full',
+                        justifyContent: 'flex-start',
+                      })}
+                    >
+                      Settings
+                    </Button>
+                  </Link>
+                )}
                 <Button
                   variant="plain"
                   onClick={() => {
