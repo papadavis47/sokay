@@ -9,9 +9,11 @@ import {
 import { css } from 'styled-system/css'
 import { ThemeProvider } from '@/layout/theme-provider'
 import { Footer } from '@/layout/footer'
+import { getUser } from '@/auth/auth'
 import '@/index.css'
 
 export const Route = createRootRoute({
+  loader: async () => ({ isLoggedIn: Boolean(await getUser()) }),
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -61,6 +63,8 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  const { isLoggedIn } = Route.useLoaderData()
+
   return (
     <RootDocument>
       <div
@@ -73,7 +77,7 @@ function RootComponent() {
         <div className={css({ flex: '1' })}>
           <Outlet />
         </div>
-        <Footer />
+        <Footer isLoggedIn={isLoggedIn} />
       </div>
     </RootDocument>
   )

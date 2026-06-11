@@ -1,8 +1,15 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouterState } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { BrandMark } from '@/layout/brand-mark'
 
-export function Footer() {
+const linkStyles = css({
+  color: 'brand.solid',
+  _hover: { color: 'brand.solidHover' },
+  transition: 'colors',
+})
+
+export function Footer({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   const year = new Date().getFullYear()
 
   return (
@@ -39,36 +46,44 @@ export function Footer() {
             fontSize: 'sm',
           })}
         >
-          <Link
-            to="/"
-            className={css({
-              color: 'brand.solid',
-              _hover: { color: 'brand.solidHover' },
-              transition: 'colors',
-            })}
-          >
-            Home
-          </Link>
-          <Link
-            to="/login"
-            className={css({
-              color: 'brand.solid',
-              _hover: { color: 'brand.solidHover' },
-              transition: 'colors',
-            })}
-          >
-            Log in
-          </Link>
-          <Link
-            to="/signup"
-            className={css({
-              color: 'brand.solid',
-              _hover: { color: 'brand.solidHover' },
-              transition: 'colors',
-            })}
-          >
-            Sign up
-          </Link>
+          {pathname !== '/' && (
+            <Link to="/" className={linkStyles}>
+              Home
+            </Link>
+          )}
+          {pathname !== '/origin' && (
+            <Link to="/origin" className={linkStyles}>
+              Origin
+            </Link>
+          )}
+          {isLoggedIn ? (
+            <>
+              {pathname !== '/dashboard' && (
+                <Link to="/dashboard" className={linkStyles}>
+                  Dashboard
+                </Link>
+              )}
+              {pathname !== '/dashboard/history' && (
+                <Link to="/dashboard/history" className={linkStyles}>
+                  History
+                </Link>
+              )}
+              {pathname !== '/dashboard/settings' && (
+                <Link to="/dashboard/settings" className={linkStyles}>
+                  Settings
+                </Link>
+              )}
+            </>
+          ) : (
+            <>
+              <Link to="/login" className={linkStyles}>
+                Log in
+              </Link>
+              <Link to="/signup" className={linkStyles}>
+                Sign up
+              </Link>
+            </>
+          )}
         </nav>
 
         <p className={css({ fontSize: 'xs', color: 'fg.subtle' })}>
