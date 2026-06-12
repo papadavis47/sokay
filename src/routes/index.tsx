@@ -2,6 +2,7 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { css } from 'styled-system/css'
 import { HomeNav } from '@/layout/home-nav'
 import { HeroSection } from '@/landing/hero-section'
+import { TemptationSection } from '@/landing/temptation-section'
 import { HowItWorks } from '@/landing/how-it-works'
 import { OriginStory } from '@/landing/origin-story'
 
@@ -20,6 +21,8 @@ function Home() {
 
       <main>
         <HeroSection isLoggedIn={isLoggedIn} />
+
+        <TemptationSection />
 
         <HowItWorks />
 
