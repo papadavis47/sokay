@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { css } from 'styled-system/css'
-import { token } from 'styled-system/tokens'
 import { Button } from 'design-system/button'
+import { AnimatedSokayMark } from '@/landing/animated-sokay-mark'
 
 export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   return (
@@ -14,21 +14,6 @@ export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
         pb: { base: '16', md: '24' },
       })}
     >
-      {/* Faint, far-reaching warm wash — a wide low-opacity radial gradient
-          that melts into the canvas rather than a defined blob. */}
-      <div
-        aria-hidden
-        className={css({
-          position: 'absolute',
-          inset: '0',
-          pointerEvents: 'none',
-          zIndex: '0',
-          backgroundImage: `radial-gradient(120% 80% at 50% 0%, ${token(
-            'colors.brand.subtle',
-          )}, transparent 60%)`,
-        })}
-      />
-
       <div
         className={css({
           position: 'relative',
@@ -43,6 +28,9 @@ export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
           gap: '6',
         })}
       >
+        {/* Animated brand ring */}
+        <AnimatedSokayMark />
+
         {/* Headline */}
         <h1
           className={css({
