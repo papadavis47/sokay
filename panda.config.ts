@@ -48,6 +48,12 @@ export default defineConfig({
               },
             },
           },
+          // Muted, desaturated slate-blue — the classic "feeling blue"
+          // melancholy. Used to color the SAD acronym so it reads as somber
+          // rather than on-brand. Light / dark values baked in.
+          somber: {
+            solid: { value: { base: '#5b6b8c', _dark: '#9aa8c4' } },
+          },
         },
         shadows: {
           brand: {

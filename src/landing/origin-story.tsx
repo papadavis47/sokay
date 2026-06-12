@@ -52,14 +52,18 @@ export function OriginStory() {
             color: 'fg.default',
           })}
         >
-          The current we're swimming against
+          The <span className={css({ color: 'somber.solid' })}>SAD</span>{' '}
+          current we are swimming against
         </h3>
         <p>
           In this day and age it is so very hard to eat healthy. Most people I
-          know grew up with the Standard American Diet (SAD)—which,
-          unfortunately, is being slowly adopted around the world in places that
-          were free of it as recently as ten years ago. There are so many poor
-          options that it is virtually impossible to steer clear of it
+          know grew up with the{' '}
+          <span className={css({ color: 'somber.solid' })}>
+            Standard American Diet (SAD)
+          </span>
+          —which, unfortunately, is being slowly adopted around the world in
+          places that were free of it as recently as ten years ago. There are so
+          many poor options that it is virtually impossible to steer clear of it
           completely.
         </p>
         <p>
@@ -108,7 +112,7 @@ export function OriginStory() {
         })}
       >
         <p>Everyone is going to fall prey to this from time to time.</p>
-        <p>But the journey goes on.</p>
+        <p className={css({ color: 'brand.solid' })}>Keep moving forward</p>
       </div>
     </section>
   )

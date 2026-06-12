@@ -76,7 +76,8 @@ export function TemptationSection() {
               lineHeight: 'relaxed',
             })}
           >
-            There is temptation everywhere in our modern world.
+            There are poor food choice temptations everywhere in our modern
+            society.
           </p>
         </FadeIn>
 
@@ -124,10 +125,13 @@ export function TemptationSection() {
               lineHeight: 'snug',
             })}
           >
-            You will make mistakes or will simply want the immediate pleasure
-            sometimes. That is not failure—it is being human. What matters is
-            that you{' '}
-            <span className={css({ color: 'brand.solid' })}>keep going</span>.
+            You will have setbacks or you will simply want the immediate
+            pleasure sometimes. That is not failure—it is being human. What
+            matters is that you{' '}
+            <span className={css({ color: 'brand.solid' })}>
+              keep striving for your ideal
+            </span>
+            .
           </p>
         </FadeIn>
       </div>

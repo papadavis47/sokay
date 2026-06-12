@@ -64,8 +64,8 @@ export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
             lineHeight: 'relaxed',
           })}
         >
-          Sokay helps you stay mindful of the food you eat, track the slips
-          without guilt, and get back on track—because the journey goes on.
+          Sokay helps you stay mindful of the foods you eat, track stumbles
+          without guilt and get back on track—because the journey goes on.
         </p>
 
         {/* Calls to action */}
