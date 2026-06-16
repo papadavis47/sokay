@@ -112,11 +112,11 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
       <Card>
         <CardHeader>
           <CardTitle
-            className={css({
-              fontSize: '2xl!',
+            css={{
+              fontSize: '2xl',
               color: 'brand.solid',
               textTransform: 'uppercase',
-            })}
+            }}
           >
             sokay balance
           </CardTitle>
@@ -258,20 +258,20 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
               <DialogTrigger asChild>
                 <Button
                   size="lg"
-                  className={css({
+                  css={{
                     w: 'full',
-                    color: 'brand.solid!',
+                    color: 'brand.solid',
                     borderWidth: '1px',
                     borderColor: 'brand.solid',
-                    h: 'auto!',
+                    h: 'auto',
                     py: '4',
-                  })}
+                  }}
                 >
                   Log an Item
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle className={css({ color: 'brand.solid!' })}>
+                <DialogTitle css={{ color: 'brand.solid' }}>
                   Log an Item
                 </DialogTitle>
                 <DialogDescription className={css({ mb: '4', pt: '2' })}>
@@ -294,7 +294,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   >
                     <Label
                       htmlFor="foodName"
-                      className={css({ color: 'brand.solid!' })}
+                      className={css({ color: 'brand.solid' })}
                     >
                       Food or Drink
                     </Label>
@@ -325,7 +325,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     >
                       <Label
                         htmlFor="notes"
-                        className={css({ color: 'brand.solid!' })}
+                        className={css({ color: 'brand.solid' })}
                       >
                         Notes (optional)
                       </Label>
@@ -378,14 +378,14 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                       variant="outline"
                       onClick={() => setDialogOpen(false)}
                       disabled={loading}
-                      className={css({ color: 'brand.solid!' })}
+                      css={{ color: 'brand.solid' }}
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={loading}
-                      className={css({ color: 'brand.solid!' })}
+                      css={{ color: 'brand.solid' }}
                     >
                       {loading ? 'Logging...' : 'Log Item'}
                     </Button>
@@ -420,7 +420,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 </button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle className={css({ color: 'brand.solid!' })}>
+                <DialogTitle css={{ color: 'brand.solid' }}>
                   End this goal early?
                 </DialogTitle>
                 <DialogDescription className={css({ mb: '4', pt: '2' })}>
@@ -454,7 +454,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     variant="outline"
                     onClick={() => setEndEarlyDialogOpen(false)}
                     disabled={loading}
-                    className={css({ color: 'brand.solid!' })}
+                    css={{ color: 'brand.solid' }}
                   >
                     Keep going
                   </Button>
@@ -462,7 +462,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     type="button"
                     onClick={handleStartOver}
                     disabled={loading}
-                    className={css({ color: 'brand.solid!' })}
+                    css={{ color: 'brand.solid' }}
                   >
                     {loading ? 'Loading...' : 'End & Review'}
                   </Button>
@@ -556,9 +556,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
         </Card>
       )}
 
-      <Card
-        className={css({ bg: 'brand.subtle!', borderColor: 'brand.border!' })}
-      >
+      <Card css={{ bg: 'brand.subtle', borderColor: 'brand.border' }}>
         <CardBody className={css({ pt: '6' })}>
           <p
             className={css({

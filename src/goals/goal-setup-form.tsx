@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
-import { css, cx } from 'styled-system/css'
+import { css } from 'styled-system/css'
+import type { SystemStyleObject } from 'styled-system/types'
 import { Button } from 'design-system/button'
 import { Input } from 'design-system/input'
 import { Label } from 'design-system/label'
@@ -29,16 +30,18 @@ import {
 } from '@/goals/duration'
 import type { DurationUnit } from '@/goals/types'
 
-const unitButtonStyles = {
-  active: css({
-    bg: 'brand.solid!',
-    color: 'brand.onSolid!',
-    _hover: { bg: 'brand.solidHover!' },
-  }),
-  inactive: css({
-    color: 'brand.solid!',
-    borderColor: 'brand.solid!',
-  }),
+// Raw style objects passed via the Button `css` prop so they merge after (and
+// win over) the solid/outline variant — no `!important` needed.
+const unitButtonStyles: Record<'active' | 'inactive', SystemStyleObject> = {
+  active: {
+    bg: 'brand.solid',
+    color: 'brand.onSolid',
+    _hover: { bg: 'brand.solidHover' },
+  },
+  inactive: {
+    color: 'brand.solid',
+    borderColor: 'brand.solid',
+  },
 }
 
 const durationCollections: Record<
@@ -112,7 +115,7 @@ export function GoalSetupForm() {
   return (
     <Card className={css({ maxW: '2xl', mx: 'auto' })}>
       <CardHeader>
-        <CardTitle className={css({ fontSize: '2xl!', color: 'brand.solid' })}>
+        <CardTitle css={{ fontSize: '2xl', color: 'brand.solid' }}>
           Set Your Sokay Goal
         </CardTitle>
         <CardDescription className={css({ lineHeight: 'relaxed' })}>
@@ -156,7 +159,7 @@ export function GoalSetupForm() {
               >
                 <Label
                   htmlFor="totalItems"
-                  className={css({ color: 'brand.solid!' })}
+                  className={css({ color: 'brand.solid' })}
                 >
                   Sokay Items
                 </Label>
@@ -199,19 +202,19 @@ export function GoalSetupForm() {
                 gap: '2',
               })}
             >
-              <Label className={css({ color: 'brand.solid!' })}>
+              <Label className={css({ color: 'brand.solid' })}>
                 Goal Duration
               </Label>
               <div className={css({ display: 'flex', gap: '2' })}>
                 <Button
                   type="button"
                   variant={durationUnit === 'week' ? 'solid' : 'outline'}
-                  className={cx(
-                    css({ flex: '1' }),
+                  className={css({ flex: '1' })}
+                  css={
                     durationUnit === 'week'
                       ? unitButtonStyles.active
-                      : unitButtonStyles.inactive,
-                  )}
+                      : unitButtonStyles.inactive
+                  }
                   onClick={() => handleUnitChange('week')}
                 >
                   Weeks
@@ -219,12 +222,12 @@ export function GoalSetupForm() {
                 <Button
                   type="button"
                   variant={durationUnit === 'month' ? 'solid' : 'outline'}
-                  className={cx(
-                    css({ flex: '1' }),
+                  className={css({ flex: '1' })}
+                  css={
                     durationUnit === 'month'
                       ? unitButtonStyles.active
-                      : unitButtonStyles.inactive,
-                  )}
+                      : unitButtonStyles.inactive
+                  }
                   onClick={() => handleUnitChange('month')}
                 >
                   Months

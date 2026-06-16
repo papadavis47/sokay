@@ -2,6 +2,7 @@ import { Dialog as ArkDialog } from '@ark-ui/react/dialog'
 import { Portal } from '@ark-ui/react/portal'
 import { type ComponentProps, forwardRef } from 'react'
 import { css, cx } from 'styled-system/css'
+import type { SystemStyleObject } from 'styled-system/types'
 
 const backdropStyles = css({
   bg: 'black/50',
@@ -21,7 +22,10 @@ const positionerStyles = css({
   zIndex: 'modal',
 })
 
-const contentStyles = css({
+// Raw style objects so the parts can merge a caller's `css` override in one
+// `css()` call (last-wins) instead of `cx`-ing class strings — see button.tsx
+// for why that removes the need for `!important`.
+const contentStyles: SystemStyleObject = {
   bg: 'bg.default',
   borderRadius: 'l3',
   boxShadow: 'lg',
@@ -32,33 +36,33 @@ const contentStyles = css({
   mx: '4',
   _open: { animation: 'slide-in 0.2s ease-out' },
   _closed: { animation: 'slide-out 0.15s ease-in' },
-})
+}
 
-const titleStyles = css({
+const titleStyles: SystemStyleObject = {
   fontSize: 'lg',
   fontWeight: 'semibold',
   lineHeight: 'tight',
-})
+}
 
-const descriptionStyles = css({
+const descriptionStyles: SystemStyleObject = {
   color: 'fg.muted',
   fontSize: 'sm',
-})
+}
 
 export const DialogRoot = ArkDialog.Root
 export const DialogTrigger = ArkDialog.Trigger
 
 export const DialogContent = forwardRef<
   HTMLDivElement,
-  ComponentProps<typeof ArkDialog.Content>
->(function DialogContent({ className, children, ...props }, ref) {
+  ComponentProps<typeof ArkDialog.Content> & { css?: SystemStyleObject }
+>(function DialogContent({ className, css: cssProp, children, ...props }, ref) {
   return (
     <Portal>
       <ArkDialog.Backdrop className={backdropStyles} />
       <ArkDialog.Positioner className={positionerStyles}>
         <ArkDialog.Content
           ref={ref}
-          className={cx(contentStyles, className)}
+          className={cx(css(contentStyles, cssProp), className)}
           {...props}
         >
           {children}
@@ -70,12 +74,12 @@ export const DialogContent = forwardRef<
 
 export const DialogTitle = forwardRef<
   HTMLHeadingElement,
-  ComponentProps<typeof ArkDialog.Title>
->(function DialogTitle({ className, ...props }, ref) {
+  ComponentProps<typeof ArkDialog.Title> & { css?: SystemStyleObject }
+>(function DialogTitle({ className, css: cssProp, ...props }, ref) {
   return (
     <ArkDialog.Title
       ref={ref}
-      className={cx(titleStyles, className)}
+      className={cx(css(titleStyles, cssProp), className)}
       {...props}
     />
   )
@@ -83,12 +87,12 @@ export const DialogTitle = forwardRef<
 
 export const DialogDescription = forwardRef<
   HTMLParagraphElement,
-  ComponentProps<typeof ArkDialog.Description>
->(function DialogDescription({ className, ...props }, ref) {
+  ComponentProps<typeof ArkDialog.Description> & { css?: SystemStyleObject }
+>(function DialogDescription({ className, css: cssProp, ...props }, ref) {
   return (
     <ArkDialog.Description
       ref={ref}
-      className={cx(descriptionStyles, className)}
+      className={cx(css(descriptionStyles, cssProp), className)}
       {...props}
     />
   )

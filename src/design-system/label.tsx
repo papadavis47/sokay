@@ -2,7 +2,10 @@ import { type ComponentProps, forwardRef } from 'react'
 import { css, cx } from 'styled-system/css'
 
 const labelStyles = css({
-  color: 'fg.default',
+  // No `color` here on purpose: the body inherits `fg.default` globally
+  // (Park UI preset), so labels match by default while staying overridable
+  // via the `className` prop — Panda's `cx` only concatenates classes, so a
+  // hardcoded color would always win over the override by CSS source order.
   fontWeight: 'medium',
   fontSize: 'sm',
   lineHeight: 'normal',

@@ -82,7 +82,7 @@ function SignupPage() {
     >
       <Card className={css({ w: 'full', maxW: 'md' })}>
         <CardHeader className={css({ textAlign: 'center' })}>
-          <CardTitle className={css({ fontSize: '2xl!', fontWeight: 'bold' })}>
+          <CardTitle css={{ fontSize: '2xl', fontWeight: 'bold' }}>
             Join sokay
           </CardTitle>
           <CardDescription>

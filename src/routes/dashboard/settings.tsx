@@ -128,7 +128,9 @@ function SettingsPage() {
   return (
     <Card className={css({ maxW: 'lg', mx: 'auto' })}>
       <CardHeader>
-        <CardTitle className={css({ fontSize: 'xl!', fontWeight: 'bold' })}>
+        <CardTitle
+          css={{ fontSize: 'xl', fontWeight: 'bold', color: 'brand.solid' }}
+        >
           Profile settings
         </CardTitle>
         <CardDescription>Choose how you appear in the app.</CardDescription>
@@ -237,7 +239,12 @@ function SettingsPage() {
                 gap: '2',
               })}
             >
-              <Label htmlFor="displayName">Display name</Label>
+              <Label
+                htmlFor="displayName"
+                className={css({ color: 'brand.solid' })}
+              >
+                Display name
+              </Label>
               <Input
                 id="displayName"
                 type="text"
@@ -265,6 +272,7 @@ function SettingsPage() {
 
             <Button
               type="submit"
+              variant="cta"
               disabled={saving || displayName.trim().length === 0}
               className={css({ alignSelf: 'flex-start' })}
             >

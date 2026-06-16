@@ -70,7 +70,7 @@ function LoginPage() {
     >
       <Card className={css({ w: 'full', maxW: 'md' })}>
         <CardHeader className={css({ textAlign: 'center' })}>
-          <CardTitle className={css({ fontSize: '2xl!', fontWeight: 'bold' })}>
+          <CardTitle css={{ fontSize: '2xl', fontWeight: 'bold' }}>
             Welcome back to sokay
           </CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>

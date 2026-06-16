@@ -95,12 +95,10 @@ export function GoalReview({ goal, debits }: GoalReviewProps) {
         </p>
       </div>
 
-      <Card
-        className={css({ bg: 'brand.subtle!', borderColor: 'brand.border!' })}
-      >
+      <Card css={{ bg: 'brand.subtle', borderColor: 'brand.border' }}>
         <CardHeader className={css({ textAlign: 'center' })}>
-          <CardTitle className={css({ fontSize: '3xl!' })}>{title}</CardTitle>
-          <CardDescription className={css({ fontSize: 'base!' })}>
+          <CardTitle css={{ fontSize: '3xl' }}>{title}</CardTitle>
+          <CardDescription css={{ fontSize: 'base' }}>
             {message}
           </CardDescription>
         </CardHeader>
