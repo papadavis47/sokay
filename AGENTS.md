@@ -60,7 +60,8 @@ as **thin entry points** that import the substance from the verticals.
 src/
 ├── routes/                  # TanStack Router file-based routes (thin: loaders + wiring)
 │   ├── __root.tsx           # root layout, theme bootstrap
-│   ├── index.tsx            # marketing/landing (composes HomeNav + HeroSection + HowItWorks + OriginStory)
+│   ├── index.tsx            # marketing/landing (composes HomeNav + HeroSection + TemptationSection + HowItWorks + OriginStory)
+│   ├── origin.tsx           # /origin — full long-form origin story (self-contained sections, not the landing OriginStory teaser)
 │   ├── login.tsx, signup.tsx  # email/password + "Continue with GitHub" button
 │   ├── auth/callback.tsx     # /auth/callback — OAuth code exchange, then redirect
 │   ├── dashboard.tsx        # /dashboard layout (auth-gated; loads profile for nav)
@@ -260,6 +261,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Avatar support: public `avatars` Storage bucket + owner-scoped RLS; upload/change/remove on `/dashboard/settings`; avatar shown in nav (initials fallback).
 - Flexible goals (`flexible_goal_limits` migration): items 1–100 (slider + synced number input), duration in weeks (1–52) **or** months (1–12) via unit toggle + per-unit dropdowns; handler-side validation; at-limit inline notice (no log button); "End this goal early" dialog.
 - Learning notes: `learning/auth-and-dev-prod-supabase.md`, `learning/git-safety-and-prod-sync.md`.
+- Origin page (`/origin`): full long-form story — lead, "sokay" definition callout, personal turning point, the bigger cultural current (scroll-revealed shifts list), honest claims, closing CTA. Reuses `FadeIn`, `SokayMark`, `brand.subtle` radial washes + brand/somber tokens; mirrors the hero CTA. Curly `"…"` only on the two display pull-quotes; straight apostrophes elsewhere (matches the rest of the codebase; HTML entities not used).
 
 ### TODO (next steps)
 
