@@ -260,7 +260,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   size="lg"
                   css={{
                     w: 'full',
-                    color: 'brand.solid',
+                    color: 'brand.onSolid',
                     borderWidth: '1px',
                     borderColor: 'brand.solid',
                     h: 'auto',
@@ -385,7 +385,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     <Button
                       type="submit"
                       disabled={loading}
-                      css={{ color: 'brand.solid' }}
+                      css={{ color: 'brand.onSolid' }}
                     >
                       {loading ? 'Logging...' : 'Log Item'}
                     </Button>
@@ -462,7 +462,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                     type="button"
                     onClick={handleStartOver}
                     disabled={loading}
-                    css={{ color: 'brand.solid' }}
+                    css={{ color: 'brand.onSolid' }}
                   >
                     {loading ? 'Loading...' : 'End & Review'}
                   </Button>
