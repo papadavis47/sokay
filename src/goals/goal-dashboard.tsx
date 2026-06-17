@@ -271,7 +271,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle css={{ color: 'brand.solid' }}>
+                <DialogTitle className={css({ color: 'brand.solid' })}>
                   Log an Item
                 </DialogTitle>
                 <DialogDescription className={css({ mb: '4', pt: '2' })}>
@@ -420,7 +420,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 </button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle css={{ color: 'brand.solid' }}>
+                <DialogTitle className={css({ color: 'brand.solid' })}>
                   End this goal early?
                 </DialogTitle>
                 <DialogDescription className={css({ mb: '4', pt: '2' })}>

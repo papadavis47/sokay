@@ -2,6 +2,15 @@ import { defineConfig } from '@pandacss/dev'
 import { createPreset } from '@park-ui/panda-preset'
 import teal from '@park-ui/panda-preset/colors/teal'
 import neutral from '@park-ui/panda-preset/colors/neutral'
+import { button } from './src/theme/recipes/button.recipe'
+import { input } from './src/theme/recipes/input.recipe'
+import { textarea } from './src/theme/recipes/textarea.recipe'
+import { label } from './src/theme/recipes/label.recipe'
+import { card } from './src/theme/recipes/card.recipe'
+import { dialog } from './src/theme/recipes/dialog.recipe'
+import { select } from './src/theme/recipes/select.recipe'
+import { slider } from './src/theme/recipes/slider.recipe'
+import { avatar } from './src/theme/recipes/avatar.recipe'
 
 export default defineConfig({
   preflight: true,
@@ -19,6 +28,19 @@ export default defineConfig({
   outdir: 'styled-system',
   theme: {
     extend: {
+      recipes: {
+        button,
+        input,
+        textarea,
+        label,
+      },
+      slotRecipes: {
+        card,
+        dialog,
+        select,
+        slider,
+        avatar,
+      },
       semanticTokens: {
         colors: {
           // Warm brand accent used for the "sokay" wordmark and heading
@@ -81,6 +103,22 @@ export default defineConfig({
             ? utils.omit(preset, [
                 'theme.tokens.colors',
                 'theme.semanticTokens.colors',
+              ])
+            : preset,
+      },
+    },
+    {
+      // The Park UI preset ships full button/card/dialog/… recipe definitions,
+      // but nothing imports them — we author our own (see src/theme/recipes/).
+      // Strip the preset's recipes so we own the canonical names with no dead
+      // generated CSS; keep all of its tokens (colors, radii, colorPalette).
+      name: 'Remove Park UI Preset Recipes',
+      hooks: {
+        'preset:resolved': ({ utils, preset, name }) =>
+          name === '@park-ui/panda-preset'
+            ? utils.omit(preset, [
+                'theme.extend.recipes',
+                'theme.extend.slotRecipes',
               ])
             : preset,
       },
