@@ -275,7 +275,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                   Log an Item
                 </DialogTitle>
                 <DialogDescription className={css({ mb: '4', pt: '2' })}>
-                  What did you eat? Be honest—this is for you, not judgment.
+                  What did you eat? Remember—mindfulness, not judgment.
                 </DialogDescription>
                 <form
                   onSubmit={handleDebit}

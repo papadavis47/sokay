@@ -54,7 +54,7 @@ export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
             lineHeight: 'relaxed',
           })}
         >
-          We are swimming against the current of the Standard American Diet.
+          We are swimming against the tide of the Standard American Diet.
         </p>
         <p
           className={css({
@@ -65,7 +65,7 @@ export function HeroSection({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
           })}
         >
           Sokay helps you stay mindful of the foods you eat, track stumbles
-          without guilt and get back on track—because the journey goes on.
+          without guilt and get back on track.
         </p>
 
         {/* Calls to action */}

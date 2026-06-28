@@ -76,7 +76,7 @@ export function TemptationSection() {
               lineHeight: 'relaxed',
             })}
           >
-            There are poor food choice temptations everywhere in our modern
+            There are unhealthy food temptations everywhere in our modern
             society.
           </p>
         </FadeIn>
@@ -126,8 +126,8 @@ export function TemptationSection() {
             })}
           >
             You will have setbacks or you will simply want the immediate
-            pleasure sometimes. That is not failure—it is being human. What
-            matters is that you{' '}
+            pleasure sometimes. That is not failure&mdash;it is being human.
+            What matters is that you{' '}
             <span className={css({ color: 'brand.solid' })}>
               keep striving for your ideal
             </span>

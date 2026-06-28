@@ -61,13 +61,13 @@ export function OriginStory() {
           <span className={css({ color: 'somber.solid' })}>
             Standard American Diet (SAD)
           </span>
-          —which, unfortunately, is being slowly adopted around the world in
-          places that were free of it as recently as ten years ago. There are so
-          many poor options that it is virtually impossible to steer clear of it
-          completely.
+          &ndash;which, unfortunately, is being slowly adopted around the world
+          in places that were free of it as recently as ten years ago. There are
+          so many unhealthy options presented that it is virtually impossible to
+          steer clear of them completely.
         </p>
         <p>
-          Many people resolve to avoid junk food—items they{' '}
+          Many people resolve to avoid junk food&mdash;items they{' '}
           <span className={css({ color: 'fg.default', fontWeight: 'medium' })}>
             fully know
           </span>{' '}
@@ -81,7 +81,7 @@ export function OriginStory() {
           expense of society's health.
         </p>
         <p>
-          Sokay is about being mindful of the food that we consume—and
+          Sokay is about being mindful of the food that we consume, and
           understanding that one or two bad choices does not need to derail a
           healthy way of eating.
         </p>
@@ -92,7 +92,7 @@ export function OriginStory() {
           </span>{' '}
           of nurturing the body every day. It is about focusing on the things
           that truly nurture us—while including self-forgiveness and simply
-          getting back on track.
+          getting back on track no matter the setback.
         </p>
       </div>
 
