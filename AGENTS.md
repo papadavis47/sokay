@@ -16,8 +16,11 @@ Guidance for AI agents working on **Sokay** — a mindful-eating tracker where u
 
 ```bash
 pnpm dev            # vite dev server on http://localhost:3000
-pnpm build          # production build
-pnpm start          # run built server (node .output/server/index.mjs)
+pnpm build          # production build (emits dist/client + dist/server fetch handler)
+pnpm serve          # run the built prod app locally on :3000 (loads .env.local)
+pnpm start          # ⚠️ stale: points at .output/server/index.mjs, which this
+                    #    build target does NOT emit — use `pnpm serve` instead,
+                    #    or wire a hosting target before relying on it
 pnpm lint           # eslint src
 pnpm format         # prettier --write . (format all files)
 pnpm format:check   # prettier --check . (CI-safe, no writes)
@@ -25,6 +28,50 @@ pnpm prepare        # panda codegen — regenerates styled-system/
 ```
 
 Always use **pnpm**, never npm or yarn. Run `pnpm prepare` after changing `panda.config.ts` or adding new Panda tokens.
+
+### Testing a production build locally
+
+`vite dev` cannot reproduce prod-only behavior, so some things must be checked
+against the built app. The known case: in **dev**, TanStack Start serves CSS via
+a `/@tanstack-start/styles.css` middleware endpoint (`Cache-Control: no-store`)
+and then, on hydration, Vite injects the styles as a `<style>` tag and **removes
+that SSR stylesheet** (~700ms in). Removing/re-adding the stylesheet restarts any
+running CSS animation — this is what makes the hero ring
+(`src/landing/animated-sokay-mark.tsx`, a pure-CSS draw) **flicker ~20-30% into
+its first draw on a cold `vite dev` load**. It is a **dev-only artifact**: the
+prod build ships a single static `<link rel="stylesheet">` that is never swapped,
+so there is no flicker. Verified via Playwright (dev logs a `LINK-` removal at
+~700ms; prod logs none).
+
+To test the prod build locally:
+
+```bash
+# 1. stop `pnpm dev` (it holds :3000)
+pnpm build
+pnpm serve            # → prod build serving on http://localhost:3000
+# 2. hard-refresh http://localhost:3000 with DevTools open + "Disable cache"
+#    (Network tab) to force a true cold load
+```
+
+`pnpm serve` runs `serve-prod.mjs` — a small, dependency-free runner (Node
+built-ins only) that serves the static `dist/client/**` assets and routes
+everything else to the `dist/server/server.js` fetch handler, mirroring what a
+real host does. It loads `.env.local` via `--env-file`, so **local Supabase must
+be running** for pages that fetch user/profile data. When forwarding the SSR
+response it must emit `Set-Cookie` via `Headers.getSetCookie()` (an array), not
+`Object.fromEntries(headers)` — the latter collapses Supabase's **chunked** auth
+cookies into one header, which silently breaks server-set sessions (GitHub OAuth
+callback lands back on `/login`). Harmless `notFoundError` warnings in its
+console are just unmatched-path probes (Chrome DevTools `/.well-known/…`,
+`/robots.txt`, etc.) hitting the router's default not-found — not a real error. `serve-prod.mjs` is **not**
+part of the build graph (nothing imports it), isn't type-checked (tsconfig
+includes only `.ts`/`.tsx`) or linted (`eslint src`), and is never auto-run by a
+deploy platform — it is a local-only convenience and safe to keep or delete.
+
+Real deploys still need a **hosting target/adapter** configured so `vite build`
+emits the chosen platform's expected output (Netlify / Cloudflare / Vercel /
+Node server); that is independent of `serve-prod.mjs`. See
+`learning/auth-and-dev-prod-supabase.md` §6 for the Netlify-vs-Cloudflare notes.
 
 ### Local Supabase (dev)
 

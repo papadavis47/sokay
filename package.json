@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "serve": "node --env-file=.env.local serve-prod.mjs",
     "start": "node .output/server/index.mjs",
     "prepare": "panda codegen",
     "lint": "eslint src",

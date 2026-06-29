@@ -41,6 +41,21 @@ export default defineConfig({
         slider,
         avatar,
       },
+      keyframes: {
+        // Draw an SVG stroke in: with pathLength normalized to 1 and
+        // strokeDasharray 1, offset 1 = fully hidden, 0 = fully drawn.
+        sokayDraw: {
+          from: { strokeDashoffset: '1' },
+          to: { strokeDashoffset: '0' },
+        },
+        // Each phase's round line-cap renders a fat dot while the stroke
+        // length is ~0; easing opacity in hides that dot until the stroke
+        // has grown into an actual line.
+        sokayCapFade: {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+      },
       semanticTokens: {
         colors: {
           // Warm brand accent used for the "sokay" wordmark and heading

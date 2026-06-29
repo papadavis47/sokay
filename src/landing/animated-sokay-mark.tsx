@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
 import { css } from 'styled-system/css'
 
 /**
@@ -14,11 +12,17 @@ import { css } from 'styled-system/css'
  *   2. pause
  *   3. the break's upper edge (8:20) → clockwise up the left → back to 12
  *
- * Implemented as two independent paths with a delay on the second, so the
- * sequencing (and the pause) is explicit rather than relying on a shared dash
- * offset. Geometry mirrors `SokayMark` (128×128, center 64,64, r=40, 7:30 gap).
- * Color is inherited via `currentColor`. The draw is gated on a client-side
- * `mounted` flag so it reliably replays on every full page load.
+ * Implemented as two independent paths animated with **pure CSS keyframes**
+ * (no JS/Motion). CSS is render-blocking and present at first paint, so the
+ * draw begins the instant the SVG paints — it does not wait for the JS bundle
+ * to download/parse or for React to hydrate. (The earlier Motion + useEffect
+ * version couldn't start until after hydration, which on a cold first load
+ * showed up as a ~1s lag before the ring began drawing.)
+ *
+ * Each path normalizes its length via `pathLength={1}` and uses
+ * strokeDasharray 1 + an animated strokeDashoffset (1 → 0) to draw in.
+ * Geometry mirrors `SokayMark` (128×128, center 64,64, r=40, 7:30 gap).
+ * Color is inherited via `currentColor`.
  */
 
 // Phase 1: top → clockwise → 6:40 (the break's lower edge).
@@ -26,34 +30,26 @@ const PATH_TOP_TO_BREAK = 'M64 24 A40 40 0 1 1 48.37 100.82'
 // Phase 2: 8:20 (the break's upper edge) → clockwise → top.
 const PATH_BREAK_TO_TOP = 'M27.18 79.63 A40 40 0 0 1 64 24'
 
-const PHASE_ONE = 2.4
-const PAUSE = 0.8
-const PHASE_TWO = 1.5
-// Each phase's round line-cap renders a fat dot while its stroke length is ~0.
-// Easing opacity in over this window keeps that dot invisible until the stroke
-// has grown into an actual line, so no dot flashes at the phase's start point.
-const CAP_FADE = 0.5
+// Timings (kept literal in the `animation` strings below because Panda
+// extracts styles statically and can't evaluate runtime expressions):
+//   phase 1 draw  = 2.4s
+//   pause         = 0.8s  → phase 2 starts at 2.4 + 0.8 = 3.2s
+//   phase 2 draw  = 1.5s
+//   cap fade-in   = 0.5s  (eases the round cap's dot in so it never flashes)
+const ANIM_PHASE_ONE =
+  'sokayDraw 2.4s ease-in-out both, sokayCapFade 0.5s ease-in both'
+const ANIM_PHASE_TWO =
+  'sokayDraw 1.5s ease-in-out 3.2s both, sokayCapFade 0.5s ease-in 3.2s both'
 
 const STROKE = {
   fill: 'none',
   stroke: 'currentColor',
   strokeWidth: 14,
   strokeLinecap: 'round',
+  pathLength: 1,
 } as const
 
 export function AnimatedSokayMark() {
-  // Two flags drive the sequence. `phaseOne` starts the draw at 12 on mount;
-  // `phaseTwo` gates the second arc so it isn't in the DOM at all until its
-  // turn — a zero-length round-capped stroke renders as a stray dot, so the
-  // only way to guarantee no dot at 8:20 is to not render it yet.
-  const [phaseOne, setPhaseOne] = useState(false)
-  const [phaseTwo, setPhaseTwo] = useState(false)
-  useEffect(() => {
-    setPhaseOne(true)
-    const t = setTimeout(() => setPhaseTwo(true), (PHASE_ONE + PAUSE) * 1000)
-    return () => clearTimeout(t)
-  }, [])
-
   return (
     <div
       aria-hidden
@@ -68,35 +64,29 @@ export function AnimatedSokayMark() {
         fill="none"
         className={css({ w: 'full', h: 'full' })}
       >
-        {/* Phase 1: 12 o'clock → clockwise → the 7:30 break. The round line-cap
-            renders a fat dot whenever the stroke length is ~0, so we ease the
-            opacity in (slow start) — by the time the stroke is opaque it has
-            grown past the dot stage into a moving line, with no flash at 12. */}
-        <motion.path
+        {/* Phase 1: 12 o'clock → clockwise → the 7:30 break. Starts drawing at
+            first paint; opacity eases in (slow start) so the round cap's dot is
+            invisible until the stroke has grown into a moving line. */}
+        <path
           d={PATH_TOP_TO_BREAK}
           {...STROKE}
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: phaseOne ? 1 : 0, opacity: phaseOne ? 1 : 0 }}
-          transition={{
-            pathLength: { duration: PHASE_ONE, ease: 'easeInOut' },
-            opacity: { duration: CAP_FADE, ease: 'easeIn' },
-          }}
+          className={css({
+            strokeDasharray: '1',
+            // `both` so the from-state (hidden) holds before the keyframes run.
+            animation: ANIM_PHASE_ONE,
+          })}
         />
-        {/* Phase 2: after a pause, the far side of the break → up → 12 o'clock.
-            Only rendered once it's its turn (so its zero-length cap can't flash
-            during phase 1), and faded in the same way so no dot pops at 8:20. */}
-        {phaseTwo && (
-          <motion.path
-            d={PATH_BREAK_TO_TOP}
-            {...STROKE}
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{
-              pathLength: { duration: PHASE_TWO, ease: 'easeInOut' },
-              opacity: { duration: CAP_FADE, ease: 'easeIn' },
-            }}
-          />
-        )}
+        {/* Phase 2: after the pause, the far side of the break → up → 12
+            o'clock. While its delay elapses it sits fully offset (dash entirely
+            in the gap), so nothing — not even a cap dot — renders. */}
+        <path
+          d={PATH_BREAK_TO_TOP}
+          {...STROKE}
+          className={css({
+            strokeDasharray: '1',
+            animation: ANIM_PHASE_TWO,
+          })}
+        />
       </svg>
     </div>
   )
