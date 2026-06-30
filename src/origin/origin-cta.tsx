@@ -72,8 +72,7 @@ export function OriginCta({ isLoggedIn }: OriginCtaProps) {
             lineHeight: 'relaxed',
           })}
         >
-          If any of this resonates, give Sokay a try. The journey goes on—and so
-          do you.
+          If any of this resonates, give Sokay a try.
         </p>
 
         {isLoggedIn ? (

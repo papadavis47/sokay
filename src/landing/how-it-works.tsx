@@ -55,11 +55,12 @@ export function HowItWorks() {
       >
         <Card size="lg">
           <CardHeader>
-            <CardTitle>Set Your Limit</CardTitle>
+            <CardTitle>Set Your Own Limit</CardTitle>
             <CardDescription>
-              Choose 1-100 "sokay" items and choose your timeframe ( anywhere
-              from 1 week to 1 year ). Most of what we are sold in the Standard
-              American Diet is not the ideal. Build awareness and keep trying.
+              Choose between 1 to 100 "sokay" items and choose your timeframe (
+              anywhere from 1 week to 1 year ). Most of what we are sold in the
+              Standard American Diet is not the ideal. Build awareness and keep
+              trying.
             </CardDescription>
           </CardHeader>
         </Card>

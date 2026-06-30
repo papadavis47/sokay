@@ -86,7 +86,7 @@ export function SokayDefinition() {
                 lineHeight: 'relaxed',
               })}
             >
-              the moment you stray from your ideal way of eating.
+              the moment you stray from your ideal way of eating
             </p>
 
             <p

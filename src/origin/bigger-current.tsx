@@ -97,8 +97,8 @@ export function BiggerCurrent() {
           })}
         >
           Like the reckoning that came for the tobacco industry, I believe a
-          backlash is coming for the food that makes us sicker as time goes on—a
-          backlash against corporate greed.
+          backlash is coming for a food industry that makes us sicker as time
+          goes on: a backlash against corporate greed.
         </p>
       </FadeIn>
     </section>

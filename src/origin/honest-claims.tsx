@@ -26,7 +26,7 @@ export function HonestClaims() {
             textWrap: 'balance',
           })}
         >
-          What I claim—and what I don't.
+          What I claim, and what I don't
         </h2>
       </FadeIn>
 
@@ -53,7 +53,7 @@ export function HonestClaims() {
           </span>{' '}
           If it doesn't help, fine—but at the very least it gives you one more
           piece of incentive to make a healthy choice. Put as much thought and
-          energy into the process as you see fit. However much it helps—great.
+          energy into the process as you see fit.
         </p>
       </div>
     </section>
