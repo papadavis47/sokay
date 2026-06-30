@@ -99,7 +99,8 @@ export function SokayDefinition() {
                 textWrap: 'balance',
               })}
             >
-              “It's okay. Get back on the horse.”
+              “It'<span className={css({ color: 'fg.default' })}>s okay</span>.
+              Get back on the horse.”
             </p>
 
             <p
