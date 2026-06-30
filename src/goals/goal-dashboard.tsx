@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useRouter, Link } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
+import { motion, useReducedMotion } from 'motion/react'
 import { css } from 'styled-system/css'
 import { Button } from 'design-system/button'
 import {
@@ -21,6 +22,7 @@ import {
 } from 'design-system/dialog'
 import { createDebit } from '@/goals/debits'
 import { startGoalReview } from '@/goals/goals'
+import { ActivityList } from '@/goals/activity-list'
 import type { Goal, Debit } from '@/goals/types'
 
 const NOTES_MAX_LENGTH = 250
@@ -38,6 +40,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [endEarlyDialogOpen, setEndEarlyDialogOpen] = useState(false)
   const router = useRouter()
+  const prefersReducedMotion = useReducedMotion()
 
   const usedItems = debits.length
   const remainingItems = goal.totalItems - usedItems
@@ -165,7 +168,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
             className={css({
               display: 'flex',
               flexDirection: 'column',
-              gap: '2',
+              gap: '3',
             })}
           >
             <div
@@ -173,29 +176,82 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                 w: 'full',
                 bg: 'gray.a3',
                 borderRadius: 'full',
-                h: '4',
+                h: '6',
                 overflow: 'hidden',
+                boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
               })}
             >
-              <div
+              <motion.div
                 className={css({
                   h: 'full',
-                  bg: 'colorPalette.solid.bg',
-                  transition: 'all 0.3s',
+                  borderRadius: 'full',
+                  bgGradient: 'to-r',
+                  gradientFrom: 'brand.solid',
+                  gradientTo: 'brand.solidHover',
+                  boxShadow: 'brand',
                 })}
-                style={{ width: `${percentageUsed}%` }}
+                initial={prefersReducedMotion ? false : { width: 0 }}
+                animate={{ width: `${percentageUsed}%` }}
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+                }
               />
             </div>
             <div
               className={css({
                 display: 'flex',
                 justifyContent: 'space-between',
-                fontSize: 'md',
-                color: 'brand.solid',
+                alignItems: 'flex-end',
               })}
             >
-              <span>0</span>
-              <span>{goal.totalItems}</span>
+              <div className={css({ textAlign: 'left' })}>
+                <div
+                  className={css({
+                    fontSize: '2xl',
+                    fontWeight: 'bold',
+                    color: 'fg.default',
+                    lineHeight: '1',
+                  })}
+                >
+                  {usedItems}
+                </div>
+                <div
+                  className={css({
+                    fontSize: 'xs',
+                    color: 'fg.muted',
+                    textTransform: 'uppercase',
+                    letterSpacing: 'wide',
+                    mt: '1',
+                  })}
+                >
+                  Used
+                </div>
+              </div>
+              <div className={css({ textAlign: 'right' })}>
+                <div
+                  className={css({
+                    fontSize: '2xl',
+                    fontWeight: 'bold',
+                    color: 'brand.solid',
+                    lineHeight: '1',
+                  })}
+                >
+                  {goal.totalItems}
+                </div>
+                <div
+                  className={css({
+                    fontSize: 'xs',
+                    color: 'fg.muted',
+                    textTransform: 'uppercase',
+                    letterSpacing: 'wide',
+                    mt: '1',
+                  })}
+                >
+                  Total
+                </div>
+              </div>
             </div>
           </div>
 
@@ -473,88 +529,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
         </CardBody>
       </Card>
 
-      {debits.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your last few items</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <div
-              className={css({
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '3',
-              })}
-            >
-              {debits.slice(0, 5).map((debit) => (
-                <div
-                  key={debit.id}
-                  className={css({
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: '3',
-                    p: '3',
-                    borderRadius: 'l2',
-                    bg: 'gray.a2',
-                  })}
-                >
-                  <div
-                    className={css({
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '1',
-                      minW: '0',
-                    })}
-                  >
-                    <span className={css({ fontWeight: 'medium' })}>
-                      {debit.foodName}
-                    </span>
-                    {debit.notes && (
-                      <span
-                        className={css({
-                          fontSize: 'sm',
-                          fontStyle: 'italic',
-                          color: 'fg.muted',
-                          whiteSpace: 'pre-wrap',
-                          wordBreak: 'break-word',
-                        })}
-                      >
-                        {debit.notes}
-                      </span>
-                    )}
-                  </div>
-                  <span
-                    className={css({
-                      fontSize: 'sm',
-                      color: 'fg.muted',
-                      whiteSpace: 'nowrap',
-                    })}
-                  >
-                    {formatDate(debit.debitedAt)}
-                  </span>
-                </div>
-              ))}
-            </div>
-            {debits.length > 5 && (
-              <Link
-                to="/dashboard/history"
-                className={css({
-                  display: 'block',
-                  textAlign: 'center',
-                  mt: '4',
-                  fontSize: 'sm',
-                  color: 'colorPalette.default',
-                  _hover: { textDecoration: 'underline' },
-                })}
-              >
-                View all activity →
-              </Link>
-            )}
-          </CardBody>
-        </Card>
-      )}
+      <ActivityList debits={debits} />
 
       <Card css={{ bg: 'brand.subtle', borderColor: 'brand.border' }}>
         <CardBody className={css({ pt: '6' })}>
