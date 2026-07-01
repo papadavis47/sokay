@@ -6,6 +6,7 @@ import { goals, debits } from '@/lib/db/schema'
 import { eq, and, count } from 'drizzle-orm'
 
 const NOTES_MAX_LENGTH = 250
+const FOOD_NAME_MAX_LENGTH = 120
 
 function normalizeNotes(notes: string | undefined | null): string | null {
   if (notes == null) return null
@@ -13,6 +14,19 @@ function normalizeNotes(notes: string | undefined | null): string | null {
   if (trimmed.length === 0) return null
   if (trimmed.length > NOTES_MAX_LENGTH) {
     throw new Error(`Notes must be ${NOTES_MAX_LENGTH} characters or fewer.`)
+  }
+  return trimmed
+}
+
+function normalizeFoodName(foodName: string): string {
+  const trimmed = foodName.trim()
+  if (trimmed.length === 0) {
+    throw new Error('Food or drink name is required.')
+  }
+  if (trimmed.length > FOOD_NAME_MAX_LENGTH) {
+    throw new Error(
+      `Food or drink name must be ${FOOD_NAME_MAX_LENGTH} characters or fewer.`,
+    )
   }
   return trimmed
 }
@@ -52,7 +66,7 @@ export const createDebit = createServerFn({ method: 'POST' })
     await db.insert(debits).values({
       goalId: data.goalId,
       userId: user.id,
-      foodName: data.foodName,
+      foodName: normalizeFoodName(data.foodName),
       notes: normalizeNotes(data.notes),
     })
 
@@ -72,7 +86,10 @@ export const updateDebit = createServerFn({ method: 'POST' })
 
     await db
       .update(debits)
-      .set({ foodName: data.foodName, notes: normalizeNotes(data.notes) })
+      .set({
+        foodName: normalizeFoodName(data.foodName),
+        notes: normalizeNotes(data.notes),
+      })
       .where(and(eq(debits.id, data.debitId), eq(debits.userId, user.id)))
 
     return { success: true }

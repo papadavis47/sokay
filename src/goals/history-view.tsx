@@ -23,6 +23,7 @@ import { updateDebit, deleteDebit } from '@/goals/debits'
 import type { Goal, Debit } from '@/goals/types'
 
 const NOTES_MAX_LENGTH = 250
+const FOOD_NAME_MAX_LENGTH = 120
 
 interface GoalWithDebits {
   goal: Goal
@@ -302,6 +303,7 @@ export function HistoryView({ goalsWithDebits }: HistoryViewProps) {
                 value={foodName}
                 onChange={(e) => setFoodName(e.target.value)}
                 required
+                maxLength={FOOD_NAME_MAX_LENGTH}
                 disabled={loading}
                 autoFocus
               />

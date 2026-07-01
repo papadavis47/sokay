@@ -26,6 +26,7 @@ import { ActivityList } from '@/goals/activity-list'
 import type { Goal, Debit } from '@/goals/types'
 
 const NOTES_MAX_LENGTH = 250
+const FOOD_NAME_MAX_LENGTH = 120
 
 interface GoalDashboardProps {
   goal: Goal
@@ -360,6 +361,7 @@ export function GoalDashboard({ goal, debits }: GoalDashboardProps) {
                       value={foodName}
                       onChange={(e) => setFoodName(e.target.value)}
                       required
+                      maxLength={FOOD_NAME_MAX_LENGTH}
                       disabled={loading}
                       autoFocus
                     />
