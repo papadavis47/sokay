@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@netlify/vite-plugin-tanstack-start": "^1.3.16",
     "@pandacss/dev": "^1.11.1",
     "@pandacss/preset-base": "^1.11.1",
     "@park-ui/panda-preset": "^0.43.1",

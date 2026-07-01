@@ -17,6 +17,9 @@
 /.output/
 /.vinxi/
 
+# netlify (build output)
+/.netlify/
+
 # production
 /build
 /dist
