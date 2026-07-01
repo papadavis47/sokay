@@ -96,6 +96,18 @@ export function DashboardNav({
             {shownName}
           </span>
           <ThemeToggle />
+          <Link to="/origin">
+            <Button
+              variant="plain"
+              size="sm"
+              className={css({
+                color: 'brand.solid',
+                _hover: { bg: 'brand.subtle' },
+              })}
+            >
+              Origin
+            </Button>
+          </Link>
           <Button
             variant="plain"
             size="sm"
@@ -180,6 +192,19 @@ export function DashboardNav({
                     </Button>
                   </Link>
                 )}
+                <Link to="/origin" onClick={close}>
+                  <Button
+                    variant="plain"
+                    className={css({
+                      w: 'full',
+                      justifyContent: 'flex-start',
+                      color: 'brand.solid',
+                      _hover: { bg: 'brand.subtle' },
+                    })}
+                  >
+                    Origin
+                  </Button>
+                </Link>
                 <Button
                   variant="plain"
                   onClick={() => {
