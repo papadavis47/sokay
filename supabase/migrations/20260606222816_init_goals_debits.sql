@@ -1,12 +1,10 @@
 -- Sokay initial schema: goals + debits, RLS, indexes, triggers.
 -- Applied locally via `supabase db reset` and to prod via `supabase db push`.
 
--- Enable UUID extension
-create extension if not exists "uuid-ossp";
-
 -- Goals table
+-- (uses core gen_random_uuid(); no extension needed, portable local + cloud)
 create table public.goals (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users not null,
   total_credits integer not null check (total_credits >= 5 and total_credits <= 20),
   duration_months integer not null check (duration_months in (1, 2, 3, 6, 12)),
@@ -19,7 +17,7 @@ create table public.goals (
 
 -- Debits table (tracks each time user consumes a cheat food)
 create table public.debits (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   goal_id uuid references public.goals(id) on delete cascade not null,
   user_id uuid references auth.users not null,
   food_name text not null,

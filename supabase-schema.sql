@@ -1,12 +1,10 @@
 -- Sokay Database Schema
 -- Run this in your Supabase SQL Editor
 
--- Enable UUID extension
-create extension if not exists "uuid-ossp";
-
 -- Goals table
+-- (uses core gen_random_uuid(); no extension needed, portable local + cloud)
 create table public.goals (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users not null,
   total_items integer not null check (total_items >= 1 and total_items <= 100),
   duration_value integer not null,
@@ -24,7 +22,7 @@ create table public.goals (
 
 -- Debits table (tracks each time user consumes a cheat food)
 create table public.debits (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   goal_id uuid references public.goals(id) on delete cascade not null,
   user_id uuid references auth.users not null,
   food_name text not null,
