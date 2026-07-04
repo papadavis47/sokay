@@ -81,18 +81,24 @@ free-tier project is reserved for prod. Requires Docker running.
 ```bash
 supabase start            # boot local stack (API :54321, Studio :54323, DB :54322)
 supabase status           # print URLs + keys (note: new CLI uses sb_publishable_* keys)
-supabase db reset         # rebuild local DB from ALL migrations (wipes local data)
-supabase migration up     # apply only pending migrations (preserves local data)
+supabase db reset         # wipe local DB → re-run seed.sql → then run pnpm db:migrate!
 supabase stop             # shut the stack down
 ```
 
 - `.env.local` points at the **local** stack for dev; the `VITE_SUPABASE_ANON_KEY`
   value is the local `sb_publishable_*` key. Prod values live commented below the
   DEV block (and in the deploy provider's env).
-- **Migrations are the schema source of truth.** Add a new file under
-  `supabase/migrations/` for any schema change — never edit an applied migration.
-- Prod sync (later): `supabase link --project-ref <ref>` then `supabase db push`.
-  See `learning/git-safety-and-prod-sync.md`.
+- **Drizzle is the schema source of truth** (`src/lib/db/schema.ts`). Workflow:
+  edit schema.ts → `pnpm db:generate` (interactive — run in a real terminal) →
+  `pnpm db:migrate`. SQL drizzle can't express (RLS policies, triggers, functions)
+  goes in `drizzle-kit generate --custom` migrations. `supabase/migrations/` stays
+  **empty** — the supabase CLI only runs the stack; `supabase/seed.sql` re-creates
+  the avatars bucket on reset. **Never use `drizzle-kit push`** (no `db:push`
+  script exists; push bypasses migration files and causes drift).
+- Fresh-DB flow: `supabase db reset` → `pnpm db:migrate`.
+- Prod sync: point `DATABASE_URL` at cloud (uncomment PROD block), `pnpm db:migrate`
+  in a terminal, re-comment immediately. Cloud was baselined so drizzle skips
+  0000/0001 (already present from the retired CLI migrations).
 
 ## Project Layout
 
@@ -152,9 +158,15 @@ src/
 │   └── supabase/            # client.ts (browser), server.ts (SSR cookies)
 ├── router.tsx, routeTree.gen.ts, index.css
 
-supabase/                    # local Supabase stack config + migrations (committed)
+drizzle/                     # generated + custom SQL migrations (committed; schema truth is src/lib/db/schema.ts)
+├── 0000_baseline.sql       # tables/FKs/checks/indexes (generated from schema.ts)
+├── 0001_rls_triggers_storage.sql  # hand-written: RLS policies, triggers, functions, storage policies
+└── meta/                   # drizzle-kit journal + snapshots (needed for future generates)
+
+supabase/                    # local Supabase stack config only (NO app-schema migrations)
 ├── config.toml             # stack + auth config (secrets via env() refs — safe to commit)
-├── migrations/             # SQL migrations = schema source of truth (run local + prod)
+├── migrations/             # intentionally EMPTY — CLI only runs the stack
+├── seed.sql                # avatars bucket (re-created on db reset; policies live in drizzle/0001)
 └── .env.local              # GitHub OAuth creds for local dev (gitignored)
 ```
 
@@ -185,7 +197,7 @@ top-level directories. (Aliases are declared in `tsconfig.json` and mirrored in
 
 ## Data Model
 
-Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` (SQL with RLS), **and** `supabase/migrations/` (the applied source of truth). **Keep all three in sync.**
+Three tables defined in `src/lib/db/schema.ts` (Drizzle) — **the single source of truth**, including FKs to `auth.users`, check constraints, and indexes. RLS policies, triggers, and functions live in `drizzle/0001_rls_triggers_storage.sql` (custom migration). The old `supabase-schema.sql` mirror and `supabase/migrations/` are retired — no more keeping copies in sync.
 
 - `goals` — `userId`, `totalItems` (1–100, column `total_items`), `durationValue` + `durationUnit` (`'week'` 1–52 | `'month'` 1–12 — one unit per goal, never mixed), `startDate`, `endDate`, `status` (`active` | `completed` | `reviewing`). Limits + `formatDuration` live in `src/goals/duration.ts` — import from there, don't re-hardcode bounds.
 - `debits` — `goalId` (cascade), `userId`, `foodName`, `notes` (nullable, ≤250 chars — enforced by a `check` constraint and re-validated in the server function), `debitedAt`
@@ -193,7 +205,7 @@ Three tables defined in `src/lib/db/schema.ts` (Drizzle), `supabase-schema.sql` 
 
 ### Avatars (Supabase Storage)
 
-Avatar images live in a **public `avatars` storage bucket** (created in `supabase/migrations/*_avatars_bucket.sql`, mirrored in `supabase-schema.sql`). Files are stored per-user at `<user_id>/avatar.<ext>`; the folder name is the user id so `storage.objects` RLS can scope writes to the owner (`(storage.foldername(name))[1] = auth.uid()::text`) while reads stay public. The bucket caps uploads at 2 MiB and allows `image/jpeg|png|webp|gif`.
+Avatar images live in a **public `avatars` storage bucket** (created locally by `supabase/seed.sql`; its RLS policies live in `drizzle/0001_rls_triggers_storage.sql`). Files are stored per-user at `<user_id>/avatar.<ext>`; the folder name is the user id so `storage.objects` RLS can scope writes to the owner (`(storage.foldername(name))[1] = auth.uid()::text`) while reads stay public. The bucket caps uploads at 2 MiB and allows `image/jpeg|png|webp|gif`.
 
 The **upload flow is client-side then server-persist**: the settings page uploads the file straight to Storage with the browser client (`upsert: true`), clears any prior file in the user's folder first (so a changed extension leaves no orphan), then calls the `updateAvatar` server fn to save the public URL (with a `?t=` cache-buster). "Remove" deletes the file(s) and sets `avatar_url` to `null`. Storage upsert needs INSERT + SELECT + UPDATE policies (all present), plus DELETE for remove/replace.
 
@@ -293,7 +305,7 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - Don't edit `routeTree.gen.ts`, `styled-system/`, `.output/`, `.tanstack/`, or `dist/`.
 - Don't add a second styling system (Tailwind, CSS modules, emotion).
 - Don't bypass `requireUser` / `getUser` checks in server functions.
-- Don't change the Drizzle schema without also updating `supabase-schema.sql`, a new migration, and the SQL `check` constraints (items 1–100, duration 1–52 weeks / 1–12 months, status enum) — plus the bounds in `src/goals/duration.ts`.
+- Don't change the Drizzle schema without generating a migration (`pnpm db:generate` → `pnpm db:migrate`); keep check constraints in schema.ts (items 1–100, duration 1–52 weeks / 1–12 months, status enum) in sync with the bounds in `src/goals/duration.ts`.
 - Don't introduce a new ORM, query builder, or HTTP framework — server functions + Drizzle is the pattern.
 
 ## Learning Folder
@@ -325,5 +337,5 @@ GitHub OAuth creds are **not** in `.env.local` — local creds live in `supabase
 - [x] **Design-system: migrated hand-rolled primitives to Panda config recipes + cascade layers.** All 9 primitives (`button`/`input`/`textarea`/`label` as `defineRecipe`; `card`/`dialog`/`select`/`slider`/`avatar` as `defineSlotRecipe`) now live in `src/theme/recipes/*.ts`, registered in `panda.config.ts`. They emit into `@layer recipes` (below `@layer utilities`), so consumer `className={css({...})}` / `css`-prop overrides win automatically — the old `css`-prop object-merge workaround and `CardSizeContext` are gone. The Park UI preset's unused recipes are stripped via a `preset:resolved` hook (tokens kept). Wrappers use `styled()` (single elements), `createStyleContext()` (Card), or direct recipe calls (Dialog/Select/Slider/Avatar). **Faithful port — zero visual change.** Follow-up fix: the original author had used Park UI button token names from a _newer_ preset version (`colorPalette.solid.bg`, nested) that don't exist in the installed preset 0.43.1, so `solid`/`subtle`/`outline`/`plain` and the slider `range` rendered transparent (the default-`solid` "Sign in"/"Save" buttons were invisible). Re-pointed to the preset's real tokens — accent `colorPalette.default/fg/emphasized` for `solid` (+ slider range), neutral `colorPalette: 'gray'` + alpha steps for the quiet variants — using only the existing teal/gray/brand palette. See `learning/panda-recipe-refactor-plan.md`.
 - [ ] Email confirmation flow (currently signup → straight to `/dashboard`; breaks if "confirm email" is enabled).
 - [ ] Session refresh on navigation (tokens can go stale).
-- [ ] Prod: create cloud GitHub OAuth app, `supabase link` + `supabase db push`, set deploy env vars.
+- [ ] Prod: create cloud GitHub OAuth app, set deploy env vars. (Schema: cloud already baselined for drizzle; future changes via PROD-block `pnpm db:migrate`.)
 - [ ] Decide deploy target (Netlify lowest-friction now; Cloudflare later — see `learning/auth-and-dev-prod-supabase.md` §6).
