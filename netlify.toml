@@ -1,3 +1,15 @@
 [build]
-command = "vite build"
-publish = "dist/client"
+  # `pnpm build` runs panda codegen first. Do NOT reduce this to `vite build`:
+  # netlify restores node_modules from its build cache, and a cached install is
+  # a no-op that never fires the `prepare` lifecycle script, so the generated
+  # styled-system/ would be missing and the build fails to resolve it.
+  command = "pnpm build"
+  publish = "dist/client"
+
+# Pin the toolchain to what the test suite actually runs against. Without this
+# Netlify picks its own Node and pnpm, and both drift over time: the lockfile is
+# lockfileVersion 9 written by pnpm 12, which an older pnpm will either reject or
+# resolve into a different dependency tree than the one that was tested.
+[build.environment]
+  NODE_VERSION = "22"
+  PNPM_VERSION = "12.4.2"
